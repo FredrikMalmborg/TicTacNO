@@ -29,6 +29,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # Try to auto-fix issues
-          auto-fix: true
+          auto_fix: true
           # Enable linters
           prettier: true
