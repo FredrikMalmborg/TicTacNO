@@ -10,7 +10,7 @@ on:
 
 # What workflow does
 jobs:
-  test_pull_request-w/jest:
+  test_pull_request_with_jest:
     name: Performing tests
     runs-on: ubuntu-latest
     steps: 
@@ -28,5 +28,6 @@ jobs:
       - name: Run Jest tests
         run: npm test
 
-      - name: Try Expo build
-        run: npm start
+      # Add expo publish at a later date? (unsure how we test the build with expo)
+      # - name: Try Expo build
+      #   run: npm start
