@@ -10,7 +10,7 @@ on:
 
 # What workflow does
 jobs:
-  test_pull_request-w/jest:
+  test_pull_request_with_jest:
     name: Performing tests
     runs-on: ubuntu-latest
     steps: 
