@@ -27,7 +27,7 @@ jobs:
       - name: Run linters
         uses: wearerequired/lint-action@v1.7.0
         with:
-          github_token: ${{ secrets.LINT_SECRET }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           # Try to auto-fix issues
           auto_fix: true
           # Enable linters
