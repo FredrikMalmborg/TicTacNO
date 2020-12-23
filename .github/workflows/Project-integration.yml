@@ -1,0 +1,32 @@
+# Workflow name
+name: Project Continuous Integration
+
+# When workflow triggers
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# What workflow does
+jobs:
+  test_pull_request-w/jest:
+    name: Performing tests
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout Github repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run Jest tests
+        run: npm test
+
+      - name: Try Expo build
+        run: npm start
