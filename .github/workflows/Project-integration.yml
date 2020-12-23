@@ -1,17 +1,20 @@
 # Workflow name
-name: Project Continuous Integration
+name: Main Continuous Integration
 
 # When workflow triggers
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches: main
+    branches: [ main ]
 
 # What workflow does
 jobs:
   # Testing PR
-  test_pull_request:
+  test_pull_request-w/jest:
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
       - run: npm ci
       - run: npm test
+      - run: npm start
