@@ -1,5 +1,5 @@
 # Workflow name
-name: Main Continuous Integration
+name: Project Continuous Integration
 
 # When workflow triggers
 on:
@@ -10,11 +10,23 @@ on:
 
 # What workflow does
 jobs:
-  # Testing PR
   test_pull_request-w/jest:
+    name: Performing tests
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v2
-      - run: npm ci
-      - run: npm test
-      - run: npm start
+      - name: Checkout Github repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run Jest tests
+        run: npm test
+
+      - name: Try Expo build
+        run: npm start
