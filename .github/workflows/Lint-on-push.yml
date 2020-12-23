@@ -28,5 +28,7 @@ jobs:
         uses: wearerequired/lint-action@v1.7.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Try to auto-fix issues
+          auto-fix: true
           # Enable linters
           prettier: true
