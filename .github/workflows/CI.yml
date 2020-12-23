@@ -1,18 +1,17 @@
+# Workflow name
 name: Project Continuous Integration
+
+# When workflow triggers
 on:
   pull_request:
-    branches: [ main ]
+    branches: main
 
+# What workflow does
 jobs:
+  # Testing PR
   test_pull_request:
     runs_on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: latest
       - run: npm ci
       - run: npm test
-      - run: npm ios
-      - run: npm android
-      - run: npm web
