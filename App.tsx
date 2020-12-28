@@ -1,46 +1,26 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import Background from "./components/background";
+import Pages from "./pages/pages";
 
-interface IStyleManager {
-  container: StyleProp<ViewStyle>;
-  text: StyleProp<TextStyle>;
-}
-
-interface IProps {
-  dark: boolean;
-}
-
-export default function App({ ...props }) {
-  const dark = false;
-
+export default function App() {
   return (
-    <View style={styles({ ...props, dark }).container}>
-      <Text style={styles({ ...props, dark }).text}>
-        Open up App.tsx to start working on your game!
-      </Text>
-      <StatusBar style="auto" />
+    <View style={style.appContainer}>
+      <Pages />
+      <Background width="100%" height="100%" />
+      <StatusBar style="dark" />
     </View>
   );
 }
 
-const styles = StyleSheet.create(
-  (props: IProps): IStyleManager => ({
-    container: {
-      flex: 1,
-      backgroundColor: `${props.dark ? "#000" : "#FFF"}`,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    text: {
-      color: `${props.dark ? "#FFF" : "#000"}`,
-    },
-  })
-);
+const style: { appContainer: StyleProp<ViewStyle> } = StyleSheet.create({
+  appContainer: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 1,
+  },
+});

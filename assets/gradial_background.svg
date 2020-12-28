@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 169.84 182.48">
+	<defs>
+		<style>
+			.cls-1{fill-opacity:0.45;fill:url(#Namnlös_övertoning_2);}
+		</style>
+		<radialGradient id="Namnlös_övertoning_2" cx="-368.43" cy="545.39" r="0.55" gradientTransform="matrix(-309, 332, 217.96, 202.86, -232550.37, 11679.78)" gradientUnits="userSpaceOnUse">
+			<stop offset="0.42" stop-color="#ffd148" />
+			<stop offset="1" stop-color="#ea555a" />
+		</radialGradient>
+	</defs>
+	<g id="Lager_2" data-name="Lager 2">
+		<g id="text">
+			<rect class="cls-1" width="169.84" height="182.48" />
+		</g>
+	</g>
+</svg>
