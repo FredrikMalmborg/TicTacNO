@@ -1,13 +1,4 @@
-// import React, { FC } from "react";
-// import Logo from "../assets/logo.svg";
-
-// const Logotype: FC = () => {
-//   return <>{Logo && <Logo width="100%" height={100} />}</>;
-// };
-
-// export default Logotype;
-
-import * as React from "react"
+import * as React from "react";
 import Svg, {
   SvgProps,
   Defs,
@@ -15,7 +6,7 @@ import Svg, {
   Stop,
   G,
   Path,
-} from "react-native-svg"
+} from "react-native-svg";
 /* SVGR has dropped some elements not supported by react-native-svg: style */
 
 function Logotype(props: SvgProps) {
@@ -273,8 +264,7 @@ function Logotype(props: SvgProps) {
         </G>
       </G>
     </Svg>
-  )
+  );
 }
 
-export default Logotype
-
+export default Logotype;
