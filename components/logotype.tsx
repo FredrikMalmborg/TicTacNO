@@ -12,7 +12,7 @@ import Svg, {
 
 const Logotype = ({ width, height, ...props }: SvgProps) => {
   return (
-    <View style={{ width: width, height: height}}>
+    <View style={{ width: width, height: height }}>
       <Svg viewBox={`0 0 256 112`} {...props} width="100%" height="100%">
         <Defs>
           <LinearGradient

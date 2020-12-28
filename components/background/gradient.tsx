@@ -10,7 +10,7 @@ import { useWindowDimensions, View } from "react-native";
 
 // created using: https://react-svgr.com/playground/?native=true&typescript=true
 
-const Gradient = ({style, ...props}: SvgProps) => {
+const Gradient = ({ style, ...props }: SvgProps) => {
   const windowWidth = useWindowDimensions().width;
   const windowHeight = useWindowDimensions().height;
 

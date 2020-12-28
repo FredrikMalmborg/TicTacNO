@@ -8,7 +8,7 @@ export default function App() {
   return (
     <View style={style.appContainer}>
       <Pages />
-      <Background   />
+      <Background />
       <StatusBar style="dark" />
     </View>
   );

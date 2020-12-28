@@ -9,10 +9,7 @@ interface IStyles {
 const StartPage = () => {
   return (
     <View style={style.container}>
-      <Logotype
-        width="90%"
-        height="33%"
-      />
+      <Logotype width="90%" height="33%" />
     </View>
   );
 };

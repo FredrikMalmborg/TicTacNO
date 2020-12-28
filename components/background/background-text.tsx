@@ -4,11 +4,10 @@ import { SvgProps } from "react-native-svg";
 import TextSection from "./text-section";
 
 interface IProps extends SvgProps {
-  style: StyleProp<ViewStyle>
+  style: StyleProp<ViewStyle>;
 }
 
-const BackgroundText: React.FC<IProps> = ({style, ...props}) => {
-
+const BackgroundText: React.FC<IProps> = ({ style, ...props }) => {
   return (
     <View style={style}>
       <TextSection {...props} />
@@ -23,6 +22,6 @@ const BackgroundText: React.FC<IProps> = ({style, ...props}) => {
       <TextSection {...props} />
     </View>
   );
-}
+};
 
 export default BackgroundText;
