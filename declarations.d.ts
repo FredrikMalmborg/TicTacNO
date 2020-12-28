@@ -5,10 +5,9 @@ declare module "*.svg" {
   export default content;
 }
 
-
 // Package didn't work...
 
-// declare module "react-native-radial-gradient" 
+// declare module "react-native-radial-gradient"
 // {
 //   import React from "react";
 //   import { StyleProp, ViewStyle } from "react-native";
