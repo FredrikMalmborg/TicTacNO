@@ -9,14 +9,21 @@ interface IStyles {
 const StartPage = () => {
   return (
     <View style={style.container}>
-      <Logotype />
+      <Logotype
+        width="90%"
+        height="33%"
+      />
     </View>
   );
 };
 
 const style: IStyles = StyleSheet.create({
   container: {
-    margin: "15%",
+    flex: 1,
+    alignItems: "center",
+    paddingTop: 16,
+    width: "100%",
+    height: "100%",
   },
 });
 
