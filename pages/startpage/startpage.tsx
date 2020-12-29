@@ -10,7 +10,7 @@ interface IStyles {
 const StartPage = () => {
   return (
     <View style={style.container}>
-      {/* <Logotype /> */}
+      <Logotype width="90%" height="33%" />
 
       <TicTacText title label="play" size="sm" />
       <TicTacText title label="host" size="sm" />
@@ -47,8 +47,9 @@ const style: IStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-
-    padding: 30,
+    paddingTop: 16,
+    width: "100%",
+    height: "100%",
   },
 });
 
