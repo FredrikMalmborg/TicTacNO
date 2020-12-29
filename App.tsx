@@ -1,14 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
-import Background from "./components/background";
+import Background from "./components/background/background";
 import Pages from "./pages/pages";
 
 export default function App() {
   return (
     <View style={style.appContainer}>
       <Pages />
-      <Background width="100%" height="100%" />
+      <Background />
       <StatusBar style="dark" />
     </View>
   );
