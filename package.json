@@ -20,6 +20,7 @@
     ]
   },
   "dependencies": {
+    "@expo-google-fonts/fredoka-one": "^0.1.0",
     "expo": "^40.0.0",
     "expo-cli": "^4.0.16",
     "expo-status-bar": "~1.0.3",
