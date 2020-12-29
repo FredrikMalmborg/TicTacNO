@@ -1,11 +1,13 @@
 import React from "react";
 import { StyleProp, View, ViewStyle, StyleSheet } from "react-native";
+import GamePage from "./gamepage_test/GamePage";
 import StartPage from "./startpage/startpage";
 
 const Pages = () => {
   return (
     <View style={style.pages}>
-      <StartPage />
+      {/* <StartPage /> */}
+      <GamePage />
     </View>
   );
 };
