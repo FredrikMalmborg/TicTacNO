@@ -3,14 +3,24 @@ import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Background from "./components/background/background";
 import Pages from "./pages/pages";
+import {
+  useFonts,
+  FredokaOne_400Regular,
+} from "@expo-google-fonts/fredoka-one";
 
 export default function App() {
+  const [fontsLoaded /*, error */] = useFonts({ FredokaOne_400Regular });
+
   return (
-    <View style={style.appContainer}>
-      <Pages />
-      <Background />
-      <StatusBar style="dark" />
-    </View>
+    <>
+      {fontsLoaded && (
+        <View style={style.appContainer}>
+          <Pages />
+          <Background />
+          <StatusBar style="dark" />
+        </View>
+      )}
+    </>
   );
 }
 
