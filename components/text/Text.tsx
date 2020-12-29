@@ -6,19 +6,14 @@ import {
   ViewStyle,
   TextStyle,
   StyleSheet,
-  ImageStyle,
+  Platform,
 } from "react-native";
-import { Svg, Path, Image } from "react-native-svg";
+import { Svg, Image } from "react-native-svg";
 
 import Play_PNG from "../../assets/images/text/Play_PNG.png";
 import Profile_PNG from "../../assets/images/text/Profile_PNG.png";
 import Host_PNG from "../../assets/images/text/Host_PNG.png";
 import Join_PNG from "../../assets/images/text/Join_PNG.png";
-
-import {
-  useFonts,
-  FredokaOne_400Regular,
-} from "@expo-google-fonts/fredoka-one";
 
 type Size = "sm" | "md" | "lg" | number;
 
@@ -33,13 +28,21 @@ interface Props {
   title?: boolean;
   bread?: boolean;
   size?: Size;
+  centered?: boolean;
+  color?: string;
 }
 
-const TicTacText = (props: Props) => {
-  const [fontsLoaded /*, error */] = useFonts({ FredokaOne_400Regular });
-  const [content, setContent] = React.useState(<></>);
-
-  const { size, title, label, bread, children } = props;
+const TicTacText = ({
+  size,
+  title,
+  label,
+  bread,
+  centered,
+  color,
+  children,
+  ...props
+}: Props) => {
+  
 
   const getSize = () => {
     switch (size) {
@@ -80,34 +83,43 @@ const TicTacText = (props: Props) => {
   const getText = () => {
     return (
       <View style={style({ bread }).container}>
-        <Text style={style({ bread }, getSize()).text}>
+        <Text style={style({ bread }, getSize(), centered, color).text}>
           {children ? children : label}
         </Text>
       </View>
     );
   };
 
-  React.useEffect(() => {
-    setContent(title ? getImg() : getText());
-  }, []);
-
-  return <>{content}</>;
+  return <>{title ? getImg() : getText()}</>;
 };
 
 const style = (
   type?: { bread?: boolean; title?: boolean },
-  size?: number
+  size?: number,
+  centered?: boolean,
+  color?: string
 ): IStyles => {
   return StyleSheet.create({
     container: {
       width: "100%",
-
-      border: "1px solid red",
       margin: type?.bread ? "" : 10,
     },
     text: {
-      fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular",
+      ...Platform.select({
+        ios: {
+          fontFamily: type?.bread ? "Helvetica" : "FredokaOne_400Regular"
+        },
+        android: {
+          fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular"
+        },
+        default: {
+          fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular"
+        }
+      }),
+      // fontFamily: type?.bread ? Platform.OS === "ios" ? "Helvetica" : s,
       fontSize: size || 20,
+      textAlign: centered ? "center" : "left",
+      color: color ? color : "#000"
     },
   });
 };
