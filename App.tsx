@@ -1,13 +1,14 @@
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Background from "./components/background/background";
-import Pages from "./pages/pages";
+import PageNavigator from "./pages/PageNavigator";
 import {
   useFonts,
   FredokaOne_400Regular,
 } from "@expo-google-fonts/fredoka-one";
 import { StatusBar } from "expo-status-bar";
 import AppLoading from "expo-app-loading";
+import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
@@ -23,17 +24,15 @@ export default function App() {
     },
   });
 
-  return (
+  return fontsLoaded ?
     <View style={style.appContainer}>
-      {fontsLoaded ? (
-        <>
-          <Pages />
-          <Background />
-          <StatusBar style="dark" />
-        </>
-      ) : (
-        <AppLoading />
-      )}
+      <Background />
+      <NavigationContainer>
+        <PageNavigator />
+      </NavigationContainer>
+      <StatusBar style="dark" />
     </View>
-  );
+    :
+    <AppLoading />
+
 }

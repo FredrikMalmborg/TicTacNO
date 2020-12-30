@@ -1,56 +1,60 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { Grid, Row } from "react-native-easy-grid";
 import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
+import { StackParamlist } from "../PageNavigator";
 
+import { Pages } from "../pages";
 interface IStyles {
   container: StyleProp<ViewStyle>;
+  section: StyleProp<ViewStyle>;
+}
+interface Props {
+  navigation: StackNavigationProp<StackParamlist, 'StartPage'>;
 }
 
-const StartPage = () => {
+const StartPage = ({ navigation }: Props) => {
+  const { container, section }: IStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      // justifyContent: "center",
+      alignItems: "center",
+      paddingTop: 16,
+      width: "100%",
+      height: "100%",
+      backgroundColor: '#F220'
+    },
+    section: {
+      justifyContent: "center",
+      alignItems: "center",
+      flexDirection: "column"
+    }
+  });
+
+  const navigateToPlay = () => navigation.navigate(Pages.Play)
+  // const navigateToProfile = () => navigation.navigate(Pages.Profile)
+
   return (
-    <View style={style.container}>
-      <Logotype width="90%" height="33%" />
-      <TicTacText title label="play" size="md" />
-      <TicTacText title label="profile" size="md" />
-      {/* <TicTacText title label="play" size="sm" />
-      <TicTacText title label="host" size="sm" />
-      <TicTacText title label="join" size="sm" /> */}
+    <View style={container}>
+      <Grid style={{ width: "100%", height: "100%" }}>
+        <Row size={1} style={section}>
+          <Logotype width="90%" height="100%" />
+        </Row>
+        <Row size={4} style={section}>
+          <TicTacText title label="play" size="md" button={{ onClick: navigateToPlay }} />
+          <TicTacText title label="profile" size="md" />
+        </Row>
+        <Row size={1} style={section}>
+          <TicTacText label="back" size="sm" />
+          <TicTacText label="about us" size="sm" />
+        </Row>
 
-      {/* <TicTacText title label="profile" size="sm" /> */}
-      {/* <TicTacText title label="profile" size="lg" /> */}
-
-      {/* <TicTacText label="profile" size="sm" />
-
-      <TicTacText bread label="profile" size={10} />
-      <TicTacText bread label="profile" size="sm" />
-      <TicTacText bread label="profile" size="md" /> */}
-
-      {/* <TicTacText size="sm">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat.
-      </TicTacText>
-      <TicTacText bread size={15}>
-        {" "}
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-      </TicTacText> */}
+      </Grid>
     </View>
   );
 };
 
-const style: IStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 16,
-    width: "100%",
-    height: "100%",
-  },
-});
 
 export default StartPage;

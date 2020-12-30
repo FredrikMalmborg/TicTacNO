@@ -7,13 +7,18 @@ import {
   TextStyle,
   StyleSheet,
   Platform,
+  TouchableHighlight,
 } from "react-native";
 import { Svg, Image } from "react-native-svg";
 
-import Play_PNG from "../../assets/images/text/Play_PNG.png";
-import Profile_PNG from "../../assets/images/text/Profile_PNG.png";
-import Host_PNG from "../../assets/images/text/Host_PNG.png";
-import Join_PNG from "../../assets/images/text/Join_PNG.png";
+import PLAY_PNG from "../../assets/images/text/PLAY_PNG.png";
+import PROFILE_PNG from "../../assets/images/text/PROFILE_PNG.png";
+import HOST_PNG from "../../assets/images/text/HOST_PNG.png";
+import JOIN_PNG from "../../assets/images/text/JOIN_PNG.png";
+import HELP_PNG from "../../assets/images/text/HELP_PNG.png";
+import BACK_PNG from "../../assets/images/text/BACK_PNG.png";
+import MATCHMAKING_PNG from "../../assets/images/text/MATCHMAKING_PNG.png";
+import ABOUTUS_PNG from "../../assets/images/text/ABOUTUS_PNG.png";
 
 type Size = "sm" | "md" | "lg" | number;
 
@@ -30,6 +35,11 @@ interface Props {
   size?: Size;
   centered?: boolean;
   color?: string;
+  button?: {
+    form?: "square" | "rounded";
+    bgColor?: string;
+    onClick: () => any;
+  }
 }
 
 const TicTacText = ({
@@ -59,23 +69,37 @@ const TicTacText = ({
     let img;
     switch (label?.toLocaleLowerCase()) {
       case "play":
-        img = Play_PNG;
+        img = PLAY_PNG;
         break;
       case "profile":
-        img = Profile_PNG;
+        img = PROFILE_PNG;
         break;
       case "join":
-        img = Join_PNG;
+        img = JOIN_PNG;
         break;
       case "host":
-        img = Host_PNG;
+        img = HOST_PNG;
+        break;
+      case "about us":
+        img = ABOUTUS_PNG;
+        break;
+      case "help":
+        img = HELP_PNG;
+        break;
+      case "matchmaking":
+        img = MATCHMAKING_PNG;
+        break;
+      case "back":
+        img = BACK_PNG;
         break;
     }
 
     return (
-      <Svg style={style().container} height={getSize()}>
-        <Image width="100%" height={"100%"} href={img} />
-      </Svg>
+      <TouchableHighlight style={[style().container, { height: getSize() }]} onPress={() => props.button ? props.button.onClick() : null}>
+        <Svg>
+          <Image width="100%" height={"100%"} href={img} />
+        </Svg>
+      </TouchableHighlight>
     );
   };
   const getText = () => {
