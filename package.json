@@ -1,13 +1,4 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "eject": "expo eject",
-    "test": "jest"
-  },
   "jest": {
     "preset": "jest-expo",
     "moduleFileExtensions": [
@@ -17,12 +8,25 @@
       "json",
       "jsx",
       "node"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!@expo-google-fonts)/"
     ]
+  },
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject",
+    "test": "jest"
   },
   "dependencies": {
     "@expo-google-fonts/fredoka-one": "^0.1.0",
     "expo": "^40.0.0",
-    "expo-cli": "^4.0.16",
+    "expo-app-loading": "^1.0.1",
+    "expo-cli": "^4.0.17",
     "expo-status-bar": "~1.0.3",
     "prettier": "^2.2.1",
     "react": "16.13.1",
@@ -31,10 +35,12 @@
     "react-native-easy-grid": "^0.2.2",
     "react-native-svg": "12.1.0",
     "react-native-web": "~0.13.12",
-    "react-test-renderer": "^17.0.1"
+    "react-test-renderer": "^17.0.1",
+    "ts-jest": "^26.4.4"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
+    "@testing-library/react-native": "^7.1.0",
     "@types/jest": "^26.0.19",
     "@types/react": "~16.9.35",
     "@types/react-dom": "~16.9.8",
