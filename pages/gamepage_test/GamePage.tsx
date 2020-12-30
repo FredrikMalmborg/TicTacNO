@@ -6,13 +6,8 @@ import {
   ViewStyle,
   useWindowDimensions,
 } from "react-native";
-import { Grid, Row, Col } from "react-native-easy-grid";
-import TicTacText from "../../components/text/Text";
-
-// import {
-//   useFonts,
-//   FredokaOne_400Regular,
-// } from "@expo-google-fonts/fredoka-one";
+import Board from "../../components/game/board/board";
+import { TCellState } from "../../components/game/cell/cell";
 
 interface IStyles {
   container: StyleProp<ViewStyle>;
@@ -40,53 +35,8 @@ const GamePage = () => {
   const length = windowWidth > windowHeight ? windowHeight : windowWidth;
 
   return (
-    <View style={[style.container, { width: length, height: length }]}>
-      <Grid style={{ width: "100%", height: "100%" }}>
-        {board.map((row, index) => (
-          <Row key={`row-${index}`}>
-            {row.map((col, index) => {
-              switch (col) {
-                case 0:
-                  return (
-                    <Col
-                      key={`cell-${col}/${index}`}
-                      style={[style.cell, style.deactivated]}
-                    ></Col>
-                  );
-                case 1:
-                  return (
-                    <Col
-                      key={`cell-${col}/${index}`}
-                      style={[style.cell, style.empty]}
-                    ></Col>
-                  );
-                case 2:
-                  return (
-                    <Col
-                      key={`cell-${col}/${index}`}
-                      style={[style.cell, style.x]}
-                    >
-                      <TicTacText size="sm" centered color="#fff">
-                        X
-                      </TicTacText>
-                    </Col>
-                  );
-                case 3:
-                  return (
-                    <Col
-                      key={`cell-${col}/${index}`}
-                      style={[style.cell, style.o]}
-                    >
-                      <TicTacText size="sm" centered color="#fff">
-                        O
-                      </TicTacText>
-                    </Col>
-                  );
-              }
-            })}
-          </Row>
-        ))}
-      </Grid>
+    <View style={[style.viewContainer]}>
+      <Board board={board} />
     </View>
   );
 };
