@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  StyleProp,
-  ViewStyle,
-} from "react-native";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 import Cell, { TCellState } from "../../components/game/cell/cell";
 
@@ -35,7 +30,7 @@ const GamePage = () => {
 
   return (
     <View style={[style.viewContainer]}>
-      <Grid style={{flex: 0}}>
+      <Grid style={{ flex: 0 }}>
         {board.map((row, rowIndex) => (
           <Row style={{ height: 60 }} key={`row-${rowIndex}`}>
             {row.map((col, colIndex) => (
