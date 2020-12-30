@@ -66,7 +66,9 @@ const GamePage = () => {
                       key={`cell-${col}/${index}`}
                       style={[style.cell, style.x]}
                     >
-                      <TicTacText size="sm" centered color="#fff">X</TicTacText>
+                      <TicTacText size="sm" centered color="#fff">
+                        X
+                      </TicTacText>
                     </Col>
                   );
                 case 3:
@@ -75,7 +77,9 @@ const GamePage = () => {
                       key={`cell-${col}/${index}`}
                       style={[style.cell, style.o]}
                     >
-                      <TicTacText size="sm" centered color="#fff">O</TicTacText>
+                      <TicTacText size="sm" centered color="#fff">
+                        O
+                      </TicTacText>
                     </Col>
                   );
               }
@@ -110,13 +114,13 @@ const style: IStyles = StyleSheet.create({
       height: 2,
     },
     shadowRadius: 0,
-    elevation: 3
+    elevation: 3,
   },
 
   deactivated: {
     opacity: 0.33,
     elevation: 0,
-    borderWidth: 0
+    borderWidth: 0,
   },
   empty: {
     borderColor: "#c1c1c1",

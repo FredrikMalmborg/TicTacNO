@@ -42,8 +42,6 @@ const TicTacText = ({
   children,
   ...props
 }: Props) => {
-  
-
   const getSize = () => {
     switch (size) {
       case "sm":
@@ -107,19 +105,19 @@ const style = (
     text: {
       ...Platform.select({
         ios: {
-          fontFamily: type?.bread ? "Helvetica" : "FredokaOne_400Regular"
+          fontFamily: type?.bread ? "Helvetica" : "FredokaOne_400Regular",
         },
         android: {
-          fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular"
+          fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular",
         },
         default: {
-          fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular"
-        }
+          fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular",
+        },
       }),
       // fontFamily: type?.bread ? Platform.OS === "ios" ? "Helvetica" : s,
       fontSize: size || 20,
       textAlign: centered ? "center" : "left",
-      color: color ? color : "#000"
+      color: color ? color : "#000",
     },
   });
 };
