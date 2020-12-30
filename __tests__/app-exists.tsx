@@ -1,8 +1,11 @@
 import React from "react";
-import renderer from "react-test-renderer";
+// import {create, act} from "react-test-renderer";
+import { render, cleanup } from "@testing-library/react-native";
 import App from "../App";
 
-test("App exists", () => {
-  const tree = renderer.create(<App />).toJSON();
-  expect(tree).toBeTruthy();
+describe("<App />", () => {
+  it("renders", () => {
+    const tree = render(<App />);
+    cleanup();
+  });
 });
