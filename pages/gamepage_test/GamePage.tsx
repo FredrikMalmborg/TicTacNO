@@ -8,7 +8,6 @@ interface IStyles {
 }
 
 const GamePage = () => {
-
   const board: TCellState[][] = [
     [0, 0, 0, 0, 0],
     [0, 1, 1, 1, 0],
