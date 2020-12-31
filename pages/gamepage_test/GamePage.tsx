@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  StyleProp,
-  ViewStyle,
-} from "react-native";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Board from "../../components/game/board/board";
 
 interface IStyles {
@@ -13,7 +8,7 @@ interface IStyles {
 
 const GamePage = () => {
 
-  const board = [
+  const board: TCellState[][] = [
     [0, 0, 0, 0, 0],
     [0, 1, 1, 1, 0],
     [0, 1, 1, 1, 0],
