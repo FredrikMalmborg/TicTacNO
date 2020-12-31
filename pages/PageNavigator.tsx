@@ -3,7 +3,7 @@ import { StyleProp, View, ViewStyle, StyleSheet } from "react-native";
 import GamePage from "./gamepage_test/GamePage";
 import StartPage from "./startpage/startpage";
 
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from "@react-navigation/stack";
 import { Pages } from "./pages";
 import PlayPage from "./playPage/playPage";
 
@@ -30,7 +30,7 @@ export type StackParamlist = {
   [Pages.Play]: undefined;
 };
 const PageNavigator = () => {
-  const Stack = createStackNavigator<StackParamlist>()
+  const Stack = createStackNavigator<StackParamlist>();
 
   return (
     <Stack.Navigator
@@ -43,9 +43,7 @@ const PageNavigator = () => {
       <Stack.Screen name={Pages.Start} component={StartPage} />
       <Stack.Screen name={Pages.Play} component={PlayPage} />
     </Stack.Navigator>
-  )
-
+  );
 };
-
 
 export default PageNavigator;

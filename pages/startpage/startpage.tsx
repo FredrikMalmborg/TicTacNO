@@ -12,7 +12,7 @@ interface IStyles {
   section: StyleProp<ViewStyle>;
 }
 interface Props {
-  navigation: StackNavigationProp<StackParamlist, 'StartPage'>;
+  navigation: StackNavigationProp<StackParamlist, "StartPage">;
 }
 
 const StartPage = ({ navigation }: Props) => {
@@ -24,16 +24,16 @@ const StartPage = ({ navigation }: Props) => {
       paddingTop: 16,
       width: "100%",
       height: "100%",
-      backgroundColor: '#F220'
+      backgroundColor: "#F220",
     },
     section: {
       justifyContent: "center",
       alignItems: "center",
-      flexDirection: "column"
-    }
+      flexDirection: "column",
+    },
   });
 
-  const navigateToPlay = () => navigation.navigate(Pages.Play)
+  const navigateToPlay = () => navigation.navigate(Pages.Play);
   // const navigateToProfile = () => navigation.navigate(Pages.Profile)
 
   return (
@@ -43,18 +43,21 @@ const StartPage = ({ navigation }: Props) => {
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={4} style={section}>
-          <TicTacText title label="play" size="md" button={{ onClick: navigateToPlay }} />
+          <TicTacText
+            title
+            label="play"
+            size="md"
+            button={{ onClick: navigateToPlay }}
+          />
           <TicTacText title label="profile" size="md" />
         </Row>
         <Row size={1} style={section}>
           <TicTacText label="back" size="sm" />
           <TicTacText label="about us" size="sm" />
         </Row>
-
       </Grid>
     </View>
   );
 };
-
 
 export default StartPage;

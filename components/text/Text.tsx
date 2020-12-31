@@ -6,7 +6,7 @@ import {
   ViewStyle,
   TextStyle,
   StyleSheet,
-  Platform
+  Platform,
 } from "react-native";
 import { Svg, Image } from "react-native-svg";
 
@@ -39,7 +39,7 @@ interface Props {
     form?: "square" | "rounded";
     bgColor?: string;
     onClick: () => any;
-  }
+  };
 }
 
 const TicTacText = ({
@@ -95,7 +95,10 @@ const TicTacText = ({
     }
 
     return (
-      <TouchableOpacity style={[style().container, { height: getSize() }]} onPress={() => props.button ? props.button.onClick() : null}>
+      <TouchableOpacity
+        style={[style().container, { height: getSize() }]}
+        onPress={() => (props.button ? props.button.onClick() : null)}
+      >
         <Svg>
           <Image width="100%" height={"100%"} href={img} />
         </Svg>
