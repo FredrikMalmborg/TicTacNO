@@ -21,4 +21,4 @@ const Board = ({ board, ...props }: IBoardProps) => {
   );
 };
 
-export default Board
+export default Board;
