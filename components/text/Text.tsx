@@ -6,8 +6,7 @@ import {
   ViewStyle,
   TextStyle,
   StyleSheet,
-  Platform,
-  TouchableHighlight,
+  Platform
 } from "react-native";
 import { Svg, Image } from "react-native-svg";
 
@@ -19,6 +18,7 @@ import HELP_PNG from "../../assets/images/text/HELP_PNG.png";
 import BACK_PNG from "../../assets/images/text/BACK_PNG.png";
 import MATCHMAKING_PNG from "../../assets/images/text/MATCHMAKING_PNG.png";
 import ABOUTUS_PNG from "../../assets/images/text/ABOUTUS_PNG.png";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 type Size = "sm" | "md" | "lg" | number;
 
@@ -95,11 +95,11 @@ const TicTacText = ({
     }
 
     return (
-      <TouchableHighlight style={[style().container, { height: getSize() }]} onPress={() => props.button ? props.button.onClick() : null}>
+      <TouchableOpacity style={[style().container, { height: getSize() }]} onPress={() => props.button ? props.button.onClick() : null}>
         <Svg>
           <Image width="100%" height={"100%"} href={img} />
         </Svg>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   };
   const getText = () => {
