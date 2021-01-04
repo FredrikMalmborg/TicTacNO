@@ -5,7 +5,7 @@ import Svg, { SvgProps, G, Path } from "react-native-svg";
 const TextSection = ({ width, height, ...props }: SvgProps) => {
   return (
     <View style={styles(width, height)}>
-      <Svg viewBox={`0 0 600 85`} width="100%" height="100%" {...props}>
+      <Svg viewBox={`0 0 900 85`} width="100%" height="100%" {...props}>
         <G id="prefix__Lager_5" data-name="Lager 5">
           <Path
             fill="#ea565a"

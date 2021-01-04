@@ -10,18 +10,20 @@ import { Pages } from "../pages";
 interface IStyles {
   container: StyleProp<ViewStyle>;
   section: StyleProp<ViewStyle>;
+  top: StyleProp<ViewStyle>;
+  bottom: StyleProp<ViewStyle>;
 }
 interface Props {
   navigation: StackNavigationProp<StackParamlist, 'StartPage'>;
 }
 
 const StartPage = ({ navigation }: Props) => {
-  const { container, section }: IStyles = StyleSheet.create({
+  const style: IStyles = StyleSheet.create({
     container: {
       flex: 1,
       // justifyContent: "center",
       alignItems: "center",
-      paddingTop: 16,
+      // paddingTop: 16,
       width: "100%",
       height: "100%",
       backgroundColor: '#F220'
@@ -30,27 +32,31 @@ const StartPage = ({ navigation }: Props) => {
       justifyContent: "center",
       alignItems: "center",
       flexDirection: "column"
-    }
+    },
+    top: {
+      padding: 50
+    },
+    bottom: {
+      flexDirection: "row",
+      justifyContent: "space-evenly"
+    },
   });
 
   const navigateToPlay = () => navigation.navigate(Pages.Play)
-  // const navigateToProfile = () => navigation.navigate(Pages.Profile)
 
   return (
-    <View style={container}>
+    <View style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
-        <Row size={1} style={section}>
+        <Row size={1} style={[style.section, style.top]}>
           <Logotype width="90%" height="100%" />
         </Row>
-        <Row size={4} style={section}>
-          <TicTacText title label="play" size="md" button={{ onClick: navigateToPlay }} />
-          <TicTacText title label="profile" size="md" />
+        <Row size={4} style={style.section}>
+          <TicTacText title label="play" size='md' button={{ onClick: navigateToPlay }} />
+          <TicTacText title label="profile" size='md' />
         </Row>
-        <Row size={1} style={section}>
-          <TicTacText label="back" size="sm" />
+        <Row size={1} style={[style.section, style.bottom]}>
           <TicTacText label="about us" size="sm" />
         </Row>
-
       </Grid>
     </View>
   );

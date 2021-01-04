@@ -30,13 +30,16 @@ export type StackParamlist = {
   [Pages.Play]: undefined;
 };
 const PageNavigator = () => {
-  const Stack = createStackNavigator<StackParamlist>()
+  const Stack = createStackNavigator<StackParamlist>(
+
+  )
 
   return (
     <Stack.Navigator
       initialRouteName={Pages.Start}
       screenOptions={{
         headerShown: false,
+        cardStyle: { backgroundColor: 'transparent' }
       }}
     >
       <Stack.Screen name={Pages.Game} component={GamePage} />

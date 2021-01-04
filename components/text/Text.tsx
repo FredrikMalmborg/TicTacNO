@@ -6,9 +6,11 @@ import {
   ViewStyle,
   TextStyle,
   StyleSheet,
-  Platform
+  Platform,
+  useWindowDimensions
 } from "react-native";
-import { Svg, Image } from "react-native-svg";
+import { Svg, Image as SvgImage } from "react-native-svg";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 import PLAY_PNG from "../../assets/images/text/PLAY_PNG.png";
 import PROFILE_PNG from "../../assets/images/text/PROFILE_PNG.png";
@@ -18,7 +20,6 @@ import HELP_PNG from "../../assets/images/text/HELP_PNG.png";
 import BACK_PNG from "../../assets/images/text/BACK_PNG.png";
 import MATCHMAKING_PNG from "../../assets/images/text/MATCHMAKING_PNG.png";
 import ABOUTUS_PNG from "../../assets/images/text/ABOUTUS_PNG.png";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 type Size = "sm" | "md" | "lg" | number;
 
@@ -64,9 +65,8 @@ const TicTacText = ({
         return size;
     }
   };
-  // const imgScale: string = getScale();
   const getImg = () => {
-    let img;
+    let img
     switch (label?.toLocaleLowerCase()) {
       case "play":
         img = PLAY_PNG;
@@ -94,21 +94,39 @@ const TicTacText = ({
         break;
     }
 
+    const SVG_STYLE = [style().container, { height: getSize() }]
+    const SVG_TEXT =
+      <Svg>
+        <SvgImage width="100%" height="100%" href={img} />
+      </Svg>
+
     return (
-      <TouchableOpacity style={[style().container, { height: getSize() }]} onPress={() => props.button ? props.button.onClick() : null}>
-        <Svg>
-          <Image width="100%" height={"100%"} href={img} />
-        </Svg>
-      </TouchableOpacity>
+      img ?
+        props.button ?
+          <TouchableOpacity style={SVG_STYLE} onPress={() => props.button?.onClick()}>
+            {SVG_TEXT}
+          </TouchableOpacity >
+          :
+          <View style={SVG_STYLE} >
+            {SVG_TEXT}
+          </View>
+        : getText()
     );
   };
   const getText = () => {
     return (
-      <View style={style({ bread }).container}>
-        <Text style={style({ bread }, getSize(), centered, color).text}>
-          {children ? children : label}
-        </Text>
-      </View>
+      props.button ?
+        <TouchableOpacity style={title && { width: '100%' }} onPress={() => props.button?.onClick()}>
+          <Text style={style({ bread }, getSize(), centered, color).text}>
+            {children ? children : label}
+          </Text>
+        </TouchableOpacity >
+        :
+        <View style={title && { width: '100%' }}>
+          <Text style={style({ bread }, getSize(), centered, color).text}>
+            {children ? children : label}
+          </Text>
+        </View>
     );
   };
 
@@ -123,8 +141,8 @@ const style = (
 ): IStyles => {
   return StyleSheet.create({
     container: {
-      width: "100%",
-      margin: type?.bread ? "" : 10,
+      width: useWindowDimensions().width,
+      margin: type?.bread ? 0 : 10,
     },
     text: {
       ...Platform.select({
@@ -138,7 +156,6 @@ const style = (
           fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular",
         },
       }),
-      // fontFamily: type?.bread ? Platform.OS === "ios" ? "Helvetica" : s,
       fontSize: size || 20,
       textAlign: centered ? "center" : "left",
       color: color ? color : "#000",
