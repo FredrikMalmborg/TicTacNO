@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Board from "../../components/game/board/board";
+import { TCellState } from "../../components/game/cell/cell";
 
 interface IStyles {
   viewContainer: StyleProp<ViewStyle>;
