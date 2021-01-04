@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Row } from "react-native-easy-grid";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 
@@ -24,14 +24,25 @@ const Board = ({ board, ...props }: IBoardProps) => {
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
     let board = [...gameBoard];
     board[y][x] = state;
-    // console.log(board);
     setGameBoard(board);
   };
 
+  useEffect(() => {
+    if (gameBoard !== board) {
+      setGameBoard(board);
+    }
+  }, [board]);
+
   return (
-    <Grid style={{ flex: 0 }}>
-      {gameBoard.map((row, rowIndex) => (
-        <Row style={{ height: 60 }} key={`row-${rowIndex}`}>
+    <Grid
+      style={{
+        flex: 0,
+        borderWidth: 3,
+        borderColor: "purple",
+      }}
+    >
+      {[...gameBoard].map((row, rowIndex) => (
+        <Row style={{ height: 58 }} key={`row-${rowIndex}`}>
           {row.map((col, colIndex) => (
             <Cell
               click={onClickCell}
