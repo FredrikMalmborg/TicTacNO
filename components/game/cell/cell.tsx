@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React from "react";
 import {
   StyleProp,
   ViewStyle,
@@ -28,7 +27,6 @@ interface ICellStyles {
 }
 
 const Cell = ({ state, pos, ...props }: ICellProps) => {
-  const [cellState, setCellState] = useState<TCellState>(state);
   const style: ICellStyles = StyleSheet.create({
     container: {
       width: 60,
@@ -73,18 +71,17 @@ const Cell = ({ state, pos, ...props }: ICellProps) => {
   });
 
   const clickedCell = (state: TCellState) => {
-    setCellState(state)
     props.click(pos, state)
   }
 
   return (
     <TouchableOpacity
       style={style.container}
-      onPress={() => cellState === 1 && clickedCell(3)}
+      onPress={() => state === 1 && clickedCell(3)}
     >
-      <Col style={[style.cell, style[cellState]]} {...props}>
+      <Col style={[style.cell, style[state]]} {...props}>
         <TicTacText centered color="#fff">
-          {(cellState === 2 && "X") || (cellState === 3 && "O")}
+          {(state === 2 && "X") || (state === 3 && "O")}
         </TicTacText>
       </Col>
     </TouchableOpacity>
