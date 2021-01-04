@@ -11,12 +11,13 @@ import { useWindowDimensions, View } from "react-native";
 // created using: https://react-svgr.com/playground/?native=true&typescript=true
 
 const Gradient = ({ style, ...props }: SvgProps) => {
-  const windowWidth = useWindowDimensions().width;
-  const windowHeight = useWindowDimensions().height;
+
+  const width = useWindowDimensions().width
+  const height = useWindowDimensions().height
 
   return (
     <View style={style}>
-      <Svg viewBox={`0 0 ${windowWidth} ${windowHeight}`} {...props}>
+      <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" {...props}>
         <Defs>
           <RadialGradient
             id="prefix__a"
@@ -34,8 +35,8 @@ const Gradient = ({ style, ...props }: SvgProps) => {
           fillOpacity={0.45}
           fill="url(#prefix__a)"
           d={`M0 0
-            h${windowWidth}
-            v${windowHeight}
+            h100
+            v100  
             H0z`}
           data-name="Lager 2"
         />
