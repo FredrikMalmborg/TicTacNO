@@ -9,12 +9,12 @@ import { Col, ColProps } from "react-native-easy-grid";
 import TicTacText from "../../text/Text";
 
 export type TCellState = 0 | 1 | 2 | 3;
-export type TCellPos = {y: number, x: number}
+export type TCellPos = { y: number; x: number };
 
 interface ICellProps extends ColProps {
   state: TCellState;
   pos: TCellPos;
-  click: ({y, x}: TCellPos, state: TCellState) => void
+  click: ({ y, x }: TCellPos, state: TCellState) => void;
 }
 
 interface ICellStyles {
@@ -71,8 +71,8 @@ const Cell = ({ state, pos, ...props }: ICellProps) => {
   });
 
   const clickedCell = (state: TCellState) => {
-    props.click(pos, state)
-  }
+    props.click(pos, state);
+  };
 
   return (
     <TouchableOpacity

@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  StyleProp,
-  ViewStyle,
-  SafeAreaView,
-  Dimensions,
-} from "react-native";
+import { StyleProp, ViewStyle, SafeAreaView, Dimensions } from "react-native";
 import Board from "../../components/game/board/board";
 import PanCamera from "../../components/game/camera/pan-camera";
 import { TCellState } from "../../components/game/cell/cell";
