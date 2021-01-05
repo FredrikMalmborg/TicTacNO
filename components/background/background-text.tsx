@@ -16,6 +16,7 @@ const BackgroundText: React.FC<IProps> = ({ style, ...props }) => {
         const inverted = (i + 1) % 2
         return <TextSection
           key={i} {...props}
+          row={i}
           inverted={inverted} />
       }
       )}
