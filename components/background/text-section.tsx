@@ -4,7 +4,7 @@ import { View, StyleSheet, StyleProp, ViewStyle, Animated } from "react-native";
 import Svg, { SvgProps, G, Path } from "react-native-svg";
 
 interface Props extends SvgProps {
-  inverted: boolean
+  inverted: boolean;
 }
 
 const TextSection = ({ width, height, ...props }: Props) => {
@@ -15,7 +15,7 @@ const TextSection = ({ width, height, ...props }: Props) => {
     Animated.timing(movement, {
       useNativeDriver: true,
       toValue: 50,
-      duration: 2000
+      duration: 2000,
     }).start(() => moveLeft());
   };
 
@@ -24,23 +24,22 @@ const TextSection = ({ width, height, ...props }: Props) => {
     Animated.timing(movement, {
       useNativeDriver: true,
       toValue: -50,
-      duration: 2000
+      duration: 2000,
     }).start(() => moveRight());
   };
 
-
   React.useEffect(() => {
-    props.inverted && moveRight()
-    !props.inverted && moveLeft()
-  }, [])
+    props.inverted && moveRight();
+    !props.inverted && moveLeft();
+  }, []);
 
   return (
     <View style={styles(width, height)}>
-      <Animated.View style={{
-        transform: [
-          { translateX: movement }
-        ]
-      }}>
+      <Animated.View
+        style={{
+          transform: [{ translateX: movement }],
+        }}
+      >
         <Svg viewBox={`0 0 900 85`} width="100%" height="100%" {...props}>
           <G id="prefix__Lager_5" data-name="Lager 5">
             <Path

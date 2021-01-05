@@ -21,7 +21,6 @@ interface Props {
 }
 
 const StartPage = ({ navigation }: Props) => {
-
   const style: IStyles = StyleSheet.create({
     container: {
       flex: 1,
@@ -33,21 +32,19 @@ const StartPage = ({ navigation }: Props) => {
     section: {
       justifyContent: "center",
       alignItems: "center",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     top: {
-      padding: 50
+      padding: 50,
     },
     bottom: {
       flexDirection: "row",
-      justifyContent: "space-evenly"
+      justifyContent: "space-evenly",
     },
-    animate: {
-
-    }
+    animate: {},
   });
 
-  const navigateToPlay = () => navigation.navigate(Pages.Play)
+  const navigateToPlay = () => navigation.navigate(Pages.Play);
 
   return (
     <View style={style.container}>
@@ -56,8 +53,13 @@ const StartPage = ({ navigation }: Props) => {
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={4} style={style.section}>
-          <TicTacText title label="play" size='md' button={{ onClick: navigateToPlay }} />
-          <TicTacText title label="profile" size='md' />
+          <TicTacText
+            title
+            label="play"
+            size="md"
+            button={{ onClick: navigateToPlay }}
+          />
+          <TicTacText title label="profile" size="md" />
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
           <TicTacText label="About us" size="md" color="white" />

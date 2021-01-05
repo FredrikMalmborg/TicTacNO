@@ -13,10 +13,16 @@ const BackgroundText: React.FC<IProps> = ({ style, ...props }) => {
   return (
     <View style={style}>
       {[...Array(Math.ceil(wH / 85) + 1)].map((_, i) => {
-        const inverted = (i + 1) % 2
-        return <TextSection key={i} {...props} rotation={inverted ? 180 : 0} inverted />
-      }
-      )}
+        const inverted = (i + 1) % 2;
+        return (
+          <TextSection
+            key={i}
+            {...props}
+            rotation={inverted ? 180 : 0}
+            inverted
+          />
+        );
+      })}
     </View>
   );
   // return (
