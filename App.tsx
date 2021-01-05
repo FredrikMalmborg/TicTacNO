@@ -24,7 +24,7 @@ export default function App() {
     },
   });
 
-  return fontsLoaded ?
+  return fontsLoaded ? (
     <View style={style.appContainer}>
       <Background />
       <NavigationContainer>
@@ -32,7 +32,7 @@ export default function App() {
       </NavigationContainer>
       <StatusBar style="dark" />
     </View>
-    :
+  ) : (
     <AppLoading />
-
+  );
 }

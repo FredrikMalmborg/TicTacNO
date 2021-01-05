@@ -1,11 +1,10 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useRef } from "react";
-import { View, Text, StyleSheet, StyleProp, ViewStyle, Animated } from "react-native";
+import React from "react";
+import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
-// import  from "react-native-reanimated";
+
 import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
-import AnimTEST from "../animation_TEST/anim";
 import { StackParamlist } from "../PageNavigator";
 
 import { Pages } from "../pages";
@@ -18,7 +17,7 @@ interface IStyles {
   animate: StyleProp<ViewStyle>;
 }
 interface Props {
-  navigation: StackNavigationProp<StackParamlist, 'StartPage'>;
+  navigation: StackNavigationProp<StackParamlist, "StartPage">;
 }
 
 const StartPage = ({ navigation }: Props) => {
@@ -26,12 +25,10 @@ const StartPage = ({ navigation }: Props) => {
   const style: IStyles = StyleSheet.create({
     container: {
       flex: 1,
-      // justifyContent: "center",
       alignItems: "center",
-      // paddingTop: 16,
       width: "100%",
       height: "100%",
-      backgroundColor: '#F220'
+      backgroundColor: "#F220",
     },
     section: {
       justifyContent: "center",
@@ -63,13 +60,11 @@ const StartPage = ({ navigation }: Props) => {
           <TicTacText title label="profile" size='md' />
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
-          {/* <AnimTEST /> */}
           <TicTacText label="About us" size="md" color="white" />
         </Row>
       </Grid>
     </View>
   );
 };
-
 
 export default StartPage;
