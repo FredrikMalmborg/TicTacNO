@@ -1,37 +1,49 @@
 import React from "react";
-import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle, SafeAreaView, Dimensions } from "react-native";
 import Board from "../../components/game/board/board";
+import PanCamera from "../../components/game/camera/pan-camera";
 import { TCellState } from "../../components/game/cell/cell";
 
 interface IStyles {
-  viewContainer: StyleProp<ViewStyle>;
+  boardContainer: StyleProp<ViewStyle>;
+  // gameContainer: StyleProp<ViewStyle>;
 }
 
 const GamePage = () => {
+  const windowSize = Dimensions.get("screen");
+
+  // const board: TCellState[][] = [
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  // ];
+
   const board: TCellState[][] = [
-    [0, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0],
-    [0, 1, 1, 1, 0],
-    [0, 1, 1, 1, 0],
-    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 1, 1, 0, 0],
+    [0, 0, 1, 1, 1, 0, 0],
+    [0, 0, 1, 1, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
   ];
 
-  const style: IStyles = StyleSheet.create({
-    viewContainer: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-  });
-
   return (
-    <View style={[style.viewContainer]}>
-      <Board board={board} />
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <PanCamera windowSize={windowSize}>
+        <Board board={[...board]} />
+      </PanCamera>
+    </SafeAreaView>
   );
 };
 

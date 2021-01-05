@@ -10,6 +10,28 @@ interface IStyleProps {
 }
 
 const Background = () => {
+  const styles: IStyleProps = StyleSheet.create({
+    backgroundContainer: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
+    backgroundText: {
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+    },
+    backgroundGradient: {
+      // position: "absolute",
+      // top: 0,
+      // right: 0,
+      // bottom: 0,
+      // left: 0,
+    },
+  });
+
   return (
     <View style={styles.backgroundContainer}>
       <BackgroundText
@@ -22,27 +44,5 @@ const Background = () => {
     </View>
   );
 };
-
-const styles: IStyleProps = StyleSheet.create({
-  backgroundContainer: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  },
-  backgroundText: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-  },
-  backgroundGradient: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  },
-});
 
 export default Background;
