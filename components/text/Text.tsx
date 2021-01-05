@@ -7,13 +7,10 @@ import {
   TextStyle,
   StyleSheet,
   Platform,
+  useWindowDimensions,
 } from "react-native";
-import { Svg, Image } from "react-native-svg";
-
-import Play_PNG from "../../assets/images/text/Play_PNG.png";
-import Profile_PNG from "../../assets/images/text/Profile_PNG.png";
-import Host_PNG from "../../assets/images/text/Host_PNG.png";
-import Join_PNG from "../../assets/images/text/Join_PNG.png";
+import { Svg, Image as SvgImage } from "react-native-svg";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 type Size = "sm" | "md" | "lg" | number;
 
@@ -30,6 +27,11 @@ interface Props {
   size?: Size;
   centered?: boolean;
   color?: string;
+  button?: {
+    form?: "square" | "rounded";
+    bgColor?: string;
+    onClick: () => any;
+  };
 }
 
 const TicTacText = ({
@@ -54,33 +56,65 @@ const TicTacText = ({
         return size;
     }
   };
-  // const imgScale: string = getScale();
-  const getImg = () => {
-    let img;
+
+  const getImgUri = () => {
     switch (label?.toLocaleLowerCase()) {
       case "play":
-        img = Play_PNG;
-        break;
+        return require("../../assets/images/text/PLAY_PNG.png");
       case "profile":
-        img = Profile_PNG;
-        break;
+        return require("../../assets/images/text/PROFILE_PNG.png");
       case "join":
-        img = Join_PNG;
-        break;
+        return require("../../assets/images/text/JOIN_PNG.png");
       case "host":
-        img = Host_PNG;
-        break;
+        return require("../../assets/images/text/HOST_PNG.png");
+      case "about us":
+        require("../../assets/images/text/ABOUTUS_PNG.png");
+      case "help":
+        return require("../../assets/images/text/HELP_PNG.png");
+      case "matchmaking":
+        return require("../../assets/images/text/MATCHMAKING_PNG.png");
+      case "back":
+        return require("../../assets/images/text/BACK_PNG.png");
     }
+  };
 
-    return (
-      <Svg style={style().container} height={getSize()}>
-        <Image width="100%" height={"100%"} href={img} />
+  const getImg = () => {
+    const img = getImgUri();
+
+    const SVG_STYLE = [style().container, { height: getSize() }];
+    const SVG_TEXT = (
+      <Svg width="100%" height="100%">
+        <SvgImage width="100%" height="100%" href={img} />
       </Svg>
+    );
+
+    return img ? (
+      props.button ? (
+        <TouchableOpacity
+          style={SVG_STYLE}
+          onPress={() => props.button?.onClick()}
+        >
+          {SVG_TEXT}
+        </TouchableOpacity>
+      ) : (
+        <View style={SVG_STYLE}>{SVG_TEXT}</View>
+      )
+    ) : (
+      getText()
     );
   };
   const getText = () => {
-    return (
-      <View style={style({ bread }).container}>
+    return props.button ? (
+      <TouchableOpacity
+        style={title && { width: "100%" }}
+        onPress={() => props.button?.onClick()}
+      >
+        <Text style={style({ bread }, getSize(), centered, color).text}>
+          {children ? children : label}
+        </Text>
+      </TouchableOpacity>
+    ) : (
+      <View style={title && { width: "100%" }}>
         <Text style={style({ bread }, getSize(), centered, color).text}>
           {children ? children : label}
         </Text>
@@ -99,8 +133,8 @@ const style = (
 ): IStyles => {
   return StyleSheet.create({
     container: {
-      width: "100%",
-      margin: type?.bread ? "" : 10,
+      width: useWindowDimensions().width,
+      margin: type?.bread ? 0 : 10,
     },
     text: {
       ...Platform.select({
@@ -114,7 +148,6 @@ const style = (
           fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular",
         },
       }),
-      // fontFamily: type?.bread ? Platform.OS === "ios" ? "Helvetica" : s,
       fontSize: size || 20,
       textAlign: centered ? "center" : "left",
       color: color ? color : "#000",
