@@ -48,6 +48,7 @@ const PlayPage = ({ navigation }: Props) => {
 
 
   const navigateToStart = () => navigation.navigate(Pages.Start)
+  const navigateToGame = () => navigation.navigate(Pages.Game)
 
   return (
     <View style={style.container}>
@@ -56,10 +57,9 @@ const PlayPage = ({ navigation }: Props) => {
           <TicTacText title label="play" size='lg' />
         </Row>
         <Row size={4} style={style.section}>
-          <TicTacText title label="join" size='sm' />
-          <TicTacText title label="join" size='md' />
+          <TicTacText title label="join" size='md' button={{ onClick: navigateToGame }} />
           <TicTacText title label="host" size='md' />
-          <TicTacText title label="matchmaking" size='sm' />
+          <TicTacText title label="matchmaking" size='md' />
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
           <TicTacText label="back" size="sm" button={{ onClick: navigateToStart }} />

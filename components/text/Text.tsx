@@ -7,10 +7,7 @@ import {
   TextStyle,
   StyleSheet,
   Platform,
-<<<<<<< HEAD
   useWindowDimensions
-=======
->>>>>>> 084f7193cd15ec472db5f7a9415fbe0c61d2183b
 } from "react-native";
 import { Svg, Image as SvgImage } from "react-native-svg";
 import { TouchableOpacity } from "react-native-gesture-handler";
