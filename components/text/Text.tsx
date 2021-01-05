@@ -96,7 +96,7 @@ const TicTacText = ({
 
     const SVG_STYLE = [style().container, { height: getSize() }]
     const SVG_TEXT =
-      <Svg>
+      <Svg width="100%" height="100%" >
         <SvgImage width="100%" height="100%" href={img} />
       </Svg>
 
