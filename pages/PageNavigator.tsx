@@ -21,7 +21,7 @@ const PageNavigator = () => {
       initialRouteName={Pages.Start}
       screenOptions={{
         headerShown: false,
-        cardStyle: { backgroundColor: 'transparent' }
+        cardStyle: { backgroundColor: "transparent" },
       }}
     >
       <Stack.Screen name={Pages.Game} component={GamePage} />
