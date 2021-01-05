@@ -13,13 +13,9 @@ const BackgroundText: React.FC<IProps> = ({ style, ...props }) => {
   return (
     <View style={style}>
       {[...Array(rows)].map((_, i) => {
-        const inverted = (i + 1) % 2
-        return <TextSection
-          key={i} {...props}
-          row={i}
-          inverted={inverted} />
-      }
-      )}
+        const inverted = (i + 1) % 2;
+        return <TextSection key={i} {...props} row={i} inverted={inverted} />;
+      })}
     </View>
   );
 };
