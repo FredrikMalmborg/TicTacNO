@@ -8,7 +8,7 @@ interface IProps extends SvgProps {
 }
 
 const BackgroundText: React.FC<IProps> = ({ style, ...props }) => {
-  const rows = Math.ceil(useWindowDimensions().height / 80)
+  const rows = Math.ceil(useWindowDimensions().height / 80);
 
   return (
     <View style={style}>
@@ -22,20 +22,6 @@ const BackgroundText: React.FC<IProps> = ({ style, ...props }) => {
       )}
     </View>
   );
-  // return (
-  //   <View style={style}>
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //     <TextSection {...props} />
-  //   </View>
-  // );
 };
 
 export default BackgroundText;

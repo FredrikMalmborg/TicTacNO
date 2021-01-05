@@ -37,18 +37,17 @@ const TextSection = ({ width, height, ...props }: Props) => {
   }, []);
 
   return (
-    <Animated.View style={[
-      {
-        flex: 1,
-        justifyContent: 'center',
-        flexDirection: props.inverted ? 'row' : 'row-reverse',
-        opacity: .1,
-        transform: [
-          { translateX }
-        ]
-
-      }]}>
-
+    <Animated.View
+      style={[
+        {
+          flex: 1,
+          justifyContent: "center",
+          flexDirection: props.inverted ? "row" : "row-reverse",
+          opacity: 0.1,
+          transform: [{ translateX }],
+        },
+      ]}
+    >
       {[...Array(cols)].map((_, i) => (
         <Svg key={props.row + i} width={120 * (1 + (1 / 3))} height={60 * (1 + (1 / 3))} viewBox="0 0 120 60" fill="none"  >
           <Path
