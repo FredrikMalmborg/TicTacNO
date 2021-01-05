@@ -12,14 +12,6 @@ import {
 import { Svg, Image as SvgImage } from "react-native-svg";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-import PLAY_PNG from "../../assets/images/text/PLAY_PNG.png";
-import PROFILE_PNG from "../../assets/images/text/PROFILE_PNG.png";
-import HOST_PNG from "../../assets/images/text/HOST_PNG.png";
-import JOIN_PNG from "../../assets/images/text/JOIN_PNG.png";
-import HELP_PNG from "../../assets/images/text/HELP_PNG.png";
-import BACK_PNG from "../../assets/images/text/BACK_PNG.png";
-import MATCHMAKING_PNG from "../../assets/images/text/MATCHMAKING_PNG.png";
-import ABOUTUS_PNG from "../../assets/images/text/ABOUTUS_PNG.png";
 
 type Size = "sm" | "md" | "lg" | number;
 
@@ -55,44 +47,28 @@ const TicTacText = ({
 }: Props) => {
   const getSize = () => {
     switch (size) {
-      case "sm":
-        return 25;
-      case "md":
-        return 50;
-      case "lg":
-        return 100;
-      default:
-        return size;
+      case "sm": return 25;
+      case "md": return 50;
+      case "lg": return 100;
+      default: return size;
     }
   };
-  const getImg = () => {
-    let img;
+
+  const getImgUri = () => {
     switch (label?.toLocaleLowerCase()) {
-      case "play":
-        img = PLAY_PNG;
-        break;
-      case "profile":
-        img = PROFILE_PNG;
-        break;
-      case "join":
-        img = JOIN_PNG;
-        break;
-      case "host":
-        img = HOST_PNG;
-        break;
-      case "about us":
-        img = ABOUTUS_PNG;
-        break;
-      case "help":
-        img = HELP_PNG;
-        break;
-      case "matchmaking":
-        img = MATCHMAKING_PNG;
-        break;
-      case "back":
-        img = BACK_PNG;
-        break;
+      case "play": return require("../../assets/images/text/PLAY_PNG.png");
+      case "profile": return require("../../assets/images/text/PROFILE_PNG.png");
+      case "join": return require("../../assets/images/text/JOIN_PNG.png");
+      case "host": return require("../../assets/images/text/HOST_PNG.png");
+      case "about us": require("../../assets/images/text/ABOUTUS_PNG.png");
+      case "help": return require("../../assets/images/text/HELP_PNG.png");
+      case "matchmaking": return require("../../assets/images/text/MATCHMAKING_PNG.png");
+      case "back": return require("../../assets/images/text/BACK_PNG.png");
     }
+  }
+
+  const getImg = () => {
+    const img = getImgUri()
 
     const SVG_STYLE = [style().container, { height: getSize() }];
     const SVG_TEXT = (
@@ -110,11 +86,11 @@ const TicTacText = ({
           {SVG_TEXT}
         </TouchableOpacity>
       ) : (
-        <View style={SVG_STYLE}>{SVG_TEXT}</View>
-      )
+          <View style={SVG_STYLE}>{SVG_TEXT}</View>
+        )
     ) : (
-      getText()
-    );
+        getText()
+      );
   };
   const getText = () => {
     return props.button ? (
@@ -127,12 +103,12 @@ const TicTacText = ({
         </Text>
       </TouchableOpacity>
     ) : (
-      <View style={title && { width: "100%" }}>
-        <Text style={style({ bread }, getSize(), centered, color).text}>
-          {children ? children : label}
-        </Text>
-      </View>
-    );
+        <View style={title && { width: "100%" }}>
+          <Text style={style({ bread }, getSize(), centered, color).text}>
+            {children ? children : label}
+          </Text>
+        </View>
+      );
   };
 
   return <>{title ? getImg() : getText()}</>;
