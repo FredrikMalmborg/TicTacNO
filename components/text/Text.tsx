@@ -7,7 +7,7 @@ import {
   TextStyle,
   StyleSheet,
   Platform,
-  useWindowDimensions
+  useWindowDimensions,
 } from "react-native";
 import { Svg, Image as SvgImage } from "react-native-svg";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -66,7 +66,7 @@ const TicTacText = ({
     }
   };
   const getImg = () => {
-    let img
+    let img;
     switch (label?.toLocaleLowerCase()) {
       case "play":
         img = PLAY_PNG;
@@ -94,39 +94,44 @@ const TicTacText = ({
         break;
     }
 
-    const SVG_STYLE = [style().container, { height: getSize() }]
-    const SVG_TEXT =
-      <Svg width="100%" height="100%" >
+    const SVG_STYLE = [style().container, { height: getSize() }];
+    const SVG_TEXT = (
+      <Svg width="100%" height="100%">
         <SvgImage width="100%" height="100%" href={img} />
       </Svg>
+    );
 
-    return (
-      img ?
-        props.button ?
-          <TouchableOpacity style={SVG_STYLE} onPress={() => props.button?.onClick()}>
-            {SVG_TEXT}
-          </TouchableOpacity >
-          :
-          <View style={SVG_STYLE} >
-            {SVG_TEXT}
-          </View>
-        : getText()
+    return img ? (
+      props.button ? (
+        <TouchableOpacity
+          style={SVG_STYLE}
+          onPress={() => props.button?.onClick()}
+        >
+          {SVG_TEXT}
+        </TouchableOpacity>
+      ) : (
+        <View style={SVG_STYLE}>{SVG_TEXT}</View>
+      )
+    ) : (
+      getText()
     );
   };
   const getText = () => {
-    return (
-      props.button ?
-        <TouchableOpacity style={title && { width: '100%' }} onPress={() => props.button?.onClick()}>
-          <Text style={style({ bread }, getSize(), centered, color).text}>
-            {children ? children : label}
-          </Text>
-        </TouchableOpacity >
-        :
-        <View style={title && { width: '100%' }}>
-          <Text style={style({ bread }, getSize(), centered, color).text}>
-            {children ? children : label}
-          </Text>
-        </View>
+    return props.button ? (
+      <TouchableOpacity
+        style={title && { width: "100%" }}
+        onPress={() => props.button?.onClick()}
+      >
+        <Text style={style({ bread }, getSize(), centered, color).text}>
+          {children ? children : label}
+        </Text>
+      </TouchableOpacity>
+    ) : (
+      <View style={title && { width: "100%" }}>
+        <Text style={style({ bread }, getSize(), centered, color).text}>
+          {children ? children : label}
+        </Text>
+      </View>
     );
   };
 

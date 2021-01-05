@@ -8,17 +8,14 @@ interface IProps extends SvgProps {
 }
 
 const BackgroundText: React.FC<IProps> = ({ style, ...props }) => {
-  const rows = Math.ceil(useWindowDimensions().height / 80)
+  const rows = Math.ceil(useWindowDimensions().height / 80);
 
   return (
     <View style={style}>
       {[...Array(rows)].map((_, i) => {
-        const inverted = (i + 1) % 2
-        return <TextSection
-          key={i} {...props}
-          inverted={inverted} />
-      }
-      )}
+        const inverted = (i + 1) % 2;
+        return <TextSection key={i} {...props} inverted={inverted} />;
+      })}
     </View>
   );
   // return (
