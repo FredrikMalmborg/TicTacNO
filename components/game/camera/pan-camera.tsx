@@ -72,12 +72,12 @@ const PanCamera: FC<ICameraProps> = ({ children, ...props }) => {
           width: windowWidth,
           height: windowHeight,
         } = windowState.current;
-        const MARGIN = 40;
+        const MARGIN = 0;
 
         const rightEdge = -localX + windowWidth >= width + MARGIN;
         const leftEdge = localX + windowWidth >= width + MARGIN;
-        const topEdge = localY + windowHeight >= height;
-        const bottomEdge = -localY + windowHeight >= height;
+        const topEdge = localY + windowHeight >= height + MARGIN;
+        const bottomEdge = -localY + windowHeight >= height + MARGIN;
         const rightX = width > windowWidth ? windowWidth - width : 0;
         const leftX = width > windowWidth ? width - windowWidth : 0;
         const topY =
@@ -115,7 +115,7 @@ const PanCamera: FC<ICameraProps> = ({ children, ...props }) => {
               x: vx,
               y: vy,
             },
-            deceleration: 0.99,
+            deceleration: 0.98,
           }).start();
         } else {
           runSpring(pan, 0, 0);
@@ -154,8 +154,6 @@ const PanCamera: FC<ICameraProps> = ({ children, ...props }) => {
       style={{
         flex: 1,
         flexGrow: 1,
-        borderColor: "red",
-        borderWidth: 3,
         justifyContent: "center",
         alignItems: "center",
       }}
@@ -163,9 +161,7 @@ const PanCamera: FC<ICameraProps> = ({ children, ...props }) => {
     >
       <Animated.View
         style={{
-          borderWidth: 3,
-          borderColor: "blue",
-          padding: 50,
+          padding: 30,
           transform: [{ translateX: pan.x }, { translateY: pan.y }],
         }}
         onLayout={(event) => setViewSize(event)}

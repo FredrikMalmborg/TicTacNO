@@ -8,7 +8,8 @@ interface IProps extends SvgProps {
 }
 
 const BackgroundText: React.FC<IProps> = ({ style, ...props }) => {
-  const rows = Math.ceil(useWindowDimensions().height / 80);
+  const rowNumber = Math.ceil(useWindowDimensions().height / 80);
+  const rows = rowNumber >= 8 ? rowNumber : 8
 
   return (
     <View style={style}>

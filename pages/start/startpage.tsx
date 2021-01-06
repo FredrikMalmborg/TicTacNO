@@ -5,7 +5,7 @@ import { Grid, Row } from "react-native-easy-grid";
 
 import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
-import { StackParamlist } from "../PageNavigator";
+import { StackParamlist } from "../page-navigation/PageNavigator";
 
 import { Pages } from "../pages";
 interface IStyles {
