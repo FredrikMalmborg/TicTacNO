@@ -1,16 +1,10 @@
+import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  StyleProp,
-  ViewStyle,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
-import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
-import { StackParamlist } from "../PageNavigator";
+import { StackParamlist } from "../page-navigation/PageNavigator";
 
 import { Pages } from "../pages";
 
@@ -46,9 +40,17 @@ const PlayPage = ({ navigation }: Props) => {
       justifyContent: "space-evenly",
     },
   });
+  //Place page on top of stack
+  const resetAction = CommonActions.reset({
+    index: 0,
+    routes: [{ name: "GamePage" }],
+  });
 
   const navigateToStart = () => navigation.navigate(Pages.Start);
-  const navigateToGame = () => navigation.navigate(Pages.Game);
+  const navigateToGame = () => {
+    navigation.navigate(Pages.Game);
+    navigation.dispatch(resetAction);
+  };
 
   return (
     <SafeAreaView style={style.container}>

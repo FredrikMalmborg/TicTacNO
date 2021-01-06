@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Background from "./components/background/background";
-import PageNavigator from "./pages/PageNavigator";
+import PageNavigator from "./pages/page-navigation/PageNavigator";
 import {
   useFonts,
   FredokaOne_400Regular,
