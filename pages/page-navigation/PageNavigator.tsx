@@ -34,7 +34,7 @@ const PageNavigator = () => {
       <Stack.Screen
         name={Pages.Game}
         component={GamePage}
-        options={{gestureEnabled: false, ...pageOptions}}
+        options={{ gestureEnabled: false, ...pageOptions }}
       />
       <Stack.Screen
         name={Pages.Start}

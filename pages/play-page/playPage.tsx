@@ -1,12 +1,7 @@
 import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import {
-  StyleSheet,
-  StyleProp,
-  ViewStyle,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 import TicTacText from "../../components/text/Text";
 import { StackParamlist } from "../page-navigation/PageNavigator";
@@ -50,7 +45,7 @@ const PlayPage = ({ navigation }: Props) => {
     index: 0,
     routes: [{ name: "GamePage" }],
   });
-  
+
   const navigateToStart = () => navigation.navigate(Pages.Start);
   const navigateToGame = () => {
     navigation.navigate(Pages.Game);
