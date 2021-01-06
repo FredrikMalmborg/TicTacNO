@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   StyleProp,
   ViewStyle,
@@ -88,4 +88,4 @@ const Cell = ({ state, pos, ...props }: ICellProps) => {
   );
 };
 
-export default Cell;
+export default memo(Cell);

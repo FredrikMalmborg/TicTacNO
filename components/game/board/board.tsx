@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Grid, Row } from "react-native-easy-grid";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 
@@ -16,10 +16,6 @@ const Board = ({ board, ...props }: IBoardProps) => {
     [0, 1, 1, 1, 0],
     [0, 0, 0, 0, 0],
   ];
-
-  const resetBoard = () => {
-    setGameBoard(DEFAULT);
-  };
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
     let board = [...gameBoard];
@@ -57,4 +53,4 @@ const Board = ({ board, ...props }: IBoardProps) => {
   );
 };
 
-export default Board;
+export default memo(Board);
