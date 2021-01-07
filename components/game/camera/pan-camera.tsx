@@ -6,6 +6,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+const DEADZONE = 3;
 
 interface ICameraProps {
   windowSize: ISizeState;
@@ -52,7 +53,10 @@ const PanCamera: FC<ICameraProps> = ({ children, ...props }) => {
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, { dx, dy }) =>
+        dx < DEADZONE && dx > -DEADZONE && dy < DEADZONE && dy > -DEADZONE
+          ? false
+          : true,
       onPanResponderGrant: () => {
         pan.setOffset({
           x: localX,
@@ -76,8 +80,12 @@ const PanCamera: FC<ICameraProps> = ({ children, ...props }) => {
 
         const rightEdge = -localX + windowWidth >= width + MARGIN;
         const leftEdge = localX + windowWidth >= width + MARGIN;
-        const topEdge = localY + windowHeight >= height + MARGIN;
-        const bottomEdge = -localY + windowHeight >= height + MARGIN;
+        const topEdge =
+          localY + windowHeight >= height * 0.8 + MARGIN ||
+          windowHeight > height;
+        const bottomEdge =
+          -localY + windowHeight >= height * 0.8 + MARGIN ||
+          windowHeight > height;
         const rightX = width > windowWidth ? windowWidth - width : 0;
         const leftX = width > windowWidth ? width - windowWidth : 0;
         const topY =
