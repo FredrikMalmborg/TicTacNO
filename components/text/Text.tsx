@@ -45,8 +45,6 @@ const TicTacText = ({
   ...props
 }: Props) => {
   const getSize = () => {
-    console.log(size);
-
     switch (size) {
       case "sm":
         return 25;
@@ -55,7 +53,7 @@ const TicTacText = ({
       case "lg":
         return 100;
       default:
-        return size;
+        return size || 50
     }
   };
 
@@ -82,11 +80,11 @@ const TicTacText = ({
 
   const getImg = () => {
     const img = getImgUri();
-    const dipper = label && new RegExp(['y', 'g', 'p', 'q', 'j'].join('|')).test(label)
+    const dippers = ['y', 'g', 'p', 'q', 'j']
+    const dipper = label && new RegExp(dippers.join('|')).test(label.substring(1))
+
     const SVG_STYLE = [style().container, {
-      height: getSize(), transform: [
-        { scale: dipper ? 1.32486 : 1 }
-      ]
+      height: getSize() * ((dipper && img) ? 1.32486 : 1),
     }];
     const SVG_TEXT = (
       <Svg width="100%" height="100%">
@@ -139,8 +137,6 @@ const style = (
 ): IStyles => {
   return StyleSheet.create({
     container: {
-      borderWidth: 1,
-      borderColor: "red",
       width: useWindowDimensions().width,
       margin: type?.bread ? 0 : 10,
     },
