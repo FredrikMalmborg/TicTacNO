@@ -2,13 +2,14 @@ import React from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Background from "./components/background/background";
 import PageNavigator from "./pages/page-navigation/PageNavigator";
+import { StatusBar } from "expo-status-bar";
+import AppLoading from "expo-app-loading";
+import { NavigationContainer } from "@react-navigation/native";
 import {
   useFonts,
   FredokaOne_400Regular,
 } from "@expo-google-fonts/fredoka-one";
-import { StatusBar } from "expo-status-bar";
-import AppLoading from "expo-app-loading";
-import { NavigationContainer } from "@react-navigation/native";
+import Firebase from "./constants/firebase";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
@@ -33,6 +34,6 @@ export default function App() {
       <StatusBar style="dark" />
     </View>
   ) : (
-    <AppLoading />
-  );
+      <AppLoading />
+    );
 }

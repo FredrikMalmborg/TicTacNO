@@ -24,7 +24,7 @@ interface Props {
   label?: string;
   title?: boolean;
   bread?: boolean;
-  size?: Size;
+  size?: Size | number;
   centered?: boolean;
   color?: string;
   button?: {
@@ -45,6 +45,8 @@ const TicTacText = ({
   ...props
 }: Props) => {
   const getSize = () => {
+    console.log(size);
+
     switch (size) {
       case "sm":
         return 25;
@@ -60,28 +62,32 @@ const TicTacText = ({
   const getImgUri = () => {
     switch (label?.toLocaleLowerCase()) {
       case "play":
-        return require("../../assets/images/text/PLAY_PNG.png");
+        return require("../../assets/images/text/lowercase/Play_PNG.png");
       case "profile":
-        return require("../../assets/images/text/PROFILE_PNG.png");
+        return require("../../assets/images/text/lowercase/Profile_PNG.png");
       case "join":
-        return require("../../assets/images/text/JOIN_PNG.png");
+        return require("../../assets/images/text/lowercase/Join_PNG.png");
       case "host":
-        return require("../../assets/images/text/HOST_PNG.png");
+        return require("../../assets/images/text/lowercase/Host_PNG.png");
       case "about us":
-        require("../../assets/images/text/ABOUTUS_PNG.png");
+        require("../../assets/images/text/lowercase/About-us_PNG.png");
       case "help":
-        return require("../../assets/images/text/HELP_PNG.png");
+        return require("../../assets/images/text/lowercase/Help_PNG.png");
       case "matchmaking":
-        return require("../../assets/images/text/MATCHMAKING_PNG.png");
+        return require("../../assets/images/text/lowercase/Matchmaking_PNG.png");
       case "back":
-        return require("../../assets/images/text/BACK_PNG.png");
+        return require("../../assets/images/text/lowercase/Back_PNG.png");
     }
   };
 
   const getImg = () => {
     const img = getImgUri();
-
-    const SVG_STYLE = [style().container, { height: getSize() }];
+    const dipper = label && new RegExp(['y', 'g', 'p', 'q', 'j'].join('|')).test(label)
+    const SVG_STYLE = [style().container, {
+      height: getSize(), transform: [
+        { scale: dipper ? 1.32486 : 1 }
+      ]
+    }];
     const SVG_TEXT = (
       <Svg width="100%" height="100%">
         <SvgImage width="100%" height="100%" href={img} />
@@ -97,11 +103,11 @@ const TicTacText = ({
           {SVG_TEXT}
         </TouchableOpacity>
       ) : (
-        <View style={SVG_STYLE}>{SVG_TEXT}</View>
-      )
+          <View style={SVG_STYLE}>{SVG_TEXT}</View>
+        )
     ) : (
-      getText()
-    );
+        getText()
+      );
   };
   const getText = () => {
     return props.button ? (
@@ -114,12 +120,12 @@ const TicTacText = ({
         </Text>
       </TouchableOpacity>
     ) : (
-      <View style={title && { width: "100%" }}>
-        <Text style={style({ bread }, getSize(), centered, color).text}>
-          {children ? children : label}
-        </Text>
-      </View>
-    );
+        <View style={title && { width: "100%" }}>
+          <Text style={style({ bread }, getSize(), centered, color).text}>
+            {children ? children : label}
+          </Text>
+        </View>
+      );
   };
 
   return <>{title ? getImg() : getText()}</>;
@@ -133,6 +139,8 @@ const style = (
 ): IStyles => {
   return StyleSheet.create({
     container: {
+      borderWidth: 1,
+      borderColor: "red",
       width: useWindowDimensions().width,
       margin: type?.bread ? 0 : 10,
     },
