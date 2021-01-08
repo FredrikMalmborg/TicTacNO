@@ -23,12 +23,11 @@ interface IStyles {
   square: StyleProp<ViewStyle>;
 }
 
-
 type Button = {
   form?: "square" | "round";
   bgColor?: string;
   onClick: () => any;
-}
+};
 interface Props {
   children?: React.ReactNode;
   label?: string;
@@ -52,7 +51,6 @@ const TicTacText = ({
   button,
   ...props
 }: Props) => {
-
   const getSize = () => {
     switch (size) {
       case "sm":
@@ -62,7 +60,7 @@ const TicTacText = ({
       case "lg":
         return 100;
       default:
-        return size || 50
+        return size || 50;
     }
   };
   const getImgUri = () => {
@@ -87,29 +85,34 @@ const TicTacText = ({
   };
   const getImg = () => {
     const img = getImgUri();
-    const dippers = ['y', 'g', 'p', 'q', 'j']
-    const dipper = label && new RegExp(dippers.join('|')).test(label.substring(1))
+    const dippers = ["y", "g", "p", "q", "j"];
+    const dipper =
+      label && new RegExp(dippers.join("|")).test(label.substring(1));
 
-    const SVG_STYLE = [style.container, {
-      height: getSize() * ((dipper && img) ? 1.32486 : 1),
-    }];
+    const SVG_STYLE = [
+      style.container,
+      {
+        height: getSize() * (dipper && img ? 1.32486 : 1),
+      },
+    ];
     const SVG_TEXT = (
       <Svg width="100%" height="100%">
         <SvgImage width="100%" height="100%" href={img} />
       </Svg>
     );
 
-    return img ? <View style={[SVG_STYLE, props.style]}>{SVG_TEXT}</View> : getText()
-
+    return img ? (
+      <View style={[SVG_STYLE, props.style]}>{SVG_TEXT}</View>
+    ) : (
+      getText()
+    );
   };
   const getText = () => {
     return (
       <View style={[title && { width: "100%" }, props.style]}>
-        <Text style={style.text}>
-          {children ? children : label}
-        </Text>
-      </View>)
-
+        <Text style={style.text}>{children ? children : label}</Text>
+      </View>
+    );
   };
 
   const style: IStyles = StyleSheet.create({
@@ -141,34 +144,40 @@ const TicTacText = ({
       ...Platform.select({
         ios: {
           shadowRadius: 0,
-          shadowColor: '#000',
-          shadowOpacity: .6,
+          shadowColor: "#000",
+          shadowOpacity: 0.6,
           shadowOffset: {
             height: 5,
-            width: -5
+            width: -5,
           },
         },
         android: {
           elevation: 3,
-        }
-      })
+        },
+      }),
     },
     round: {
-      borderRadius: 100
+      borderRadius: 100,
     },
     square: {
-      borderRadius: 10
-    }
+      borderRadius: 10,
+    },
   });
 
-  const content = title ? getImg() : getText()
-  return button ?
-    <TouchableOpacity onPress={() => button.onClick()}
-      style={[button.form && style.button, button.form === "round" ? style.round : style.square]}>
+  const content = title ? getImg() : getText();
+  return button ? (
+    <TouchableOpacity
+      onPress={() => button.onClick()}
+      style={[
+        button.form && style.button,
+        button.form === "round" ? style.round : style.square,
+      ]}
+    >
       {content}
-    </TouchableOpacity > : <>{content}</>;
-}
-
-
+    </TouchableOpacity>
+  ) : (
+    <>{content}</>
+  );
+};
 
 export default TicTacText;

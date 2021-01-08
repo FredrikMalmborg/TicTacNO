@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { Col, ColProps } from "react-native-easy-grid";
 import TicTacText from "../../text/Text";
-import colors from '../../../constants/colors'
+import colors from "../../../constants/colors";
 
 export type TCellState = 0 | 1 | 2 | 3;
 export type TCellPos = { y: number; x: number };

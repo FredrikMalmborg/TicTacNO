@@ -53,7 +53,7 @@ const StartPage = ({ navigation }: Props) => {
             title
             label="play"
             size="md"
-          // button={{ onClick: navigateToPlay }}
+            // button={{ onClick: navigateToPlay }}
           />
           <TicTacText title label="profile" size="md" />
         </Row>

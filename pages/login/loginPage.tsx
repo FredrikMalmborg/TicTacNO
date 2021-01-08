@@ -1,8 +1,14 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, StyleProp, ViewStyle, SafeAreaView, View } from "react-native";
+import {
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  SafeAreaView,
+  View,
+} from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
-import * as Google from 'expo-google-app-auth';
+import * as Google from "expo-google-app-auth";
 // import * as GoogleSignIn from 'expo-google-sign-in';
 
 import Logotype from "../../components/logotype";
@@ -26,20 +32,24 @@ interface Props {
 
 const LoginPage = ({ navigation }: Props) => {
   // const provider = new firebase.auth.GoogleAuthProvider()
-  const [hasLogin, setHasLogin] = useState<boolean>(false)
-  const [user, setUser] = useState<any>(null)
-  const [inputFields, setInputFields] = useState<{ email: string, password: string, passwordConfirm: string }>({
+  const [hasLogin, setHasLogin] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(null);
+  const [inputFields, setInputFields] = useState<{
+    email: string;
+    password: string;
+    passwordConfirm: string;
+  }>({
     email: "",
     password: "",
-    passwordConfirm: ""
-  })
+    passwordConfirm: "",
+  });
 
   const changeInputValue = (anchor: string, value: string) => {
     setInputFields({
       ...inputFields,
-      [anchor]: value
-    })
-  }
+      [anchor]: value,
+    });
+  };
 
   const style: IStyles = StyleSheet.create({
     container: {
@@ -64,21 +74,19 @@ const LoginPage = ({ navigation }: Props) => {
     },
     input: {
       height: 40,
-      width: '80%',
+      width: "80%",
       maxWidth: 300,
 
       margin: 20,
       paddingHorizontal: 20,
       paddingVertical: 6,
-      backgroundColor: '#fff',
+      backgroundColor: "#fff",
       elevation: 3,
-      borderRadius: 50
+      borderRadius: 50,
     },
   });
 
-
-  useEffect(() => {
-  }, [])
+  useEffect(() => {}, []);
 
   return (
     <SafeAreaView style={style.container}>
@@ -87,50 +95,73 @@ const LoginPage = ({ navigation }: Props) => {
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={3} style={[style.section, style.top]}>
-          <TicTacText label={!hasLogin ? "Login" : "Register"} centered style={{ marginBottom: 20, backgroundColor: '#2221', width: '100%' }} />
+          <TicTacText
+            label={!hasLogin ? "Login" : "Register"}
+            centered
+            style={{
+              marginBottom: 20,
+              backgroundColor: "#2221",
+              width: "100%",
+            }}
+          />
 
           <TextInput
             style={style.input}
             placeholder="email"
-            onChangeText={text => changeInputValue("email", text)}
-            value={inputFields.email} />
+            onChangeText={(text) => changeInputValue("email", text)}
+            value={inputFields.email}
+          />
           <TextInput
             style={style.input}
             placeholder="password"
-            onChangeText={text => changeInputValue("password", text)}
-            value={inputFields.password} />
-          {
-            hasLogin ?
-              <TextInput
-                style={style.input}
-                placeholder="email"
-                onChangeText={text => changeInputValue("email", text)}
-                value={inputFields.email} />
-
-              :
-              <View>
-                <TicTacText label="google" size={30} centered button={{
-                  onClick: () => console.log('google'),
+            onChangeText={(text) => changeInputValue("password", text)}
+            value={inputFields.password}
+          />
+          {hasLogin ? (
+            <TextInput
+              style={style.input}
+              placeholder="email"
+              onChangeText={(text) => changeInputValue("email", text)}
+              value={inputFields.email}
+            />
+          ) : (
+            <View>
+              <TicTacText
+                label="google"
+                size={30}
+                centered
+                button={{
+                  onClick: () => console.log("google"),
                   bgColor: colors.red.light,
-                  form: 'square'
-                }} />
-                <TicTacText label="facebook" size={30} centered button={{
-                  onClick: () => console.log('facebook'),
+                  form: "square",
+                }}
+              />
+              <TicTacText
+                label="facebook"
+                size={30}
+                centered
+                button={{
+                  onClick: () => console.log("facebook"),
                   bgColor: colors.red.light,
-                  form: 'square'
-                }} />
-              </View>
-          }
-
+                  form: "square",
+                }}
+              />
+            </View>
+          )}
         </Row>
 
         <Row size={1} style={[style.section, style.bottom]}>
-          <TicTacText label={!hasLogin ? "Don't have an account?" : "I have an account"} size='sm' color={'#222'} button={{
-            onClick: () => setHasLogin(!hasLogin)
-          }} />
+          <TicTacText
+            label={!hasLogin ? "Don't have an account?" : "I have an account"}
+            size="sm"
+            color={"#222"}
+            button={{
+              onClick: () => setHasLogin(!hasLogin),
+            }}
+          />
         </Row>
       </Grid>
-    </SafeAreaView >
+    </SafeAreaView>
   );
 };
 

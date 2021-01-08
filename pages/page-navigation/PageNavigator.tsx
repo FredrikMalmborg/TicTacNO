@@ -25,31 +25,19 @@ const PageNavigator = () => {
   const pageOptions: StackNavigationOptions = {
     cardStyleInterpolator: forSlide,
     headerShown: false,
-    cardStyle: { backgroundColor: "transparent" }
+    cardStyle: { backgroundColor: "transparent" },
   };
 
   return (
-    <Stack.Navigator
-      initialRouteName={Pages.Login}
-      screenOptions={pageOptions}
-    >
+    <Stack.Navigator initialRouteName={Pages.Login} screenOptions={pageOptions}>
       <Stack.Screen
         name={Pages.Game}
         component={GamePage}
         options={{ gestureEnabled: false }}
       />
-      <Stack.Screen
-        name={Pages.Start}
-        component={StartPage}
-      />
-      <Stack.Screen
-        name={Pages.Play}
-        component={PlayPage}
-      />
-      <Stack.Screen
-        name={Pages.Login}
-        component={LoginPage}
-      />
+      <Stack.Screen name={Pages.Start} component={StartPage} />
+      <Stack.Screen name={Pages.Play} component={PlayPage} />
+      <Stack.Screen name={Pages.Login} component={LoginPage} />
     </Stack.Navigator>
   );
 };
