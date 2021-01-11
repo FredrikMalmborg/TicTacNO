@@ -66,9 +66,7 @@ const LoginPage = () => {
   });
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => Keyboard.dismiss()}
-    >
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <Grid>
         <Row size={2} style={[style.section]}>
           <Logotype width="90%" height="100%" />
