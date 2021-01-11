@@ -67,7 +67,13 @@ const AuthProvider: FC = ({ children }) => {
         })();
         dispatch({ type: "SIGN_IN", token: result });
       },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signOut: async () => {
+        await firebase.auth().signOut()
+          .then(() => {
+            dispatch({ type: "SIGN_OUT" })
+          })
+          .catch((err) => console.log(err))
+      },
       signUp: async (data: any) => {
         //Registrera mot backend här - dummy_token är en userID
         dispatch({ type: "SIGN_IN", token: "dummy_token" });
@@ -160,6 +166,8 @@ const AuthProvider: FC = ({ children }) => {
         if (user) {
           userToken = user.uid;
         }
+        console.log(userToken);
+
         dispatch({ type: "RESTORE", token: userToken });
       });
     };

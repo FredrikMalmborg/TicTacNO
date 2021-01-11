@@ -1,10 +1,12 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 
 import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
+import colors from "../../constants/colors";
+import AuthContext from "../../contexts/auth/auth-context";
 import { StackParamlist } from "../page-navigation/PageNavigator";
 
 import { Pages } from "../pages";
@@ -20,6 +22,8 @@ interface Props {
 }
 
 const StartPage = ({ navigation }: Props) => {
+  const { authContext } = useContext(AuthContext);
+
   const style: IStyles = StyleSheet.create({
     container: {
       flex: 1,
@@ -58,7 +62,10 @@ const StartPage = ({ navigation }: Props) => {
           <TicTacText title label="profile" size="md" />
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
-          <TicTacText label="About us" size="md" color="white" />
+          <TicTacText label="Logout" size="sm" button={{
+            onClick: () => authContext.signOut(),
+            form: "round", bgColor: colors.teal
+          }} />
         </Row>
       </Grid>
     </SafeAreaView>
