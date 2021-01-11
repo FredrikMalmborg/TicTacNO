@@ -9,7 +9,7 @@ import {
   useFonts,
   FredokaOne_400Regular,
 } from "@expo-google-fonts/fredoka-one";
-import Firebase from "./constants/firebase";
+import AuthProvider from "./contexts/auth/auth-provider";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
@@ -29,7 +29,9 @@ export default function App() {
     <View style={style.appContainer}>
       <Background />
       <NavigationContainer>
-        <PageNavigator />
+        <AuthProvider>
+          <PageNavigator />
+        </AuthProvider>
       </NavigationContainer>
       <StatusBar style="dark" />
     </View>

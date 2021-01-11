@@ -25,7 +25,7 @@ interface IStyles {
 
 type Button = {
   form?: "square" | "round";
-  bgColor?: string;
+  bgColor?: { light: string; dark: string };
   onClick: () => any;
 };
 interface Props {
@@ -137,14 +137,14 @@ const TicTacText = ({
       color: color ? color : "#fff",
     },
     button: {
-      backgroundColor: button?.bgColor,
-      paddingHorizontal: 30,
+      backgroundColor: button?.bgColor?.light,
+      paddingHorizontal: 20,
       paddingVertical: 8,
       margin: 10,
       ...Platform.select({
         ios: {
           shadowRadius: 0,
-          shadowColor: "#000",
+          shadowColor: button?.bgColor?.dark,
           shadowOpacity: 0.6,
           shadowOffset: {
             height: 5,
