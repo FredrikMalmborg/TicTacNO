@@ -9,7 +9,8 @@ export interface IUserState {
 
 type TReducerAction =
   | { type: "RESTORE"; token: string | null }
-  | { type: "SIGN_IN"; token: string }
+  | { type: "LOADING_USER" }
+  | { type: "SIGN_IN"; token: string | null }
   | { type: "SIGN_OUT" };
 
 export const INITIAL_STATE: IUserState = {
@@ -26,9 +27,15 @@ export const userState = (prevState: IUserState, action: TReducerAction) => {
         userToken: action.token,
         isLoading: false,
       };
+    case "LOADING_USER":
+      return {
+        ...prevState,
+        isLoading: true,
+      };
     case "SIGN_IN":
       return {
         ...prevState,
+        isLoading: false,
         isSignedOut: false,
         userToken: action.token,
       };
@@ -39,12 +46,15 @@ export const userState = (prevState: IUserState, action: TReducerAction) => {
         userToken: null,
       };
   }
-}
+};
 
-const AuthContext = React.createContext({ authContext: {
-  signIn: (action: TSignInAction) => {},
-  signOut: () => {},
-  signUp: (data: any) => {}
-}, user: INITIAL_STATE });
+const AuthContext = React.createContext({
+  authContext: {
+    signIn: (action: TSignInAction) => {},
+    signOut: () => {},
+    signUp: (data: any) => {},
+  },
+  user: INITIAL_STATE,
+});
 
 export default AuthContext;
