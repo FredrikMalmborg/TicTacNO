@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children } from "react";
 import {
   View,
   Text,
@@ -17,21 +17,27 @@ type Size = "sm" | "md" | "lg" | number;
 interface IStyles {
   container: StyleProp<ViewStyle>;
   text: StyleProp<TextStyle>;
+
+  button: StyleProp<ViewStyle>;
+  round: StyleProp<ViewStyle>;
+  square: StyleProp<ViewStyle>;
 }
 
+type Button = {
+  form?: "square" | "round";
+  bgColor?: { light: string; dark: string };
+  onClick: () => any;
+};
 interface Props {
   children?: React.ReactNode;
   label?: string;
   title?: boolean;
   bread?: boolean;
-  size?: Size;
+  size?: Size | number;
   centered?: boolean;
   color?: string;
-  button?: {
-    form?: "square" | "rounded";
-    bgColor?: string;
-    onClick: () => any;
-  };
+  button?: Button;
+  style?: StyleProp<ViewStyle>;
 }
 
 const TicTacText = ({
@@ -42,6 +48,7 @@ const TicTacText = ({
   centered,
   color,
   children,
+  button,
   ...props
 }: Props) => {
   const getSize = () => {
@@ -53,35 +60,41 @@ const TicTacText = ({
       case "lg":
         return 100;
       default:
-        return size;
+        return size || 50;
     }
   };
-
   const getImgUri = () => {
     switch (label?.toLocaleLowerCase()) {
       case "play":
-        return require("../../assets/images/text/PLAY_PNG.png");
+        return require("../../assets/images/text/lowercase/Play_PNG.png");
       case "profile":
-        return require("../../assets/images/text/PROFILE_PNG.png");
+        return require("../../assets/images/text/lowercase/Profile_PNG.png");
       case "join":
-        return require("../../assets/images/text/JOIN_PNG.png");
+        return require("../../assets/images/text/lowercase/Join_PNG.png");
       case "host":
-        return require("../../assets/images/text/HOST_PNG.png");
+        return require("../../assets/images/text/lowercase/Host_PNG.png");
       case "about us":
-        require("../../assets/images/text/ABOUTUS_PNG.png");
+        require("../../assets/images/text/lowercase/About-us_PNG.png");
       case "help":
-        return require("../../assets/images/text/HELP_PNG.png");
+        return require("../../assets/images/text/lowercase/Help_PNG.png");
       case "matchmaking":
-        return require("../../assets/images/text/MATCHMAKING_PNG.png");
+        return require("../../assets/images/text/lowercase/Matchmaking_PNG.png");
       case "back":
-        return require("../../assets/images/text/BACK_PNG.png");
+        return require("../../assets/images/text/lowercase/Back_PNG.png");
     }
   };
-
   const getImg = () => {
     const img = getImgUri();
+    const dippers = ["y", "g", "p", "q", "j"];
+    const dipper =
+      label && new RegExp(dippers.join("|")).test(label.substring(1));
 
-    const SVG_STYLE = [style().container, { height: getSize() }];
+    const SVG_STYLE = [
+      style.container,
+      {
+        height: getSize() * (dipper && img ? 1.32486 : 1),
+      },
+    ];
     const SVG_TEXT = (
       <Svg width="100%" height="100%">
         <SvgImage width="100%" height="100%" href={img} />
@@ -89,70 +102,82 @@ const TicTacText = ({
     );
 
     return img ? (
-      props.button ? (
-        <TouchableOpacity
-          style={SVG_STYLE}
-          onPress={() => props.button?.onClick()}
-        >
-          {SVG_TEXT}
-        </TouchableOpacity>
-      ) : (
-        <View style={SVG_STYLE}>{SVG_TEXT}</View>
-      )
+      <View style={[SVG_STYLE, props.style]}>{SVG_TEXT}</View>
     ) : (
       getText()
     );
   };
   const getText = () => {
-    return props.button ? (
-      <TouchableOpacity
-        style={title && { width: "100%" }}
-        onPress={() => props.button?.onClick()}
-      >
-        <Text style={style({ bread }, getSize(), centered, color).text}>
-          {children ? children : label}
-        </Text>
-      </TouchableOpacity>
-    ) : (
-      <View style={title && { width: "100%" }}>
-        <Text style={style({ bread }, getSize(), centered, color).text}>
-          {children ? children : label}
-        </Text>
+    return (
+      <View style={[title && { width: "100%" }, props.style]}>
+        <Text style={style.text}>{children ? children : label}</Text>
       </View>
     );
   };
 
-  return <>{title ? getImg() : getText()}</>;
-};
-
-const style = (
-  type?: { bread?: boolean; title?: boolean },
-  size?: number,
-  centered?: boolean,
-  color?: string
-): IStyles => {
-  return StyleSheet.create({
+  const style: IStyles = StyleSheet.create({
     container: {
       width: useWindowDimensions().width,
-      margin: type?.bread ? 0 : 10,
+      margin: bread ? 0 : 10,
     },
     text: {
       ...Platform.select({
         ios: {
-          fontFamily: type?.bread ? "Helvetica" : "FredokaOne_400Regular",
+          fontFamily: bread ? "Helvetica" : "FredokaOne_400Regular",
         },
         android: {
-          fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular",
+          fontFamily: bread ? "sans-serif" : "FredokaOne_400Regular",
         },
         default: {
-          fontFamily: type?.bread ? "sans-serif" : "FredokaOne_400Regular",
+          fontFamily: bread ? "sans-serif" : "FredokaOne_400Regular",
         },
       }),
-      fontSize: size || 20,
+      fontSize: getSize(),
       textAlign: centered ? "center" : "left",
-      color: color ? color : "#000",
+      color: color ? color : "#fff",
+    },
+    button: {
+      backgroundColor: button?.bgColor?.light,
+      paddingHorizontal: 20,
+      paddingVertical: 8,
+      margin: 10,
+      ...Platform.select({
+        ios: {
+          shadowRadius: 0,
+          shadowColor: button?.bgColor?.dark,
+          shadowOpacity: 0.6,
+          shadowOffset: {
+            height: 5,
+            width: -5,
+          },
+        },
+        android: {
+          elevation: 3,
+        },
+      }),
+    },
+    round: {
+      borderRadius: 100,
+    },
+    square: {
+      borderRadius: 10,
     },
   });
+
+  const content = title ? getImg() : getText();
+  return button ? (
+    <TouchableOpacity
+      onPress={() => button.onClick()}
+      style={[
+        button.form && style.button,
+        button.form === "round" ? style.round : style.square,
+      ]}
+    >
+      {content}
+    </TouchableOpacity>
+  ) : (
+    <>{content}</>
+  );
 };
 
 export default TicTacText;

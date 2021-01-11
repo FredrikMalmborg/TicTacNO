@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { Col, ColProps } from "react-native-easy-grid";
 import TicTacText from "../../text/Text";
+import colors from "../../../constants/colors";
 
 export type TCellState = 0 | 1 | 2 | 3;
 export type TCellPos = { y: number; x: number };
@@ -55,18 +56,18 @@ const Cell = ({ state, pos, ...props }: ICellProps) => {
     },
     1: {
       borderColor: "#c1c1c1",
-      backgroundColor: "#fff",
       shadowColor: "#c1c1c1",
+      backgroundColor: "#fff",
     },
     2: {
-      borderColor: "#BB2832",
-      backgroundColor: "#fa5457",
-      shadowColor: "#BB2832",
+      borderColor: colors.red.dark,
+      shadowColor: colors.red.dark,
+      backgroundColor: colors.red.light,
     },
     3: {
-      borderColor: "#0B797D",
-      backgroundColor: "#03D2DB",
-      shadowColor: "#0B797D",
+      borderColor: colors.teal.dark,
+      shadowColor: colors.teal.dark,
+      backgroundColor: colors.teal.light,
     },
   });
 
