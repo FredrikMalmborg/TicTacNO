@@ -1,5 +1,5 @@
 import { StackCardStyleInterpolator } from "@react-navigation/stack";
-import { Animated } from "react-native";
+import { Animated, Platform } from "react-native";
 
 export const forSlide: StackCardStyleInterpolator = ({
   current,
@@ -24,40 +24,44 @@ export const forSlide: StackCardStyleInterpolator = ({
 
   return {
     cardStyle: {
-      transform: [
-        // {
-        //   translateY: Animated.multiply(
-        //     progress.interpolate({
-        //       inputRange: [0, 1, 2],
-        //       outputRange: [
-        //         screen.height * -0.2, // Focused, but offscreen in the beginning
-        //         0, // Fully focused
-        //         screen.height * 0.2, // Fully unfocused
-        //       ],
-        //       extrapolate: "clamp",
-        //     }),
-        //     inverted
-        //   ),
-        // },
-        {
-          scale: Animated.multiply(
+      ...Platform.select({
+        default: {
+          transform: [
+            {
+              translateX: Animated.multiply(
+                progress.interpolate({
+                  inputRange: [0, 1, 2],
+                  outputRange: [screen.width, 0, screen.width * -1],
+                  extrapolate: "clamp",
+                }),
+                inverted
+              ),
+            },
+          ],
+        },
+        android: {
+          transform: [
+            {
+              scale: Animated.multiply(
+                progress.interpolate({
+                  inputRange: [0, 1, 2],
+                  outputRange: [0.9, 1, 1.1],
+                  extrapolate: "clamp",
+                }),
+                inverted
+              ),
+            },
+          ],
+          opacity: Animated.multiply(
             progress.interpolate({
               inputRange: [0, 1, 2],
-              outputRange: [0.9, 1, 1.1],
-              extrapolate: "clamp",
+              outputRange: [0, 1, 0],
+              extrapolate: "extend",
             }),
             inverted
           ),
         },
-      ],
-      opacity: Animated.multiply(
-        progress.interpolate({
-          inputRange: [0, 1, 2],
-          outputRange: [0, 1, 0],
-          extrapolate: "extend",
-        }),
-        inverted
-      ),
+      }),
     },
   };
 };

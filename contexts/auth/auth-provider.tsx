@@ -50,21 +50,22 @@ const AuthProvider: FC = ({ children }) => {
 
   const authContext = useMemo(
     () => ({
-      signIn: (action: TSignInAction) => {
-        switch (action.type) {
-          case "GOOGLE":
-            signInWithGoogle();
-            break;
-          case "FACEBOOK":
-            signInWithFacebook();
-            break;
-          case "EMAIL":
-            signInWithEmail(action.payload);
-            break;
-        }
-        // if (result.success) {
-        //   dispatch({ type: "SIGN_IN", token: "dummy_token" });
-        // }
+      signIn: async (action: TSignInAction) => {
+        dispatch({ type: "LOADING_USER" });
+        const result = await (async () => {
+          switch (action.type) {
+            case "GOOGLE":
+              const googlePromise = await signInWithGoogle();
+              return googlePromise;
+            case "FACEBOOK":
+              const facebookPromise = await signInWithFacebook();
+              return facebookPromise;
+            case "EMAIL":
+              const emailPromise = await signInWithEmail(action.payload);
+              return emailPromise;
+          }
+        })();
+        dispatch({ type: "SIGN_IN", token: result });
       },
       signOut: () => dispatch({ type: "SIGN_OUT" }),
       signUp: async (data: any) => {
@@ -76,7 +77,7 @@ const AuthProvider: FC = ({ children }) => {
   );
 
   // Inloggning mot Google
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (): Promise<string | null> => {
     try {
       const result = await Google.logInAsync({
         androidClientId: androidClientId,
@@ -94,15 +95,22 @@ const AuthProvider: FC = ({ children }) => {
         const googleProfileData = await firebase
           .auth()
           .signInWithCredential(credential);
-        console.log("success: ", googleProfileData);
+        if (googleProfileData && googleProfileData.user) {
+          return googleProfileData.user.uid;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
       }
     } catch (e) {
       console.log("Error: ", e);
+      return null;
     }
   };
 
   // Inloggning mot Facebook
-  const signInWithFacebook = async () => {
+  const signInWithFacebook = async (): Promise<string | null> => {
     try {
       await Facebook.initializeAsync({
         appId: facebookAppId,
@@ -121,10 +129,17 @@ const AuthProvider: FC = ({ children }) => {
         const facebookProfileData = await firebase
           .auth()
           .signInWithCredential(credential);
-        console.log("success: ", facebookProfileData);
+        if (facebookProfileData && facebookProfileData.user) {
+          return facebookProfileData.user.uid;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
       }
     } catch (e) {
       console.log(e);
+      return null;
     }
   };
 
@@ -132,22 +147,21 @@ const AuthProvider: FC = ({ children }) => {
   const signInWithEmail = async (payload: {
     email: string;
     password: string;
-  }) => {
+  }): Promise<string | null> => {
     console.log("Email!");
 
-    return "auth Email";
+    return null;
   };
 
   useEffect(() => {
-    const bootStrapUserToken = async () => {
-      let userToken = null;
-      try {
-        //Hämta userID från "localstorage"
-        userToken = await AsyncStorage.getItem("userToken");
-      } catch (e) {
-        console.error(e);
-      }
-      dispatch({ type: "RESTORE", token: userToken });
+    const bootStrapUserToken = () => {
+      firebase.auth().onAuthStateChanged((user) => {
+        let userToken = null;
+        if (user) {
+          userToken = user.uid;
+        }
+        dispatch({ type: "RESTORE", token: userToken });
+      });
     };
     bootStrapUserToken();
   }, []);
