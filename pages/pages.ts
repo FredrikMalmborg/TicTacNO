@@ -4,6 +4,6 @@ export const Pages = {
   Profile: "ProfilePage",
   Game: "GamePage",
   Login: "LoginPage",
-  Splash: "SplashPage"
+  Splash: "SplashPage",
 } as const;
 export type ScreenName = keyof typeof Pages;

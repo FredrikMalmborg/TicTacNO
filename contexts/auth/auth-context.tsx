@@ -39,12 +39,15 @@ export const userState = (prevState: IUserState, action: TReducerAction) => {
         userToken: null,
       };
   }
-}
+};
 
-const AuthContext = React.createContext({ authContext: {
-  signIn: (action: TSignInAction) => {},
-  signOut: () => {},
-  signUp: (data: any) => {}
-}, user: INITIAL_STATE });
+const AuthContext = React.createContext({
+  authContext: {
+    signIn: (action: TSignInAction) => {},
+    signOut: () => {},
+    signUp: (data: any) => {},
+  },
+  user: INITIAL_STATE,
+});
 
 export default AuthContext;

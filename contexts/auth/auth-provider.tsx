@@ -150,7 +150,7 @@ const AuthProvider: FC = ({ children }) => {
       dispatch({ type: "RESTORE", token: userToken });
     };
     bootStrapUserToken();
-  }, [])
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, authContext }}>
