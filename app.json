@@ -18,6 +18,7 @@
       "supportsTablet": true
     },
     "android": {
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -26,6 +27,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "facebookScheme": "fb202764284899231",
+    "facebookAppId": "202764284899231",
+    "facebookDisplayName": "TicTacNo",
     "packagerOpts": {
       "config": "metro.config.js",
       "sourceExts": ["js", "jsx", "ts", "tsx", "svg"]
