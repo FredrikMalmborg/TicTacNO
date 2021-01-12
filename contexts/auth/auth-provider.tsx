@@ -66,6 +66,7 @@ const AuthProvider: FC = ({ children }) => {
           }
         })();
         dispatch({ type: "SIGN_IN", token: result });
+        return result
       },
       signOut: async () => {
         await firebase.auth().signOut()
@@ -78,17 +79,14 @@ const AuthProvider: FC = ({ children }) => {
         email: string;
         password: string;
         passwordConfirm: string;
+        errCB: (error: "LOGIN" | "REGISTER") => void
       }) => {
         if (payload.password === payload.passwordConfirm) {
           firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-            .then((user) => {
-              console.log(user);
-            })
+            .then((user) => console.log(user))
             .catch((error) => {
-              const errorCode = error.code,
-                errorMessage = error.message;
-              console.log("REGISTER ERROR : ", errorCode, errorMessage);
-
+              console.log(error);
+              payload.errCB("REGISTER")
             });
         }
       }
@@ -176,7 +174,8 @@ const AuthProvider: FC = ({ children }) => {
           return null;
       })
       .catch((error) => {
-        const errorCode = error.code,
+        const
+          errorCode = error.code,
           errorMessage = error.message;
         console.log("SIGNIN ERROR : ", errorCode, errorMessage);
         return null;

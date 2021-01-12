@@ -56,6 +56,7 @@ const AuthContext = React.createContext({
       email: string;
       password: string;
       passwordConfirm: string;
+      errCB: (error: "LOGIN" | "REGISTER") => void
     }) => { },
   },
   user: INITIAL_STATE,

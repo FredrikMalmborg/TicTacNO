@@ -12,11 +12,12 @@ import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
 import colors from "../../constants/colors";
 import { TextInput } from "react-native-gesture-handler";
-import AuthContext from "../../contexts/auth/auth-context";
+import AuthContext, { userState } from "../../contexts/auth/auth-context";
 interface IStyles {
   section: StyleProp<ViewStyle>;
   content: StyleProp<ViewStyle>;
   input: StyleProp<ViewStyle>;
+  inputError: StyleProp<ViewStyle>;
 }
 
 const LoginPage = () => {
@@ -31,24 +32,35 @@ const LoginPage = () => {
     password: "",
     passwordConfirm: "",
   });
+  const [errors, setErrors] = useState<{
+    LOG: boolean;
+    REG: boolean;
+  }>({
+    LOG: false,
+    REG: false,
+  });
   const { authContext } = useContext(AuthContext);
 
   const changeInputValue = (anchor: string, value: string) => {
+    clearErrors()
     setInputFields({
       ...inputFields,
       [anchor]: value,
     });
   };
+  const handleInputErrors = (error: ("LOGIN" | "REGISTER")) => {
+    console.log("handle input error!! ", error);
 
-  const isDisabled = (field: "login" | "register") => {
-    const { email, password, passwordConfirm } = inputFields
-    const checkEmail = () => {
-      const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return res.test(String(email).toLowerCase());
-    }
-
-    if (field === "login") return (checkEmail() && password.length > 3)
-    if (field === "register") return (checkEmail() && password.length > 3 && password === passwordConfirm)
+    setErrors({
+      LOG: error === "LOGIN" ? true : errors.LOG,
+      REG: error === "REGISTER" ? true : errors.REG,
+    })
+  }
+  const clearErrors = () => {
+    setErrors({
+      LOG: false,
+      REG: false,
+    })
   }
 
   const style: IStyles = StyleSheet.create({
@@ -65,14 +77,19 @@ const LoginPage = () => {
       height: 40,
       width: "80%",
       maxWidth: 300,
-
       margin: 15,
       paddingHorizontal: 20,
       paddingVertical: 6,
+
       backgroundColor: "#fff",
       elevation: 3,
       borderRadius: 50,
     },
+    inputError: {
+      borderWidth: 3,
+      borderColor: colors.red.light,
+      backgroundColor: colors.red.dark,
+    }
   });
 
   return (
@@ -82,22 +99,26 @@ const LoginPage = () => {
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={4} style={[style.section, style.content]}>
+          {(errors.LOG || errors.REG) && <TicTacText label={errors.LOG ? "Invalid Login info" : "Invalid Information"} size="sm" centered color={colors.red.light} />}
           <TextInput
-
-            style={style.input}
+            autoCompleteType={"email"}
+            style={[style.input, (errors.LOG || errors.REG) && style.inputError]}
             placeholder="Email-address"
             onChangeText={(text) => changeInputValue("email", text)}
             value={inputFields.email}
           />
           <TextInput
-            style={style.input}
+            autoCompleteType={"password"}
+            secureTextEntry
+            style={[style.input, (errors.LOG || errors.REG) && style.inputError]}
             placeholder="Password"
             onChangeText={(text) => changeInputValue("password", text)}
             value={inputFields.password}
           />
           {register && (
             <TextInput
-              style={style.input}
+              secureTextEntry
+              style={[style.input, !(inputFields.passwordConfirm === inputFields.password) && style.inputError]}
               placeholder="confirm password"
               onChangeText={(text) => changeInputValue("passwordConfirm", text)}
               value={inputFields.passwordConfirm}
@@ -109,24 +130,25 @@ const LoginPage = () => {
             centered
             button={
               {
-                onClick: register ? () => authContext.signUp({
-                  email: inputFields.email,
-                  password: inputFields.password,
-                  passwordConfirm: inputFields.passwordConfirm
-                }) :
-                  () =>
-                    authContext.signIn({
-                      type: "EMAIL",
-                      payload: {
-                        email: inputFields.email,
-                        password: inputFields.password,
-                      },
-                    }),
+                onClick: register ?
+                  () => authContext.signUp({
+                    email: inputFields.email,
+                    password: inputFields.password,
+                    passwordConfirm: inputFields.passwordConfirm,
+                    errCB: handleInputErrors
+                  }) :
+                  () => authContext.signIn({
+                    type: "EMAIL",
+                    payload: {
+                      email: inputFields.email,
+                      password: inputFields.password
+                    }
+                  })
+                ,
                 bgColor: colors.teal,
                 form: "square",
                 disabled: (() => {
-
-                  const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                  const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                   if (
                     (register ? inputFields.passwordConfirm === inputFields.password : true)
                     && inputFields.password.length > 5
@@ -182,7 +204,10 @@ const LoginPage = () => {
               centered
               color="white"
               button={{
-                onClick: () => setRegister(!register)
+                onClick: () => {
+                  clearErrors()
+                  setRegister(!register)
+                }
               }}
             />
           </View>
