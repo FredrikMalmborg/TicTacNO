@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React, { memo } from "react";
 import {
   View,
   Text,
@@ -17,19 +17,20 @@ type Size = "sm" | "md" | "lg" | number;
 interface IStyles {
   container: StyleProp<ViewStyle>;
   text: StyleProp<TextStyle>;
-
   button: StyleProp<ViewStyle>;
   round: StyleProp<ViewStyle>;
   square: StyleProp<ViewStyle>;
+  disabledButton: StyleProp<ViewStyle>;
+  enabledButton: StyleProp<ViewStyle>;
 }
 
 type Button = {
   form?: "square" | "round";
   bgColor?: { light: string; dark: string };
+  disabled?: boolean;
   onClick: () => any;
 };
 interface Props {
-  children?: React.ReactNode;
   label?: string;
   title?: boolean;
   bread?: boolean;
@@ -47,7 +48,6 @@ const TicTacText = ({
   bread,
   centered,
   color,
-  children,
   button,
   ...props
 }: Props) => {
@@ -104,13 +104,13 @@ const TicTacText = ({
     return img ? (
       <View style={[SVG_STYLE, props.style]}>{SVG_TEXT}</View>
     ) : (
-      getText()
-    );
+        getText()
+      );
   };
   const getText = () => {
     return (
-      <View style={[title && { width: "100%" }, props.style]}>
-        <Text style={style.text}>{children ? children : label}</Text>
+      <View style={[title && { width: "100%" }, props.style, button?.disabled && { opacity: .3 }]}>
+        <Text style={style.text}>{label}</Text>
       </View>
     );
   };
@@ -162,22 +162,32 @@ const TicTacText = ({
     square: {
       borderRadius: 10,
     },
+    disabledButton: {
+      opacity: 0.3
+    },
+    enabledButton: {
+      opacity: 1
+    },
   });
 
   const content = title ? getImg() : getText();
+
+
+
   return button ? (
     <TouchableOpacity
+      disabled={button.disabled}
       onPress={() => button.onClick()}
       style={[
         button.form && style.button,
-        button.form === "round" ? style.round : style.square,
+        button.form === "round" ? style.round : style.square
       ]}
     >
       {content}
     </TouchableOpacity>
   ) : (
-    <>{content}</>
-  );
+      <>{content}</>
+    );
 };
 
-export default TicTacText;
+export default memo(TicTacText);

@@ -1,4 +1,5 @@
 import { StackNavigationProp } from "@react-navigation/stack";
+import firebase from "firebase";
 import React, { useContext } from "react";
 import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
@@ -46,6 +47,8 @@ const StartPage = ({ navigation }: Props) => {
 
   const navigateToPlay = () => navigation.navigate(Pages.Play);
 
+  const currentUser = firebase.auth().currentUser?.displayName
+
   return (
     <SafeAreaView style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
@@ -60,6 +63,10 @@ const StartPage = ({ navigation }: Props) => {
             button={{ onClick: navigateToPlay }}
           />
           <TicTacText title label="profile" size="md" />
+          {
+            currentUser &&
+            <TicTacText title label={currentUser.split(" ")[0]} size="md" />
+          }
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
           <TicTacText label="Logout" size="sm" button={{

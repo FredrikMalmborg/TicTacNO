@@ -74,10 +74,24 @@ const AuthProvider: FC = ({ children }) => {
           })
           .catch((err) => console.log(err))
       },
-      signUp: async (data: any) => {
-        //Registrera mot backend här - dummy_token är en userID
-        dispatch({ type: "SIGN_IN", token: "dummy_token" });
-      },
+      signUp: async (payload: {
+        email: string;
+        password: string;
+        passwordConfirm: string;
+      }) => {
+        if (payload.password === payload.passwordConfirm) {
+          firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+            .then((user) => {
+              console.log(user);
+            })
+            .catch((error) => {
+              const errorCode = error.code,
+                errorMessage = error.message;
+              console.log("REGISTER ERROR : ", errorCode, errorMessage);
+
+            });
+        }
+      }
     }),
     []
   );
@@ -154,9 +168,19 @@ const AuthProvider: FC = ({ children }) => {
     email: string;
     password: string;
   }): Promise<string | null> => {
-    console.log("Email!");
-
-    return null;
+    return firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+      .then((user) => {
+        if (user && user.user) {
+          return user.user.uid;
+        } else
+          return null;
+      })
+      .catch((error) => {
+        const errorCode = error.code,
+          errorMessage = error.message;
+        console.log("SIGNIN ERROR : ", errorCode, errorMessage);
+        return null;
+      });
   };
 
   useEffect(() => {

@@ -21,8 +21,7 @@ interface IStyles {
 
 const LoginPage = () => {
   // const provider = new firebase.auth.GoogleAuthProvider()
-  const [hasLogin, setHasLogin] = useState<boolean>(false);
-  // const [user, setUser] = useState<any>(null);
+  const [register, setRegister] = useState<boolean>(false);
   const [inputFields, setInputFields] = useState<{
     email: string;
     password: string;
@@ -40,6 +39,17 @@ const LoginPage = () => {
       [anchor]: value,
     });
   };
+
+  const isDisabled = (field: "login" | "register") => {
+    const { email, password, passwordConfirm } = inputFields
+    const checkEmail = () => {
+      const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return res.test(String(email).toLowerCase());
+    }
+
+    if (field === "login") return (checkEmail() && password.length > 3)
+    if (field === "register") return (checkEmail() && password.length > 3 && password === passwordConfirm)
+  }
 
   const style: IStyles = StyleSheet.create({
     section: {
@@ -73,6 +83,7 @@ const LoginPage = () => {
         </Row>
         <Row size={4} style={[style.section, style.content]}>
           <TextInput
+
             style={style.input}
             placeholder="Email-address"
             onChangeText={(text) => changeInputValue("email", text)}
@@ -84,33 +95,49 @@ const LoginPage = () => {
             onChangeText={(text) => changeInputValue("password", text)}
             value={inputFields.password}
           />
-          {hasLogin && (
+          {register && (
             <TextInput
               style={style.input}
-              placeholder="email"
-              onChangeText={(text) => changeInputValue("email", text)}
-              value={inputFields.email}
+              placeholder="confirm password"
+              onChangeText={(text) => changeInputValue("passwordConfirm", text)}
+              value={inputFields.passwordConfirm}
             />
           )}
           <TicTacText
-            label={hasLogin ? "Register account" : "Log in"}
+            label={register ? "Register account" : "Log in"}
             size="sm"
             centered
-            button={{
-              onClick: () =>
-                authContext.signIn({
-                  type: "EMAIL",
-                  payload: {
-                    email: inputFields.email,
-                    password: inputFields.password,
-                  },
-                }),
-              bgColor: colors.teal,
-              form: "square",
-            }}
+            button={
+              {
+                onClick: register ? () => authContext.signUp({
+                  email: inputFields.email,
+                  password: inputFields.password,
+                  passwordConfirm: inputFields.passwordConfirm
+                }) :
+                  () =>
+                    authContext.signIn({
+                      type: "EMAIL",
+                      payload: {
+                        email: inputFields.email,
+                        password: inputFields.password,
+                      },
+                    }),
+                bgColor: colors.teal,
+                form: "square",
+                disabled: (() => {
+
+                  const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                  if (
+                    (register ? inputFields.passwordConfirm === inputFields.password : true)
+                    && inputFields.password.length > 5
+                    && res.test(String(inputFields.email).toLowerCase())) return false
+                  return true
+                })()
+              }
+            }
           />
           <View style={{ width: "85%" }}>
-            {!hasLogin && (
+            {!register && (
               <>
                 <TicTacText
                   label="or continue with:"
@@ -149,13 +176,13 @@ const LoginPage = () => {
               </>
             )}
             <TicTacText
-              label={!hasLogin ? "Register with email" : "I have an account"}
+              label={!register ? "Register with email" : "I have an account"}
               style={{ marginVertical: 30 }}
               size="sm"
               centered
               color="white"
               button={{
-                onClick: () => setHasLogin(!hasLogin),
+                onClick: () => setRegister(!register)
               }}
             />
           </View>
