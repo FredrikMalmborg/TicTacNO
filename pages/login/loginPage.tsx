@@ -34,17 +34,15 @@ const LoginPage = () => {
     passwordConfirm: "",
   });
 
-
   const changeInputValue = (anchor: "CLEAR" | string, value?: string) => {
     if (anchor === "CLEAR") {
       setInputFields({
         ...inputFields,
         password: "",
         passwordConfirm: "",
-
-      })
+      });
     } else {
-      clearErrors()
+      clearErrors();
       setInputFields({
         ...inputFields,
         [anchor]: value,
@@ -53,8 +51,8 @@ const LoginPage = () => {
   };
 
   const clearErrors = () => {
-    authContext.setError(null)
-  }
+    authContext.setError(null);
+  };
 
   const style: IStyles = StyleSheet.create({
     section: {
@@ -82,7 +80,7 @@ const LoginPage = () => {
       borderWidth: 3,
       borderColor: colors.red.light,
       backgroundColor: colors.red.dark,
-    }
+    },
   });
 
   return (
@@ -92,12 +90,21 @@ const LoginPage = () => {
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={4} style={[style.section, style.content]}>
-          {user.error && <TicTacText label={(() => {
-            switch (user.error) {
-              case "SIGNIN": return "Login failed"
-              case "SIGNUP": return "Unable to register with this information, please try again."
-            }
-          })()} size={20} centered color={colors.red.light} />}
+          {user.error && (
+            <TicTacText
+              label={(() => {
+                switch (user.error) {
+                  case "SIGNIN":
+                    return "Login failed";
+                  case "SIGNUP":
+                    return "Unable to register with this information, please try again.";
+                }
+              })()}
+              size={20}
+              centered
+              color={colors.red.light}
+            />
+          )}
           <TextInput
             autoCompleteType={"email"}
             style={[style.input, user.error && style.inputError]}
@@ -116,7 +123,11 @@ const LoginPage = () => {
           {register && (
             <TextInput
               secureTextEntry
-              style={[style.input, inputFields.passwordConfirm !== inputFields.password && style.inputError]}
+              style={[
+                style.input,
+                inputFields.passwordConfirm !== inputFields.password &&
+                  style.inputError,
+              ]}
               placeholder="confirm password"
               onChangeText={(text) => changeInputValue("passwordConfirm", text)}
               value={inputFields.passwordConfirm}
@@ -126,38 +137,38 @@ const LoginPage = () => {
             label={register ? "Register account" : "Log in"}
             size="sm"
             centered
-            button={
-              {
-                onClick: () => {
-                  register ?
-                    authContext.signUp({
+            button={{
+              onClick: () => {
+                register
+                  ? authContext.signUp({
                       email: inputFields.email,
                       password: inputFields.password,
-                      passwordConfirm: inputFields.passwordConfirm
+                      passwordConfirm: inputFields.passwordConfirm,
                     })
-
-                    : authContext.signIn({
+                  : authContext.signIn({
                       type: "EMAIL",
                       payload: {
                         email: inputFields.email,
-                        password: inputFields.password
-                      }
-                    })
-                  changeInputValue("CLEAR")
-                }
-                ,
-                bgColor: colors.teal,
-                form: "square",
-                disabled: (() => {
-                  const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                  if (
-                    (register ? inputFields.passwordConfirm === inputFields.password : true)
-                    && inputFields.password.length > 5
-                    && res.test(String(inputFields.email).toLowerCase())) return false
-                  return true
-                })()
-              }
-            }
+                        password: inputFields.password,
+                      },
+                    });
+                changeInputValue("CLEAR");
+              },
+              bgColor: colors.teal,
+              form: "square",
+              disabled: (() => {
+                const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if (
+                  (register
+                    ? inputFields.passwordConfirm === inputFields.password
+                    : true) &&
+                  inputFields.password.length > 5 &&
+                  res.test(String(inputFields.email).toLowerCase())
+                )
+                  return false;
+                return true;
+              })(),
+            }}
           />
           <View style={{ width: "85%" }}>
             {!register && (
@@ -206,9 +217,9 @@ const LoginPage = () => {
               color="white"
               button={{
                 onClick: () => {
-                  clearErrors()
-                  setRegister(!register)
-                }
+                  clearErrors();
+                  setRegister(!register);
+                },
               }}
             />
           </View>

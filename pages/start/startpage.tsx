@@ -63,10 +63,15 @@ const StartPage = ({ navigation }: Props) => {
           <TicTacText title label="profile" size="md" />
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
-          <TicTacText label="Logout" size="sm" button={{
-            onClick: () => authContext.signOut(),
-            form: "round", bgColor: colors.teal
-          }} />
+          <TicTacText
+            label="Logout"
+            size="sm"
+            button={{
+              onClick: () => authContext.signOut(),
+              form: "round",
+              bgColor: colors.teal,
+            }}
+          />
         </Row>
       </Grid>
     </SafeAreaView>

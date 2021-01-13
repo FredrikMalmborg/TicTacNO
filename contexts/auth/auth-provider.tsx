@@ -64,15 +64,18 @@ const AuthProvider: FC = ({ children }) => {
               return emailPromise;
           }
         })();
-        if (result === null) dispatch({ type: "HANDLE_ERROR", error: "SIGNIN" })
+        if (result === null)
+          dispatch({ type: "HANDLE_ERROR", error: "SIGNIN" });
         else dispatch({ type: "SIGN_IN", token: result });
       },
       signOut: async () => {
-        await firebase.auth().signOut()
+        await firebase
+          .auth()
+          .signOut()
           .then(() => {
-            dispatch({ type: "SIGN_OUT" })
+            dispatch({ type: "SIGN_OUT" });
           })
-          .catch((err) => console.log(err))
+          .catch((err) => console.log(err));
       },
       signUp: async (payload: {
         email: string;
@@ -82,17 +85,19 @@ const AuthProvider: FC = ({ children }) => {
         console.log("Sign up ##");
 
         if (payload.password === payload.passwordConfirm) {
-          firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+          firebase
+            .auth()
+            .createUserWithEmailAndPassword(payload.email, payload.password)
             .then((user) => console.log(user))
             .catch((error) => {
               console.log(error);
-              dispatch({ type: "HANDLE_ERROR", error: "SIGNUP" })
+              dispatch({ type: "HANDLE_ERROR", error: "SIGNUP" });
             });
         }
       },
       setError: async (error: TError) => {
-        dispatch({ type: "HANDLE_ERROR", error })
-      }
+        dispatch({ type: "HANDLE_ERROR", error });
+      },
     }),
     []
   );
@@ -169,19 +174,19 @@ const AuthProvider: FC = ({ children }) => {
     email: string;
     password: string;
   }): Promise<string | null> => {
-    return firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+    return firebase
+      .auth()
+      .signInWithEmailAndPassword(payload.email, payload.password)
       .then((user) => {
         if (user && user.user) {
           return user.user.uid;
-        } else
-          return null;
+        } else return null;
       })
       .catch((error) => {
-        const
-          errorCode = error.code,
+        const errorCode = error.code,
           errorMessage = error.message;
         console.log("SIGNIN ERROR : ", errorCode, errorMessage);
-        dispatch({ type: "HANDLE_ERROR", error: "SIGNIN" })
+        dispatch({ type: "HANDLE_ERROR", error: "SIGNIN" });
 
         return null;
       });

@@ -104,12 +104,18 @@ const TicTacText = ({
     return img ? (
       <View style={[SVG_STYLE, props.style]}>{SVG_TEXT}</View>
     ) : (
-        getText()
-      );
+      getText()
+    );
   };
   const getText = () => {
     return (
-      <View style={[title && { width: "100%" }, props.style, button?.disabled && { opacity: .3 }]}>
+      <View
+        style={[
+          title && { width: "100%" },
+          props.style,
+          button?.disabled && { opacity: 0.3 },
+        ]}
+      >
         <Text style={style.text}>{label}</Text>
       </View>
     );
@@ -163,16 +169,14 @@ const TicTacText = ({
       borderRadius: 10,
     },
     disabledButton: {
-      opacity: 0.3
+      opacity: 0.3,
     },
     enabledButton: {
-      opacity: 1
+      opacity: 1,
     },
   });
 
   const content = title ? getImg() : getText();
-
-
 
   return button ? (
     <TouchableOpacity
@@ -180,14 +184,14 @@ const TicTacText = ({
       onPress={() => button.onClick()}
       style={[
         button.form && style.button,
-        button.form === "round" ? style.round : style.square
+        button.form === "round" ? style.round : style.square,
       ]}
     >
       {content}
     </TouchableOpacity>
   ) : (
-      <>{content}</>
-    );
+    <>{content}</>
+  );
 };
 
 export default memo(TicTacText);

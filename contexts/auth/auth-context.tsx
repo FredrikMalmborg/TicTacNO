@@ -1,14 +1,13 @@
 import React from "react";
 import { TSignInAction } from "./auth-provider";
 
-export type TError = "SIGNIN" | "SIGNUP" | null
+export type TError = "SIGNIN" | "SIGNUP" | null;
 export interface IUserState {
   isLoading: boolean;
   error: TError;
   isSignedOut: boolean;
   userToken: string | null;
 }
-
 
 type TReducerAction =
   | { type: "RESTORE"; token: string | null }
@@ -31,7 +30,7 @@ export const userState = (prevState: IUserState, action: TReducerAction) => {
         ...prevState,
         userToken: action.token,
         isLoading: false,
-        error: null
+        error: null,
       };
     case "HANDLE_ERROR":
       return {
@@ -43,7 +42,7 @@ export const userState = (prevState: IUserState, action: TReducerAction) => {
       return {
         ...prevState,
         isLoading: true,
-        error: null
+        error: null,
       };
     case "SIGN_IN":
       return {
@@ -51,28 +50,28 @@ export const userState = (prevState: IUserState, action: TReducerAction) => {
         isLoading: false,
         isSignedOut: false,
         userToken: action.token,
-        error: null
+        error: null,
       };
     case "SIGN_OUT":
       return {
         ...prevState,
         isSignedOut: true,
         userToken: null,
-        error: null
+        error: null,
       };
   }
 };
 
 const AuthContext = React.createContext({
   authContext: {
-    signIn: (action: TSignInAction) => { },
-    signOut: () => { },
+    signIn: (action: TSignInAction) => {},
+    signOut: () => {},
     signUp: (payload: {
       email: string;
       password: string;
       passwordConfirm: string;
-    }) => { },
-    setError: (error: TError) => { },
+    }) => {},
+    setError: (error: TError) => {},
   },
   user: INITIAL_STATE,
 });
