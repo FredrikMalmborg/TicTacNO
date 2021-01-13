@@ -12,17 +12,18 @@ import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
 import colors from "../../constants/colors";
 import { TextInput } from "react-native-gesture-handler";
-import AuthContext from "../../contexts/auth/auth-context";
+import AuthContext, { userState } from "../../contexts/auth/auth-context";
 interface IStyles {
   section: StyleProp<ViewStyle>;
   content: StyleProp<ViewStyle>;
   input: StyleProp<ViewStyle>;
+  inputError: StyleProp<ViewStyle>;
 }
 
 const LoginPage = () => {
-  // const provider = new firebase.auth.GoogleAuthProvider()
-  const [hasLogin, setHasLogin] = useState<boolean>(false);
-  // const [user, setUser] = useState<any>(null);
+  const { authContext, user } = useContext(AuthContext);
+
+  const [register, setRegister] = useState<boolean>(false);
   const [inputFields, setInputFields] = useState<{
     email: string;
     password: string;
@@ -32,13 +33,25 @@ const LoginPage = () => {
     password: "",
     passwordConfirm: "",
   });
-  const { authContext } = useContext(AuthContext);
 
-  const changeInputValue = (anchor: string, value: string) => {
-    setInputFields({
-      ...inputFields,
-      [anchor]: value,
-    });
+  const changeInputValue = (anchor: "CLEAR" | string, value?: string) => {
+    if (anchor === "CLEAR") {
+      setInputFields({
+        ...inputFields,
+        password: "",
+        passwordConfirm: "",
+      });
+    } else {
+      clearErrors();
+      setInputFields({
+        ...inputFields,
+        [anchor]: value,
+      });
+    }
+  };
+
+  const clearErrors = () => {
+    authContext.setError(null);
   };
 
   const style: IStyles = StyleSheet.create({
@@ -55,13 +68,18 @@ const LoginPage = () => {
       height: 40,
       width: "80%",
       maxWidth: 300,
-
       margin: 15,
       paddingHorizontal: 20,
       paddingVertical: 6,
+
       backgroundColor: "#fff",
       elevation: 3,
       borderRadius: 50,
+    },
+    inputError: {
+      borderWidth: 3,
+      borderColor: colors.red.light,
+      backgroundColor: colors.red.dark,
     },
   });
 
@@ -72,45 +90,88 @@ const LoginPage = () => {
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={4} style={[style.section, style.content]}>
+          {user.error && (
+            <TicTacText
+              label={(() => {
+                switch (user.error) {
+                  case "SIGNIN":
+                    return "Login failed";
+                  case "SIGNUP":
+                    return "Unable to register with this information, please try again.";
+                }
+              })()}
+              size={20}
+              centered
+              color={colors.red.light}
+            />
+          )}
           <TextInput
-            style={style.input}
+            autoCompleteType={"email"}
+            style={[style.input, user.error && style.inputError]}
             placeholder="Email-address"
             onChangeText={(text) => changeInputValue("email", text)}
             value={inputFields.email}
           />
           <TextInput
-            style={style.input}
+            autoCompleteType={"password"}
+            secureTextEntry
+            style={[style.input, user.error && style.inputError]}
             placeholder="Password"
             onChangeText={(text) => changeInputValue("password", text)}
             value={inputFields.password}
           />
-          {hasLogin && (
+          {register && (
             <TextInput
-              style={style.input}
-              placeholder="email"
-              onChangeText={(text) => changeInputValue("email", text)}
-              value={inputFields.email}
+              secureTextEntry
+              style={[
+                style.input,
+                inputFields.passwordConfirm !== inputFields.password &&
+                  style.inputError,
+              ]}
+              placeholder="confirm password"
+              onChangeText={(text) => changeInputValue("passwordConfirm", text)}
+              value={inputFields.passwordConfirm}
             />
           )}
           <TicTacText
-            label={hasLogin ? "Register account" : "Log in"}
+            label={register ? "Register account" : "Log in"}
             size="sm"
             centered
             button={{
-              onClick: () =>
-                authContext.signIn({
-                  type: "EMAIL",
-                  payload: {
-                    email: inputFields.email,
-                    password: inputFields.password,
-                  },
-                }),
+              onClick: () => {
+                register
+                  ? authContext.signUp({
+                      email: inputFields.email,
+                      password: inputFields.password,
+                      passwordConfirm: inputFields.passwordConfirm,
+                    })
+                  : authContext.signIn({
+                      type: "EMAIL",
+                      payload: {
+                        email: inputFields.email,
+                        password: inputFields.password,
+                      },
+                    });
+                changeInputValue("CLEAR");
+              },
               bgColor: colors.teal,
               form: "square",
+              disabled: (() => {
+                const res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if (
+                  (register
+                    ? inputFields.passwordConfirm === inputFields.password
+                    : true) &&
+                  inputFields.password.length > 5 &&
+                  res.test(String(inputFields.email).toLowerCase())
+                )
+                  return false;
+                return true;
+              })(),
             }}
           />
           <View style={{ width: "85%" }}>
-            {!hasLogin && (
+            {!register && (
               <>
                 <TicTacText
                   label="or continue with:"
@@ -149,13 +210,16 @@ const LoginPage = () => {
               </>
             )}
             <TicTacText
-              label={!hasLogin ? "Register with email" : "I have an account"}
+              label={!register ? "Register with email" : "I have an account"}
               style={{ marginVertical: 30 }}
               size="sm"
               centered
               color="white"
               button={{
-                onClick: () => setHasLogin(!hasLogin),
+                onClick: () => {
+                  clearErrors();
+                  setRegister(!register);
+                },
               }}
             />
           </View>
