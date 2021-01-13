@@ -17,6 +17,7 @@ import {
 import firebase from "firebase";
 import * as Google from "expo-google-app-auth";
 import * as Facebook from "expo-facebook";
+import AlertAsync from "react-native-alert-async";
 
 const androidClientId = ANDROID_CLIENT_ID;
 const iosClientId = IOS_CLIENT_ID;
@@ -50,8 +51,8 @@ const AuthProvider: FC = ({ children }) => {
   const authContext = useMemo(
     () => ({
       signIn: async (action: TSignInAction) => {
-        dispatch({ type: "LOADING_USER" });
         const result = await (async () => {
+          dispatch({ type: "LOADING_USER" });
           switch (action.type) {
             case "GOOGLE":
               const googlePromise = await signInWithGoogle();
@@ -64,6 +65,30 @@ const AuthProvider: FC = ({ children }) => {
               return emailPromise;
           }
         })();
+        if (result !== null) {
+          dispatch({ type: "SIGN_IN", token: result });
+        } else {
+          dispatch({ type: "SIGN_OUT" });
+        }
+      },
+      setUserName: async (username: string) => {
+        //KAN AWAITAS FÖR ERROR HANTERING
+        const uniqueVal = Math.floor(1000 + Math.random() * 9000);
+        const userRef = firebase.database().ref(`users/${user.userToken}`);
+        userRef.child("username").set(`${username}#${uniqueVal}`);
+        dispatch({ type: "SET_USERNAME" });
+      },
+      signOut: async () => {
+        await firebase
+          .auth()
+          .signOut()
+          .then(() => {
+            dispatch({ type: "SIGN_OUT" });
+          })
+          .catch((e) => console.log(e));
+      },
+      signUp: async (data: any) => {
+        dispatch({ type: "SIGN_IN", token: "dummy" });
         if (result === null)
           dispatch({ type: "HANDLE_ERROR", error: "SIGNIN" });
         else dispatch({ type: "SIGN_IN", token: result });
@@ -151,11 +176,24 @@ const AuthProvider: FC = ({ children }) => {
         const credential = firebase.auth.FacebookAuthProvider.credential(
           result.token
         );
-        console.log(credential);
         const facebookProfileData = await firebase
           .auth()
-          .signInWithCredential(credential);
+          .signInWithCredential(credential)
+          .catch(async (e) => {
+            if (e.code === "auth/account-exists-with-different-credential") {
+              await AlertAsync(
+                "User with email already exists",
+                "User linking is a work in progress; Please use existing account in the meantime.",
+                [{ text: "Ok", onPress: () => Promise.resolve(null) }],
+                {
+                  cancelable: true,
+                  onDismiss: () => Promise.resolve(null),
+                }
+              );
+            }
+          });
         if (facebookProfileData && facebookProfileData.user) {
+          // await checkIfNewUser(facebookProfileData.user.uid);
           return facebookProfileData.user.uid;
         } else {
           return null;
@@ -166,6 +204,23 @@ const AuthProvider: FC = ({ children }) => {
     } catch (e) {
       console.log(e);
       return null;
+    }
+  };
+
+  // Kontrollerar databasen efter användardata
+  // Går att kontrollera om en användare är ny via
+  // "user.additionalUserInfo?.isNewUser"
+  // men förutser problem.
+  const checkIfNewUser = async (userId: string) => {
+    console.log("Checking if new user");
+    const userData = await firebase
+      .database()
+      .ref(`users/${userId}`)
+      .once("value", (snap) => snap.val);
+    if (userData.hasChild("username")) {
+      return Promise.resolve(false);
+    } else {
+      return Promise.resolve(true);
     }
   };
 
@@ -193,18 +248,23 @@ const AuthProvider: FC = ({ children }) => {
   };
 
   useEffect(() => {
-    const bootStrapUserToken = () => {
-      firebase.auth().onAuthStateChanged((user) => {
+    if (user.userToken === null) {
+      firebase.auth().onAuthStateChanged(async (user) => {
         let userToken = null;
         if (user) {
+          const newUser = await checkIfNewUser(user.uid);
+          if (newUser) {
+            dispatch({ type: "NEW_USER" });
+          } else {
+            dispatch({ type: "SET_USERNAME" });
+          }
           userToken = user.uid;
         }
         console.log(userToken);
 
         dispatch({ type: "RESTORE", token: userToken });
       });
-    };
-    bootStrapUserToken();
+    }
   }, []);
 
   return (

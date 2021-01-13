@@ -1,5 +1,4 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import firebase from "firebase";
 import React, { useContext } from "react";
 import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
@@ -24,7 +23,6 @@ interface Props {
 
 const StartPage = ({ navigation }: Props) => {
   const { authContext } = useContext(AuthContext);
-
   const style: IStyles = StyleSheet.create({
     container: {
       flex: 1,
@@ -64,14 +62,16 @@ const StartPage = ({ navigation }: Props) => {
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
           <TicTacText
-            label="Logout"
+            label="Log out"
             size="sm"
+            centered
             button={{
               onClick: () => authContext.signOut(),
-              form: "round",
-              bgColor: colors.teal,
+              bgColor: colors.red,
+              form: "square",
             }}
           />
+          {/* <TicTacText label="About us" size="md" color="white" /> */}
         </Row>
       </Grid>
     </SafeAreaView>
