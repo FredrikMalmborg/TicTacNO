@@ -21,7 +21,8 @@ interface IStyles {
 }
 
 const LoginPage = () => {
-  // const provider = new firebase.auth.GoogleAuthProvider()
+  const { authContext, user } = useContext(AuthContext);
+
   const [register, setRegister] = useState<boolean>(false);
   const [inputFields, setInputFields] = useState<{
     email: string;
@@ -32,35 +33,27 @@ const LoginPage = () => {
     password: "",
     passwordConfirm: "",
   });
-  const [errors, setErrors] = useState<{
-    LOG: boolean;
-    REG: boolean;
-  }>({
-    LOG: false,
-    REG: false,
-  });
-  const { authContext } = useContext(AuthContext);
 
-  const changeInputValue = (anchor: string, value: string) => {
-    clearErrors()
-    setInputFields({
-      ...inputFields,
-      [anchor]: value,
-    });
+
+  const changeInputValue = (anchor: "CLEAR" | string, value?: string) => {
+    if (anchor === "CLEAR") {
+      setInputFields({
+        ...inputFields,
+        password: "",
+        passwordConfirm: "",
+
+      })
+    } else {
+      clearErrors()
+      setInputFields({
+        ...inputFields,
+        [anchor]: value,
+      });
+    }
   };
-  const handleInputErrors = (error: ("LOGIN" | "REGISTER")) => {
-    console.log("handle input error!! ", error);
 
-    setErrors({
-      LOG: error === "LOGIN" ? true : errors.LOG,
-      REG: error === "REGISTER" ? true : errors.REG,
-    })
-  }
   const clearErrors = () => {
-    setErrors({
-      LOG: false,
-      REG: false,
-    })
+    authContext.setError(null)
   }
 
   const style: IStyles = StyleSheet.create({
@@ -99,10 +92,15 @@ const LoginPage = () => {
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={4} style={[style.section, style.content]}>
-          {(errors.LOG || errors.REG) && <TicTacText label={errors.LOG ? "Invalid Login info" : "Invalid Information"} size="sm" centered color={colors.red.light} />}
+          {user.error && <TicTacText label={(() => {
+            switch (user.error) {
+              case "SIGNIN": return "Login failed"
+              case "SIGNUP": return "Unable to register with this information, please try again."
+            }
+          })()} size={20} centered color={colors.red.light} />}
           <TextInput
             autoCompleteType={"email"}
-            style={[style.input, (errors.LOG || errors.REG) && style.inputError]}
+            style={[style.input, user.error && style.inputError]}
             placeholder="Email-address"
             onChangeText={(text) => changeInputValue("email", text)}
             value={inputFields.email}
@@ -110,7 +108,7 @@ const LoginPage = () => {
           <TextInput
             autoCompleteType={"password"}
             secureTextEntry
-            style={[style.input, (errors.LOG || errors.REG) && style.inputError]}
+            style={[style.input, user.error && style.inputError]}
             placeholder="Password"
             onChangeText={(text) => changeInputValue("password", text)}
             value={inputFields.password}
@@ -118,7 +116,7 @@ const LoginPage = () => {
           {register && (
             <TextInput
               secureTextEntry
-              style={[style.input, !(inputFields.passwordConfirm === inputFields.password) && style.inputError]}
+              style={[style.input, inputFields.passwordConfirm !== inputFields.password && style.inputError]}
               placeholder="confirm password"
               onChangeText={(text) => changeInputValue("passwordConfirm", text)}
               value={inputFields.passwordConfirm}
@@ -130,20 +128,23 @@ const LoginPage = () => {
             centered
             button={
               {
-                onClick: register ?
-                  () => authContext.signUp({
-                    email: inputFields.email,
-                    password: inputFields.password,
-                    passwordConfirm: inputFields.passwordConfirm,
-                    errCB: handleInputErrors
-                  }) :
-                  () => authContext.signIn({
-                    type: "EMAIL",
-                    payload: {
+                onClick: () => {
+                  register ?
+                    authContext.signUp({
                       email: inputFields.email,
-                      password: inputFields.password
-                    }
-                  })
+                      password: inputFields.password,
+                      passwordConfirm: inputFields.passwordConfirm
+                    })
+
+                    : authContext.signIn({
+                      type: "EMAIL",
+                      payload: {
+                        email: inputFields.email,
+                        password: inputFields.password
+                      }
+                    })
+                  changeInputValue("CLEAR")
+                }
                 ,
                 bgColor: colors.teal,
                 form: "square",

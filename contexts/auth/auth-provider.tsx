@@ -1,7 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { FC, useEffect, useReducer } from "react";
 import { useMemo } from "react";
-import AuthContext, { INITIAL_STATE, userState } from "./auth-context";
+import AuthContext, { INITIAL_STATE, TError, userState } from "./auth-context";
 import {
   API_KEY,
   AUTH_DOMAIN,
@@ -65,8 +64,8 @@ const AuthProvider: FC = ({ children }) => {
               return emailPromise;
           }
         })();
-        dispatch({ type: "SIGN_IN", token: result });
-        return result
+        if (result === null) dispatch({ type: "HANDLE_ERROR", error: "SIGNIN" })
+        else dispatch({ type: "SIGN_IN", token: result });
       },
       signOut: async () => {
         await firebase.auth().signOut()
@@ -79,16 +78,20 @@ const AuthProvider: FC = ({ children }) => {
         email: string;
         password: string;
         passwordConfirm: string;
-        errCB: (error: "LOGIN" | "REGISTER") => void
       }) => {
+        console.log("Sign up ##");
+
         if (payload.password === payload.passwordConfirm) {
           firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
             .then((user) => console.log(user))
             .catch((error) => {
               console.log(error);
-              payload.errCB("REGISTER")
+              dispatch({ type: "HANDLE_ERROR", error: "SIGNUP" })
             });
         }
+      },
+      setError: async (error: TError) => {
+        dispatch({ type: "HANDLE_ERROR", error })
       }
     }),
     []
@@ -178,6 +181,8 @@ const AuthProvider: FC = ({ children }) => {
           errorCode = error.code,
           errorMessage = error.message;
         console.log("SIGNIN ERROR : ", errorCode, errorMessage);
+        dispatch({ type: "HANDLE_ERROR", error: "SIGNIN" })
+
         return null;
       });
   };
