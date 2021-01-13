@@ -26,29 +26,32 @@ export const forSlide: StackCardStyleInterpolator = ({
     cardStyle: {
       ...Platform.select({
         default: {
-          transform: [{
-            translateX: Animated.multiply(progress.interpolate({
-              inputRange: [0, 1, 2],
-              outputRange: [
-                screen.width,
-                0,
-                screen.width * -1
-              ],
-              extrapolate: "clamp"
-            }), inverted)
-          }]
+          transform: [
+            {
+              translateX: Animated.multiply(
+                progress.interpolate({
+                  inputRange: [0, 1, 2],
+                  outputRange: [screen.width, 0, screen.width * -1],
+                  extrapolate: "clamp",
+                }),
+                inverted
+              ),
+            },
+          ],
         },
         android: {
-          transform: [{
-            scale: Animated.multiply(
-              progress.interpolate({
-                inputRange: [0, 1, 2],
-                outputRange: [0.9, 1, 1.1],
-                extrapolate: "clamp",
-              }),
-              inverted
-            ),
-          }],
+          transform: [
+            {
+              scale: Animated.multiply(
+                progress.interpolate({
+                  inputRange: [0, 1, 2],
+                  outputRange: [0.9, 1, 1.1],
+                  extrapolate: "clamp",
+                }),
+                inverted
+              ),
+            },
+          ],
           opacity: Animated.multiply(
             progress.interpolate({
               inputRange: [0, 1, 2],
@@ -57,8 +60,8 @@ export const forSlide: StackCardStyleInterpolator = ({
             }),
             inverted
           ),
-        }
-      })
+        },
+      }),
     },
   };
 };

@@ -12,8 +12,8 @@ import {
 import AuthProvider from "./contexts/auth/auth-provider";
 
 // To ignore firebase warning temporarily. https://github.com/facebook/react-native/issues/12981
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(["Setting a timer"])
+import { LogBox } from "react-native";
+LogBox.ignoreLogs(["Setting a timer"]);
 
 export default function App() {
   const [fontsLoaded] = useFonts({ FredokaOne_400Regular });
@@ -39,7 +39,6 @@ export default function App() {
       </NavigationContainer>
       <StatusBar style="dark" />
     </View>
-    
   ) : (
     <AppLoading />
   );
