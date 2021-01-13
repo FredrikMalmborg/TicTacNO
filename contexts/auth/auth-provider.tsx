@@ -85,21 +85,6 @@ const AuthProvider: FC = ({ children }) => {
           .then(() => {
             dispatch({ type: "SIGN_OUT" });
           })
-          .catch((e) => console.log(e));
-      },
-      signUp: async (data: any) => {
-        dispatch({ type: "SIGN_IN", token: "dummy" });
-        if (result === null)
-          dispatch({ type: "HANDLE_ERROR", error: "SIGNIN" });
-        else dispatch({ type: "SIGN_IN", token: result });
-      },
-      signOut: async () => {
-        await firebase
-          .auth()
-          .signOut()
-          .then(() => {
-            dispatch({ type: "SIGN_OUT" });
-          })
           .catch((err) => console.log(err));
       },
       signUp: async (payload: {
@@ -110,14 +95,23 @@ const AuthProvider: FC = ({ children }) => {
         console.log("Sign up ##");
 
         if (payload.password === payload.passwordConfirm) {
-          firebase
+          const result = await firebase
             .auth()
             .createUserWithEmailAndPassword(payload.email, payload.password)
-            .then((user) => console.log(user))
+            .then((user) => {
+              if (user && user.user) return user.user.uid
+              return null
+            })
             .catch((error) => {
               console.log(error);
               dispatch({ type: "HANDLE_ERROR", error: "SIGNUP" });
+              return null
             });
+          if (result !== null) {
+            dispatch({ type: "SIGN_IN", token: result });
+          } else {
+            dispatch({ type: "SIGN_OUT" });
+          }
         }
       },
       setError: async (error: TError) => {
