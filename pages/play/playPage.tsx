@@ -46,11 +46,13 @@ const PlayPage = ({ navigation }: Props) => {
     routes: [{ name: "GamePage" }],
   });
 
-  const navigateToStart = () => navigation.navigate(Pages.Start);
+  // const navigateToStart = () => navigation.navigate(Pages.Start);
+  const navigateBack = () => navigation.goBack();
   const navigateToGame = () => {
     navigation.navigate(Pages.Game);
     navigation.dispatch(resetAction);
   };
+  const navigateToHostRoom = () => navigation.navigate(Pages.HostRoom)
 
   return (
     <SafeAreaView style={style.container}>
@@ -65,14 +67,14 @@ const PlayPage = ({ navigation }: Props) => {
             size="md"
             button={{ onClick: navigateToGame }}
           />
-          <TicTacText title label="host" size="md" />
+          <TicTacText title label="host" size="md" button={{ onClick: navigateToHostRoom}} />
           <TicTacText title label="matchmaking" size="md" />
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
           <TicTacText
             label="back"
             size="sm"
-            button={{ onClick: navigateToStart }}
+            button={{ onClick: navigateBack }}
             color="white"
           />
           <TicTacText label="help" size="sm" color="white" />
