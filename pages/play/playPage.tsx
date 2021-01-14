@@ -20,7 +20,7 @@ interface Props {
 }
 
 const PlayPage = ({ navigation }: Props) => {
-  const [modal, setModal] = useState<boolean>(false)
+  const [modal, setModal] = useState<boolean>(false);
   const style: IStyles = StyleSheet.create({
     container: {
       flex: 1,
