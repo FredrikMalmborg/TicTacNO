@@ -46,33 +46,32 @@ const PageNavigator = () => {
           options={pageOptions}
         />
       ) : (
-          <>
-            {user.userToken === null ? (
-              <Stack.Screen name={Pages.Login} component={LoginPage} />
-
-            ) : (
+        <>
+          {user.userToken === null ? (
+            <Stack.Screen name={Pages.Login} component={LoginPage} />
+          ) : (
+            <>
+              {user.newUser ? (
+                <Stack.Screen
+                  name={Pages.InitialSetup}
+                  component={InitialSetup}
+                />
+              ) : (
                 <>
-                  {user.newUser ? (
-                    <Stack.Screen
-                      name={Pages.InitialSetup}
-                      component={InitialSetup}
-                    />
-                  ) : (
-                      <>
-                        <Stack.Screen name={Pages.Start} component={StartPage} />
-                        <Stack.Screen name={Pages.HostRoom} component={HostRoom} />
-                        <Stack.Screen name={Pages.Play} component={PlayPage} />
-                        <Stack.Screen
-                          name={Pages.Game}
-                          component={GamePage}
-                          options={{ gestureEnabled: false }}
-                        />
-                      </>
-                    )}
+                  <Stack.Screen name={Pages.Start} component={StartPage} />
+                  <Stack.Screen name={Pages.HostRoom} component={HostRoom} />
+                  <Stack.Screen name={Pages.Play} component={PlayPage} />
+                  <Stack.Screen
+                    name={Pages.Game}
+                    component={GamePage}
+                    options={{ gestureEnabled: false }}
+                  />
                 </>
               )}
-          </>
-        )}
+            </>
+          )}
+        </>
+      )}
     </Stack.Navigator>
   );
 };

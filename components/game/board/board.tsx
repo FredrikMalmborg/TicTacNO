@@ -4,7 +4,6 @@ import { Grid, Row } from "react-native-easy-grid";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 import { availableCells as ACells, board } from "./DEFAULT_BOARD";
 
-
 const Board = ({ ...props }) => {
   const [gameBoard, setGameBoard] = useState<TCellState[][]>(board);
   // const [availableCells, setAvailableCells] = useState<TCellPos[]>(ACells);
@@ -18,67 +17,68 @@ const Board = ({ ...props }) => {
   // ];
 
   useEffect(() => {
-    console.log(gameBoard.join('\n'));
-  }, [gameBoard])
-
+    console.log(gameBoard.join("\n"));
+  }, [gameBoard]);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
-    const expanded = true
-    let
-      newBoard = [...gameBoard],
-      availableCells = ACells
+    const expanded = true;
+    let newBoard = [...gameBoard],
+      availableCells = ACells;
 
     newBoard[y][x] = state;
 
-
-    const voidedCells: TCellState[] = Array().concat(...gameBoard).filter(x => x === 0);
+    const voidedCells: TCellState[] = Array()
+      .concat(...gameBoard)
+      .filter((x) => x === 0);
 
     if (expanded) {
-      newBoard = addNewLayer([...newBoard])
-      availableCells = getOldAvailableCells(newBoard)
+      newBoard = addNewLayer([...newBoard]);
+      availableCells = getOldAvailableCells(newBoard);
     }
 
-    newBoard = addNewClickableCell(newBoard, availableCells)
+    newBoard = addNewClickableCell(newBoard, availableCells);
 
     setGameBoard(newBoard);
   };
 
+  const getRng = (range: number) => Math.floor(Math.random() * range);
 
-
-
-  const getRng = (range: number) => Math.floor(Math.random() * range)
-
-  const updateValidPositions = (cellPosition: { y: number, x: number }, newBoard: TCellState[][]) => {
-    const omni = [-1, 0, 1]
+  const updateValidPositions = (
+    cellPosition: { y: number; x: number },
+    newBoard: TCellState[][]
+  ) => {
+    const omni = [-1, 0, 1];
     // const array: TCellPos[] = []
 
-    omni.forEach(i => {
-      omni.forEach(j => {
+    omni.forEach((i) => {
+      omni.forEach((j) => {
         if (newBoard[cellPosition.y + i] !== undefined) {
           if (newBoard[cellPosition.y + i][cellPosition.x + j] !== undefined) {
-            if (((i !== 0) || (j !== 0)) && newBoard[cellPosition.y + i][cellPosition.x + j] === 0) {
+            if (
+              (i !== 0 || j !== 0) &&
+              newBoard[cellPosition.y + i][cellPosition.x + j] === 0
+            ) {
               console.log(cellPosition.y + i, cellPosition.x + j);
-              newBoard[cellPosition.y + i][cellPosition.x + j] = 1
+              newBoard[cellPosition.y + i][cellPosition.x + j] = 1;
             }
           }
         }
       });
-
     });
 
-    return newBoard
-  }
+    return newBoard;
+  };
 
   const getOldAvailableCells = (B: TCellState[][]) => {
-    const potentialCells: any[] = []
+    const potentialCells: any[] = [];
     B.forEach((Y, y) => {
       Y.forEach((_, x) => {
-        if (B[y][x] === 1) potentialCells.push({ y, x })
+        if (B[y][x] === 1) potentialCells.push({ y, x });
       });
     });
 
-    return potentialCells
-  }
+    return potentialCells;
+  };
 
   // const checkForNewAvailableCells = (newCell: { y: number, x: number }) => {
   //   const potentialNewCells: any = checkValidPosition(newCell, true)
@@ -102,44 +102,43 @@ const Board = ({ ...props }) => {
   //   return availableCells
   // }
 
-  const addNewClickableCell = (newBoard: TCellState[][], availableCells: TCellPos[]) => {
-    const newCell = availableCells[getRng(availableCells.length)]
+  const addNewClickableCell = (
+    newBoard: TCellState[][],
+    availableCells: TCellPos[]
+  ) => {
+    const newCell = availableCells[getRng(availableCells.length)];
     console.log("newcell :", newCell.y, newCell.x);
-    newBoard[newCell.y][newCell.x] = 2
+    newBoard[newCell.y][newCell.x] = 2;
 
-    const newCellLocations = updateValidPositions(newCell, newBoard)
-    return newCellLocations
-  }
+    const newCellLocations = updateValidPositions(newCell, newBoard);
+    return newCellLocations;
+  };
 
   const addNewLayer = (newBoard: TCellState[][]) => {
-
     console.log("EXPAND");
-    const layer: TCellState[] = []
+    const layer: TCellState[] = [];
     for (let i = 0; i < gameBoard.length; i++) {
-      layer.push(0)
+      layer.push(0);
     }
-    newBoard.push(layer)
-    newBoard.unshift(layer)
+    newBoard.push(layer);
+    newBoard.unshift(layer);
 
     newBoard.forEach((row: number[]) => {
       if (row.length !== newBoard.length) {
         if (row.length === 0) {
           for (let i = 0; i < newBoard.length; i++) {
-            row.push(0)
+            row.push(0);
           }
         } else {
-          row.push(0)
-          row.unshift(0)
+          row.push(0);
+          row.unshift(0);
         }
       }
-    }
-    )
+    });
     console.log("OLD", getOldAvailableCells(newBoard));
 
-    return newBoard
-  }
-
-
+    return newBoard;
+  };
 
   return (
     <>
@@ -151,7 +150,7 @@ const Board = ({ ...props }) => {
         }}
       >
         {[...gameBoard].map((row, rowIndex) => (
-          < Row style={{ height: 58 }} key={`row-${rowIndex}`}>
+          <Row style={{ height: 58 }} key={`row-${rowIndex}`}>
             {row.map((col, colIndex) => (
               <Cell
                 click={onClickCell}

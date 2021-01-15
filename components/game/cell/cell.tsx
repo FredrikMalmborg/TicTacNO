@@ -82,7 +82,12 @@ const Cell = ({ state, pos, ...props }: ICellProps) => {
     >
       <Col style={[style.cell, state !== 0 && style[state]]} {...props}>
         {/* <TicTacText centered color="#fff" size="sm" label={(state === 3 && "X") || (state === 4 && "O") || ""} /> */}
-        <TicTacText centered color="#000" size={10} label={`${pos.y}:${pos.x}`} />
+        <TicTacText
+          centered
+          color="#000"
+          size={10}
+          label={`${pos.y}:${pos.x}`}
+        />
       </Col>
     </TouchableOpacity>
   );
