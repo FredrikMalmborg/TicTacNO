@@ -61,7 +61,7 @@ const JoinRoom: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
                 centered
                 button={{
                   onClick: () => {
-                    setVisible(!modalVisible)
+                    setVisible(!modalVisible);
                   },
                   bgColor: colors.red,
                   form: "square",
