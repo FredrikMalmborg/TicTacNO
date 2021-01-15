@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { firebase } from "../constants/firebase";
 
 const INITIAL_STATE: IJoinState = {
@@ -13,22 +13,52 @@ interface IJoinState {
   success: boolean;
 }
 
+type TReducerAction =
+  | { type: "ERROR"; message: string | false }
+  | { type: "LOADING"; isLoading: boolean }
+  | { type: "SUCCESS" };
+
+const joinState = (prevState: IJoinState, action: TReducerAction) => {
+  switch (action.type) {
+    case "ERROR": {
+      return {
+        ...prevState,
+        errorMsg: action.message,
+        success: false,
+      };
+    }
+    case "LOADING": {
+      return {
+        ...prevState,
+        loading: action.isLoading,
+      };
+    }
+    case "SUCCESS": {
+      return {
+        ...prevState,
+        errorMsg: false,
+        success: true,
+      } as IJoinState;
+    }
+  }
+};
+
 const useJoinRoom = (roomId: string) => {
-  const [joinState, setJoinState] = useState<IJoinState>(INITIAL_STATE);
+  const [join, dispatch] = useReducer(joinState, INITIAL_STATE);
 
   useEffect(() => {
-    if (joinState.errorMsg) {
+    if (join.errorMsg) {
       setTimeout(() => {
-        setJoinState((prevState) => ({ ...prevState, errorMsg: false }));
-      }, 3000);
+        dispatch({ type: "ERROR", message: false });
+      }, 4000);
     }
-  }, [joinState.errorMsg]);
+  }, [join.errorMsg]);
 
-  const joinRoom = useCallback(() => {
+  const joinRoom = useCallback(async () => {
     const roomsRef = firebase.database().ref("rooms");
+    dispatch({ type: "LOADING", isLoading: true });
     try {
-      setJoinState((prevState) => ({ ...prevState, loading: true }));
-      roomsRef.once("value", (snapshot) => {
+      await roomsRef.once("value", (snapshot) => {
         let foundRoom = false;
         snapshot.forEach((room) => {
           const roomLookup = room.child("rid").val();
@@ -36,10 +66,7 @@ const useJoinRoom = (roomId: string) => {
             foundRoom = true;
             const user = firebase.auth().currentUser?.uid;
             if (!user) {
-              setJoinState((prevState) => ({
-                ...prevState,
-                errorMsg: "Couldn't load user",
-              }));
+              dispatch({ type: "ERROR", message: "Couldn't load user" });
             } else {
               firebase
                 .database()
@@ -54,41 +81,29 @@ const useJoinRoom = (roomId: string) => {
                     .child("player2")
                     .set({ displayName: username, id: user })
                     .then(() => {
-                      setJoinState((prevState) => ({
-                        ...prevState,
-                        success: true,
-                      }));
+                      dispatch({ type: "SUCCESS" });
                     });
                 });
             }
-            // const roomID = room.child("rid").val();
           }
         });
         if (!foundRoom) {
-          setJoinState((prevState) => ({
-            ...prevState,
-            errorMsg: "Found no room",
-          }));
+          dispatch({ type: "ERROR", message: "Found no room" });
         }
       });
     } catch (e) {
-      setJoinState((prevState) => ({
-        ...prevState,
-        errorMsg: "Couldn't connect to the internet",
-      }));
+      dispatch({ type: "ERROR", message: "Couldn't connect to internet" });
     } finally {
-      setJoinState((prevState) => ({
-        ...prevState,
-        loading: false,
-      }));
+      console.log("finally");
+
+      dispatch({ type: "LOADING", isLoading: false });
     }
     return () => {
       roomsRef.off("value");
-      setJoinState(INITIAL_STATE);
     };
   }, [roomId]);
 
-  return { joinState, joinRoom };
+  return { join, joinRoom };
 };
 
 export default useJoinRoom;

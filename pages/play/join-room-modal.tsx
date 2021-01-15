@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import {
   Modal,
-  Alert,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -19,20 +18,18 @@ interface IProps {
 
 const JoinRoom: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
   const [roomId, setRoomId] = useState<string>("");
-  const { joinState, joinRoom } = useJoinRoom(roomId);
+  const { join, joinRoom } = useJoinRoom(roomId);
 
   useEffect(() => {
-    console.log(joinState);
-  }, [joinState]);
+    console.log(join);
+  }, [join]);
 
   return (
     <Modal
       animationType="fade"
       transparent={true}
       visible={modalVisible}
-      onRequestClose={() => {
-        Alert.alert("Modal has been closed.");
-      }}
+      onRequestClose={() => setVisible(!modalVisible)}
     >
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.centeredView}>
@@ -63,7 +60,9 @@ const JoinRoom: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
                 size="sm"
                 centered
                 button={{
-                  onClick: () => setVisible(!modalVisible),
+                  onClick: () => {
+                    setVisible(!modalVisible)
+                  },
                   bgColor: colors.red,
                   form: "square",
                 }}
