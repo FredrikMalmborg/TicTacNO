@@ -38,7 +38,7 @@ const PageNavigator = () => {
   const { user } = useContext(AuthContext);
 
   return (
-    <Stack.Navigator initialRouteName={Pages.Login} screenOptions={pageOptions}>
+    <Stack.Navigator initialRouteName={Pages.Game} screenOptions={pageOptions}>
       {user.isLoading ? (
         <Stack.Screen
           name={Pages.Splash}
@@ -46,32 +46,33 @@ const PageNavigator = () => {
           options={pageOptions}
         />
       ) : (
-        <>
-          {user.userToken === null ? (
-            <Stack.Screen name={Pages.Login} component={LoginPage} />
-          ) : (
-            <>
-              {user.newUser ? (
-                <Stack.Screen
-                  name={Pages.InitialSetup}
-                  component={InitialSetup}
-                />
-              ) : (
+          <>
+            {user.userToken === null ? (
+              <Stack.Screen name={Pages.Login} component={LoginPage} />
+
+            ) : (
                 <>
-                  <Stack.Screen name={Pages.Start} component={StartPage} />
-                  <Stack.Screen name={Pages.HostRoom} component={HostRoom} />
-                  <Stack.Screen name={Pages.Play} component={PlayPage} />
-                  <Stack.Screen
-                    name={Pages.Game}
-                    component={GamePage}
-                    options={{ gestureEnabled: false }}
-                  />
+                  {user.newUser ? (
+                    <Stack.Screen
+                      name={Pages.InitialSetup}
+                      component={InitialSetup}
+                    />
+                  ) : (
+                      <>
+                        <Stack.Screen name={Pages.Start} component={StartPage} />
+                        <Stack.Screen name={Pages.HostRoom} component={HostRoom} />
+                        <Stack.Screen name={Pages.Play} component={PlayPage} />
+                        <Stack.Screen
+                          name={Pages.Game}
+                          component={GamePage}
+                          options={{ gestureEnabled: false }}
+                        />
+                      </>
+                    )}
                 </>
               )}
-            </>
-          )}
-        </>
-      )}
+          </>
+        )}
     </Stack.Navigator>
   );
 };
