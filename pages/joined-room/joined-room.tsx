@@ -1,5 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useContext, useEffect } from "react";
+// import { firebase } from "../../constants/firebase";
+import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   StyleProp,
@@ -10,8 +11,12 @@ import {
 import { Grid, Row } from "react-native-easy-grid";
 import TicTacText from "../../components/text/Text";
 import colors from "../../constants/colors";
+import RoomContext, { INITIAL_ROOM } from "../../contexts/room/room-context";
+// import AuthContext, { INITIAL_STATE } from "../../contexts/auth/auth-context";
 import { StackParamlist } from "../page-navigation/PageNavigator";
-import RoomContext from "../../contexts/room/room-context";
+import GameInfoModal from "./game-info-modal";
+// import useRoomStatus from "../../hooks/useRoomStatus";
+// import useRoomActions from "../../hooks/useRoomActions";
 
 interface IStyles {
   container: StyleProp<ViewStyle>;
@@ -22,16 +27,28 @@ interface IStyles {
   bottom: StyleProp<ViewStyle>;
 }
 interface Props {
+  roomKey: string;
   navigation: StackNavigationProp<StackParamlist>;
 }
 
-const HostRoom = ({ navigation }: Props) => {
+const JoinedRoom = ({ navigation }: Props) => {
   const { room, roomContext } = useContext(RoomContext);
+  const [modal, setModal] = useState<boolean>(false);
 
   useEffect(() => {
-    roomContext.hostRoom();
-    return () => roomContext.destroyRoom();
-  }, []);
+    if (room === INITIAL_ROOM) {
+      setModal(true);
+      setTimeout(() => {
+        setModal(false);
+        navigation.goBack();
+      }, 3000);
+    }
+  }, [room]);
+
+  const exitRoom = () => {
+    roomContext.leaveRoom();
+    navigation.goBack();
+  };
 
   const style: IStyles = StyleSheet.create({
     container: {
@@ -59,26 +76,11 @@ const HostRoom = ({ navigation }: Props) => {
     },
   });
 
-  const cancelRoom = () => {
-    navigation.goBack();
-  };
-
-  const gameIsReady: boolean =
-    room.player1 &&
-    room.player1 !== null &&
-    room.player2 &&
-    room.player2 !== null
-      ? true
-      : false;
-  const gameStatus: string = gameIsReady
-    ? "Game is ready"
-    : "Game is not ready";
-
   return (
     <SafeAreaView style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
-        <Row size={1} style={[style.section, style.top]}>
-          <TicTacText title label="Your room" centered size="md" />
+        <Row size={2} style={[style.section, style.top]}>
+          <TicTacText title label="Joined room" centered size="md" />
         </Row>
         <Row size={4} style={[style.section, style.roomData]}>
           {room && (
@@ -110,36 +112,23 @@ const HostRoom = ({ navigation }: Props) => {
               </View>
             </>
           )}
-          <View style={style.content}>
-            <TicTacText title label={gameStatus} centered size="sm" />
-            <TicTacText
-              label="Start game"
-              size={40}
-              centered
-              button={{
-                onClick: cancelRoom,
-                bgColor: colors.teal,
-                form: "square",
-                disabled: !gameIsReady,
-              }}
-            />
-          </View>
         </Row>
         <Row size={2} style={[style.section, style.bottom]}>
           <TicTacText
-            label="Cancel room"
+            label="Leave room"
             size="sm"
             centered
             button={{
-              onClick: cancelRoom,
+              onClick: exitRoom,
               bgColor: colors.red,
               form: "square",
             }}
           />
         </Row>
       </Grid>
+      <GameInfoModal modalVisible={modal} setVisible={setModal} />
     </SafeAreaView>
   );
 };
 
-export default HostRoom;
+export default JoinedRoom;

@@ -1,12 +1,13 @@
 import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 import TicTacText from "../../components/text/Text";
 import { StackParamlist } from "../page-navigation/PageNavigator";
 
 import { Pages } from "../pages";
+import JoinRoom from "./join-room-modal";
 
 interface IStyles {
   container: StyleProp<ViewStyle>;
@@ -15,10 +16,11 @@ interface IStyles {
   bottom: StyleProp<ViewStyle>;
 }
 interface Props {
-  navigation: StackNavigationProp<StackParamlist, "PlayPage">;
+  navigation: StackNavigationProp<StackParamlist>;
 }
 
 const PlayPage = ({ navigation }: Props) => {
+  const [modal, setModal] = useState<boolean>(false);
   const style: IStyles = StyleSheet.create({
     container: {
       flex: 1,
@@ -45,8 +47,6 @@ const PlayPage = ({ navigation }: Props) => {
     index: 0,
     routes: [{ name: "GamePage" }],
   });
-
-  // const navigateToStart = () => navigation.navigate(Pages.Start);
   const navigateBack = () => navigation.goBack();
   const navigateToGame = () => {
     navigation.navigate(Pages.Game);
@@ -65,7 +65,7 @@ const PlayPage = ({ navigation }: Props) => {
             title
             label="join"
             size="md"
-            button={{ onClick: navigateToGame }}
+            button={{ onClick: () => setModal(!modal) }}
           />
           <TicTacText
             title
@@ -85,6 +85,11 @@ const PlayPage = ({ navigation }: Props) => {
           <TicTacText label="help" size="sm" color="white" />
         </Row>
       </Grid>
+      <JoinRoom
+        modalVisible={modal}
+        setVisible={setModal}
+        navigation={navigation}
+      />
     </SafeAreaView>
   );
 };

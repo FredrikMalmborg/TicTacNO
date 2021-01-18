@@ -114,6 +114,8 @@ const InitialSetup = ({ navigation }: Props) => {
               centered
               button={{
                 onClick: () => authContext.setUserName(username.value),
+                disabled:
+                  username.value.length < 3 || username.value.length > 12,
                 bgColor: colors.teal,
                 form: "square",
               }}
