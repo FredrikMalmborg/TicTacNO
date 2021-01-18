@@ -33,12 +33,6 @@ export const gameState = (prevState: IGameState, action: TReducerAction) => {
 
             if (action.payload.remove) updated.splice(updated.indexOf(action.payload.remove), 1, ...action.payload.add)
             else updated.push(...action.payload.add)
-            const x: string[] = []
-            updated.forEach(c => {
-                x.push(`y:${c.y} x:${c.x}`)
-            });
-            console.log("UPDATED : ", x.length, x);
-
 
             return {
                 ...prevState,
@@ -46,11 +40,8 @@ export const gameState = (prevState: IGameState, action: TReducerAction) => {
             } as IGameState;
 
         case "REMOVE_AVAILABLECELL":
-            console.log("REMOVEING", action.cell);
-
             let updatedRemove = [...prevState.availableCells]
             if (action.cell) updatedRemove.splice(prevState.availableCells.indexOf(action.cell), 1)
-            console.log("after remove", updatedRemove);
 
             return {
                 ...prevState,
@@ -58,10 +49,9 @@ export const gameState = (prevState: IGameState, action: TReducerAction) => {
             } as IGameState;
 
         case "ADD_AVAILABLECELLS":
-            console.log("ADDING", action.cells);
-
             let updatedAdd = [...prevState.availableCells]
             if (action.cells) updatedAdd.push(...action.cells)
+
             return {
                 ...prevState,
                 availableCells: updatedAdd
@@ -74,9 +64,12 @@ export const gameState = (prevState: IGameState, action: TReducerAction) => {
             } as IGameState;
 
         case "UPDATE_BOARD":
+            const updatedBoard = [...action.updatedBoard]
+            console.log("DISPATCHED : \n\n", updatedBoard.join("\n"));
+
             return {
                 ...prevState,
-                board: action.updatedBoard
+                board: updatedBoard
             } as IGameState
     }
 };

@@ -30,15 +30,15 @@ interface ICellStyles {
 const Cell = ({ state, pos, ...props }: ICellProps) => {
   const style: ICellStyles = StyleSheet.create({
     container: {
-      width: 60,
-      height: 60,
+      width: 40,
+      height: 40,
     },
     cell: {
       justifyContent: "center",
       alignItems: "center",
       fontFamily: "FredokaOne_400Regular",
-      margin: 4,
-      borderRadius: 10,
+      margin: 1,
+      borderRadius: 5,
       borderWidth: 0,
       minWidth: 20,
       minHeight: 20,

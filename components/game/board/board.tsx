@@ -4,28 +4,26 @@ import { gameState, INITIAL_GAME_STATE } from "./gameController";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 import { availableCells as ACells, board } from "./DEFAULT_BOARD";
 import cell from "../cell/cell";
+import { idText } from "typescript";
 
 const Board = () => {
 
   const [game, dispatch] = useReducer(gameState, INITIAL_GAME_STATE);
 
-  const [gameBoard, setGameBoard] = useState<TCellState[][]>(board);
-
   useEffect(() => {
-    // console.log(game.board.join("\n"));
-    // console.log("Ammount of available cells : ", game.availableCells.length);
-    // const x: string[] = []
-    // game.availableCells.forEach(c => {
-    //   x.push(`y:${c.y} x:${c.x}`)
-    // });
-    // console.log(x);
+    game.board.join("\n")
+    const x: any = []
+    game.availableCells.forEach(c => {
+      x.push(`y:${c.y} x:${c.x}`)
+    });
+    console.log("Available Cells :", x.length, x);
 
-  }, [game.board, game.availableCells]);
+  }, [game.board]);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
     let
       newBoard = [...game.board],
-      expanded = false;
+      expand = false;
 
     newBoard[y][x] = state;
     console.log("CLICKED : ", y, x);
@@ -34,15 +32,19 @@ const Board = () => {
 
     const voidedCells: TCellState[] = Array()
       .concat(...game.board)
-      .filter((x) => x === 0);
+      .filter((x) => x === 0 || x === 1);
 
-    if (expanded) {
+    const ratio = voidedCells.length / Math.pow(game.board.length, 2);
+
+
+    if (ratio < 0.5) expand = true
+
+    if (expand) {
       addNewLayer([...newBoard]);
-      getAllAvailableCells(newBoard);
+    } else {
+      addNewClickableCell([...newBoard]);
     }
 
-
-    addNewClickableCell(newBoard);
   };
 
   const checkWin = (board: TCellState[][], click: TCellPos) => {
@@ -83,7 +85,7 @@ const Board = () => {
   const getRng = (range: number) => Math.floor(Math.random() * range);
 
   const updateValidPositions = (
-    cellPosition: TCellPos,
+    newCell: TCellPos,
     newBoard: TCellState[][]
   ) => {
     const omni = [-1, 0, 1];
@@ -91,15 +93,15 @@ const Board = () => {
 
     omni.forEach((i) => {
       omni.forEach((j) => {
-        if (newBoard[cellPosition.y + i] !== undefined) {
-          if (newBoard[cellPosition.y + i][cellPosition.x + j] !== undefined) {
+        if (newBoard[newCell.y + i] !== undefined) {
+          if (newBoard[newCell.y + i][newCell.x + j] !== undefined) {
             if (
               (i !== 0 || j !== 0) &&
-              newBoard[cellPosition.y + i][cellPosition.x + j] === 0
+              newBoard[newCell.y + i][newCell.x + j] === 0
             ) {
-              // console.log(cellPosition.y + i, cellPosition.x + j);
-              newBoard[cellPosition.y + i][cellPosition.x + j] = 1;
-              newCells.push({ y: cellPosition.y + i, x: cellPosition.x + j })
+              console.log(newCell.y + i, newCell.x + j);
+              newBoard[newCell.y + i][newCell.x + j] = 1;
+              newCells.push({ y: newCell.y + i, x: newCell.x + j })
             }
           }
         }
@@ -111,11 +113,13 @@ const Board = () => {
       x.push(`y:${c.y} x:${c.x}`)
     });
 
-    console.log("NewCell :", `y:${cellPosition.y} x:${cellPosition.x}`);
+    console.log("NewCell :", `y:${newCell.y} x:${newCell.x}`);
     console.log("NewCells : ", x.length, x);
 
+    dispatch({ type: "UPDATE_AVAILABLECELLS", payload: { add: newCells, remove: newCell } })
+    // dispatch({ type: "REMOVE_AVAILABLECELL", cell: cellPosition })
+    // dispatch({ type: "ADD_AVAILABLECELLS", cells: newCells })
 
-    dispatch({ type: "UPDATE_AVAILABLECELLS", payload: { add: newCells, remove: cellPosition } })
     dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard })
   };
 
@@ -133,19 +137,9 @@ const Board = () => {
     return cells;
   };
 
-  const addNewClickableCell = (
-    newBoard: TCellState[][]
-  ) => {
-    console.log(game.board.join("\n"));
-    console.log("Ammount of available cells : ", game.availableCells.length);
-    const x: string[] = []
-    game.availableCells.forEach(c => {
-      x.push(`y:${c.y} x:${c.x}`)
-    });
-    console.log(x.length, x);
+  const addNewClickableCell = (newBoard: TCellState[][], altCells?: TCellPos[]) => {
+    const newCell = altCells ? altCells[getRng(altCells.length)] : game.availableCells[getRng(game.availableCells.length)];
 
-
-    const newCell = game.availableCells[getRng(game.availableCells.length)];
     newBoard[newCell.y][newCell.x] = 2;
 
     updateValidPositions(newCell, newBoard);
@@ -173,7 +167,18 @@ const Board = () => {
       }
     });
 
-    dispatch({ type: "UPDATE_BOARD", updatedBoard })
+    console.log(updatedBoard.join("\n"));
+
+    const cells = getAllAvailableCells(updatedBoard);
+    const x: string[] = []
+    cells.forEach(c => {
+      x.push(`y:${c.y} x:${c.x}`)
+    });
+
+    console.log("newly fetched CELLS : ", x.length, x);
+
+    if (cells) addNewClickableCell(updatedBoard, cells)
+    if (updatedBoard.length === updatedBoard[0].length) dispatch({ type: "UPDATE_BOARD", updatedBoard })
     // return updatedBoard;
   };
 
@@ -186,7 +191,7 @@ const Board = () => {
       }}
     >
       {[...game.board].map((row, rowIndex) => (
-        <Row style={{ height: 58 }} key={`row-${rowIndex}`}>
+        <Row style={{ height: 40 }} key={`row-${rowIndex}`}>
           {row.map((col, colIndex) => (
             <Cell
               click={onClickCell}
