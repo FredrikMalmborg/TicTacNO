@@ -16,25 +16,28 @@ const RoomProvider: FC = ({ children }) => {
   const [room, setRoom] = useState<IRoomState>(INITIAL_ROOM);
   const roomsRef = firebase.database().ref("rooms");
   const hostRoomRef = roomsRef.push();
-  const user = firebase.auth().currentUser?.uid;
-  const userRef = firebase.database().ref(`users/${user}`);
 
   const roomContext = useMemo(
     () => ({
       hostRoom: async () => {
         const roomId = Math.random().toString(36).substr(2, 5);
-        const username = await findUsername();
-        hostRoomRef.set({
-          ...INITIAL_ROOM,
-          player1: { id: user, displayName: username },
-          rid: roomId,
-        });
-        hostRoomRef.on("value", (room) => {
-          const data = room.val();
-          if (data) {
-            setRoom(data);
+        const user = firebase.auth().currentUser?.uid;
+        if (user) {
+          const username = await findUsername(user);
+          if (username !== undefined) {
+            hostRoomRef.set({
+              ...INITIAL_ROOM,
+              player1: { id: user, displayName: username },
+              rid: roomId,
+            });
+            hostRoomRef.on("value", (room) => {
+              const data = room.val();
+              if (data) {
+                setRoom(data);
+              }
+            });
           }
-        });
+        }
       },
       destroyRoom: () => {
         hostRoomRef.off();
@@ -48,24 +51,27 @@ const RoomProvider: FC = ({ children }) => {
         try {
           const foundRoom = await findRoomById(roomId);
           if (foundRoom) {
-            const username = await findUsername();
-            const addPlayer = await foundRoom.ref
-              .child("player2")
-              .set({ displayName: username, id: user })
-              .catch(() => false)
-              .then(() => true);
-            if (addPlayer) {
-              success = true;
-              roomKeyId = foundRoom.key;
-              foundRoom.ref.on("value", (room) => {
-                const data = room.val();
-                if (data) {
-                  setRoom(data);
-                }
-              });
-              foundRoom.ref.on("child_removed", (room) => {
-                setRoom(INITIAL_ROOM);
-              });
+            const user = firebase.auth().currentUser?.uid;
+            if (user) {
+              const username = await findUsername(user);
+              const addPlayer = await foundRoom.ref
+                .child("player2")
+                .set({ displayName: username, id: user })
+                .catch(() => false)
+                .then(() => true);
+              if (addPlayer) {
+                success = true;
+                roomKeyId = foundRoom.key;
+                foundRoom.ref.on("value", (room) => {
+                  const data = room.val();
+                  if (data) {
+                    setRoom(data);
+                  }
+                });
+                foundRoom.ref.on("child_removed", (room) => {
+                  setRoom(INITIAL_ROOM);
+                });
+              }
             }
           }
         } catch (e) {
@@ -155,7 +161,8 @@ const RoomProvider: FC = ({ children }) => {
     return room;
   };
 
-  const findUsername = async (): Promise<string> => {
+  const findUsername = async (user: string): Promise<string> => {
+    const userRef = firebase.database().ref(`users/${user}`);
     const username = await userRef
       .once("value")
       .then(
