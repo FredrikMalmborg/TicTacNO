@@ -23,7 +23,9 @@ export type StackParamlist = {
   [Pages.Login]: undefined;
   [Pages.Splash]: undefined;
   [Pages.InitialSetup]: undefined;
-  [Pages.PreGameRoom]: { condition: "RECON-JOIN" | "JOIN" | "RECON-HOST" | "HOST" };
+  [Pages.PreGameRoom]: {
+    condition: "RECON-JOIN" | "JOIN" | "RECON-HOST" | "HOST";
+  };
 };
 
 const PageNavigator = () => {
@@ -59,7 +61,10 @@ const PageNavigator = () => {
               ) : (
                 <>
                   <Stack.Screen name={Pages.Start} component={StartPage} />
-                  <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} />
+                  <Stack.Screen
+                    name={Pages.PreGameRoom}
+                    component={PreGameRoom}
+                  />
                   <Stack.Screen name={Pages.Play} component={PlayPage} />
                   <Stack.Screen
                     name={Pages.Game}

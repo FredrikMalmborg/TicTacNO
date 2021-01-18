@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from "react";
+import React, { FC, useEffect, useMemo, useReducer, useState } from "react";
 import RoomContext, {
   INITIAL_ROOM,
   INITIAL_ROOM_STATUS,
@@ -46,10 +40,10 @@ const RoomProvider: FC = ({ children }) => {
         }
       },
       destroyRoom: async () => {
-        const room = await findRoomByUser()
+        const room = await findRoomByUser();
         if (room) {
-          room.ref.off()
-          room.ref.remove()
+          room.ref.off();
+          room.ref.remove();
           setRoom(INITIAL_ROOM);
         }
       },
@@ -118,9 +112,9 @@ const RoomProvider: FC = ({ children }) => {
       },
       reconnectToOngoing: (room: fb.database.DataSnapshot) => {
         room.ref.on("value", (room) => {
-          const data = room.val()
+          const data = room.val();
           if (data) {
-            setRoom(data)
+            setRoom(data);
           }
         });
       },

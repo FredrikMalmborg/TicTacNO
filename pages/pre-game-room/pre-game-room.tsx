@@ -45,7 +45,7 @@ const PreGameRoom = ({ navigation, route }: Props) => {
 
       if (condition === "HOST" || condition === "RECON-HOST") {
         console.log("DESTROY");
-        
+
         roomContext.destroyRoom();
       }
     };
