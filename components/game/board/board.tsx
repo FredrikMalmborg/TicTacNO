@@ -1,46 +1,44 @@
 import React, { memo, useEffect, useMemo, useReducer, useState } from "react";
-import { Button } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 import { gameState, INITIAL_GAME_STATE } from "./gameController";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 import { availableCells as ACells, board } from "./DEFAULT_BOARD";
 
 const Board = () => {
+
   const [game, dispatch] = useReducer(gameState, INITIAL_GAME_STATE);
 
   const [gameBoard, setGameBoard] = useState<TCellState[][]>(board);
-
-  const [center, setCenter] = useState<TCellPos>({ y: 3, x: 3 });
   const [winnerStatus, setWinnerStatus] = useState<false | { winner: string }>(false);
 
   useEffect(() => {
-    console.log(gameBoard.join("\n"));
-  }, [gameBoard]);
+    console.log(game.board.join("\n"));
+    console.log(game.availableCells.length);
+
+  }, [game.board]);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
     let
-      newBoard = [...gameBoard],
-      availableCells = ACells,
+      newBoard = [...game.board],
       expanded = false;
 
-
     newBoard[y][x] = state;
-    checkWin(newBoard, { y, x })
+    console.log("CLICKED : ", y, x);
+
+    // checkWin(newBoard, { y, x })
 
     const voidedCells: TCellState[] = Array()
       .concat(...gameBoard)
       .filter((x) => x === 0);
 
     if (expanded) {
-      newBoard = addNewLayer([...newBoard]);
-      availableCells = getAllAvailableCells(newBoard);
+      addNewLayer([...newBoard]);
+      getAllAvailableCells(newBoard);
     }
 
-    const { AC, NB } = addNewClickableCell(newBoard, availableCells);
-    newBoard = NB
-    availableCells = AC
 
-    setGameBoard(newBoard);
+    addNewClickableCell(newBoard);
+
   };
 
   const checkWin = (board: TCellState[][], click: TCellPos) => {
@@ -82,8 +80,7 @@ const Board = () => {
 
   const updateValidPositions = (
     cellPosition: TCellPos,
-    newBoard: TCellState[][],
-    availableCells: TCellPos[]
+    newBoard: TCellState[][]
   ) => {
     const omni = [-1, 0, 1];
     const newCells: TCellPos[] = []
@@ -105,20 +102,23 @@ const Board = () => {
       });
     });
 
-    availableCells.splice(availableCells.indexOf(cellPosition), 1, ...newCells)
+    dispatch({ type: "REMOVE_AVAILABLECELL", cell: cellPosition })
+    dispatch({ type: "ADD_AVAILABLECELLS", cells: newCells })
+    dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard })
 
-    return { NB: newBoard, AC: availableCells };
   };
 
   const getAllAvailableCells = (B: TCellState[][]) => {
-    const potentialCells: any[] = [];
+    game.board
+    const cells: any[] = [];
     B.forEach((Y, y) => {
       Y.forEach((_, x) => {
-        if (B[y][x] === 1) potentialCells.push({ y, x });
+        if (B[y][x] === 1) cells.push({ y, x });
       });
     });
 
-    return potentialCells;
+    dispatch({ type: "SET_AVAILABLECELLS", cells })
+    return cells;
   };
 
   // const checkForNewAvailableCells = (newCell: { y: number, x: number }) => {
@@ -144,30 +144,28 @@ const Board = () => {
   // }
 
   const addNewClickableCell = (
-    newBoard: TCellState[][],
-    availableCells: TCellPos[]
+    newBoard: TCellState[][]
   ) => {
-    const newCell = availableCells[getRng(availableCells.length)];
+    const newCell = game.availableCells[getRng(game.availableCells.length)];
     console.log("newcell :", newCell.y, newCell.x);
     newBoard[newCell.y][newCell.x] = 2;
 
-    const newCellLocations = updateValidPositions(newCell, newBoard, availableCells);
-    return updateValidPositions(newCell, newBoard, availableCells);
+    return updateValidPositions(newCell, newBoard);
   };
 
-  const addNewLayer = (newBoard: TCellState[][]) => {
+  const addNewLayer = (updatedBoard: TCellState[][]) => {
     console.log("EXPAND");
     const layer: TCellState[] = [];
     for (let i = 0; i < gameBoard.length; i++) {
       layer.push(0);
     }
-    newBoard.push([...layer]);
-    newBoard.unshift([...layer]);
+    updatedBoard.push([...layer]);
+    updatedBoard.unshift([...layer]);
 
-    newBoard.forEach((row: number[]) => {
-      if (row.length !== newBoard.length) {
+    updatedBoard.forEach((row: number[]) => {
+      if (row.length !== updatedBoard.length) {
         if (row.length === 0) {
-          for (let i = 0; i < newBoard.length; i++) {
+          for (let i = 0; i < updatedBoard.length; i++) {
             row.push(0);
           }
         } else {
@@ -177,8 +175,8 @@ const Board = () => {
       }
     });
     // console.log("OLD", getAllAvailableCells(newBoard));
-
-    return newBoard;
+    dispatch({ type: "UPDATE_BOARD", updatedBoard })
+    return updatedBoard;
   };
 
   return (
