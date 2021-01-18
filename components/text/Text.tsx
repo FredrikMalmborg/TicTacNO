@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Platform,
   useWindowDimensions,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import { Svg, Image as SvgImage } from "react-native-svg";
 
