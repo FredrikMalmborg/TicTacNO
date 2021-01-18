@@ -8,9 +8,9 @@ import {
   StyleSheet,
   Platform,
   useWindowDimensions,
+  TouchableOpacity
 } from "react-native";
 import { Svg, Image as SvgImage } from "react-native-svg";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 type Size = "sm" | "md" | "lg" | number;
 

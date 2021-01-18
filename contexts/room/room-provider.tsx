@@ -17,6 +17,10 @@ const RoomProvider: FC = ({ children }) => {
   const roomsRef = firebase.database().ref("rooms");
   const hostRoomRef = roomsRef.push();
 
+  useEffect(() => {
+    console.log("LOCAL ROOM STATE: ", room);
+  }, [room]);
+
   const roomContext = useMemo(
     () => ({
       hostRoom: async () => {
@@ -65,17 +69,24 @@ const RoomProvider: FC = ({ children }) => {
                 foundRoom.ref.on("value", (room) => {
                   const data = room.val();
                   if (data) {
+                    console.log("JOINROOMDATA: ", data);
                     setRoom(data);
                   }
                 });
-                foundRoom.ref.on("child_removed", (room) => {
-                  setRoom(INITIAL_ROOM);
+                roomsRef.on("child_removed", (child) => {
+                  const user = firebase.auth().currentUser?.uid;
+                  const player2:
+                    | { id: string; displayName: string }
+                    | undefined = child.val().player2 || undefined;
+                  if (player2 && player2.id && player2.id === user) {
+                    setRoom(INITIAL_ROOM);
+                  }
                 });
               }
             }
           }
         } catch (e) {
-          console.log(e);
+          console.log("ERROR: ", e);
         } finally {
           if (success && roomKeyId) {
             dispatch({ type: "SUCCESS", roomKey: roomKeyId });
@@ -105,7 +116,7 @@ const RoomProvider: FC = ({ children }) => {
             }
           }
         } catch (e) {
-          console.log(e);
+          console.log("ERROR: ", e);
         } finally {
           if (success) {
             dispatch({ type: "RESET" });
