@@ -1,28 +1,39 @@
-import React, { FC, useEffect, useState } from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { FC, useContext, useEffect, useState } from "react";
 import {
   Modal,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import TicTacText from "../../components/text/Text";
 import colors from "../../constants/colors";
-import useJoinRoom from "../../hooks/useJoinRoom";
+import RoomContext from "../../contexts/room/room-context";
+import { StackParamlist } from "../page-navigation/PageNavigator";
+import { Pages } from "../pages";
 
 interface IProps {
   modalVisible: boolean;
   setVisible: (arg: boolean) => void;
+  navigation: StackNavigationProp<StackParamlist>;
 }
 
 const JoinRoom: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
   const [roomId, setRoomId] = useState<string>("");
-  const { join, joinRoom } = useJoinRoom(roomId);
+  const { roomStatus, roomContext } = useContext(RoomContext);
 
   useEffect(() => {
-    console.log(join);
-  }, [join]);
+    if (roomStatus.success) {
+      setTimeout(() => {
+        roomContext.resetRoomStatus();
+        setVisible(!modalVisible);
+        props.navigation.navigate(Pages.JoinedRoom);
+      }, 1000);
+    }
+  }, [roomStatus.success]);
 
   return (
     <Modal
@@ -42,13 +53,42 @@ const JoinRoom: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
               value={roomId}
               // error={username.error}
             />
-            <TicTacText
-              title
-              style={{ paddingBottom: 20 }}
-              label="The Room-ID is the short code you are given when you host a room."
-              centered
-              size={18}
-            />
+            <View
+              style={{
+                width: "100%",
+                height: 100,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {roomStatus.loading ? (
+                <ActivityIndicator size="large" color="#fff" />
+              ) : roomStatus.errorMsg ? (
+                <TicTacText
+                  title
+                  style={{ paddingBottom: 20 }}
+                  label={`${roomStatus.errorMsg} :(`}
+                  centered
+                  size={30}
+                />
+              ) : roomStatus.success ? (
+                <TicTacText
+                  title
+                  style={{ paddingBottom: 20 }}
+                  label="Success! :)"
+                  centered
+                  size={30}
+                />
+              ) : (
+                <TicTacText
+                  title
+                  style={{ paddingBottom: 20 }}
+                  label="The Room-ID is the short code you are given when you host a room."
+                  centered
+                  size={18}
+                />
+              )}
+            </View>
             <View
               style={{
                 flexDirection: "row",
@@ -56,13 +96,14 @@ const JoinRoom: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
               }}
             >
               <TicTacText
-                label="Cancel"
+                label={"Cancel"}
                 size="sm"
                 centered
                 button={{
                   onClick: () => {
                     setVisible(!modalVisible);
                   },
+                  disabled: roomStatus.success,
                   bgColor: colors.red,
                   form: "square",
                 }}
@@ -72,7 +113,7 @@ const JoinRoom: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
                 size="sm"
                 centered
                 button={{
-                  onClick: () => joinRoom(),
+                  onClick: () => roomContext.joinRoom(roomId),
                   bgColor: { light: colors.teal.dark, dark: "rgba(0,0,0,.75)" },
                   form: "square",
                 }}
@@ -107,21 +148,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  },
-  openButton: {
-    backgroundColor: "#F194FF",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
   },
   input: {
     height: 50,

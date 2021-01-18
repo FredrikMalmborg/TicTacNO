@@ -16,7 +16,7 @@ interface IStyles {
   bottom: StyleProp<ViewStyle>;
 }
 interface Props {
-  navigation: StackNavigationProp<StackParamlist, "PlayPage">;
+  navigation: StackNavigationProp<StackParamlist>;
 }
 
 const PlayPage = ({ navigation }: Props) => {
@@ -47,8 +47,6 @@ const PlayPage = ({ navigation }: Props) => {
     index: 0,
     routes: [{ name: "GamePage" }],
   });
-
-  // const navigateToStart = () => navigation.navigate(Pages.Start);
   const navigateBack = () => navigation.goBack();
   const navigateToGame = () => {
     navigation.navigate(Pages.Game);
@@ -87,7 +85,7 @@ const PlayPage = ({ navigation }: Props) => {
           <TicTacText label="help" size="sm" color="white" />
         </Row>
       </Grid>
-      <JoinRoom modalVisible={modal} setVisible={setModal} />
+      <JoinRoom modalVisible={modal} setVisible={setModal} navigation={navigation} />
     </SafeAreaView>
   );
 };

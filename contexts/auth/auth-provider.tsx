@@ -2,14 +2,6 @@ import React, { FC, useEffect, useReducer } from "react";
 import { useMemo } from "react";
 import AuthContext, { INITIAL_STATE, TError, userState } from "./auth-context";
 import {
-  // API_KEY,
-  // AUTH_DOMAIN,
-  // DATABASE_URL,
-  // PROJECT_ID,
-  // STORA_BUCKET,
-  // MESSAGE_SENDER_ID,
-  // APP_ID,
-  // MEASUREMENT_ID,
   ANDROID_CLIENT_ID,
   IOS_CLIENT_ID,
   FACEBOOK_APP_ID,
@@ -23,23 +15,6 @@ import AlertAsync from "react-native-alert-async";
 const androidClientId = ANDROID_CLIENT_ID;
 const iosClientId = IOS_CLIENT_ID;
 const facebookAppId = FACEBOOK_APP_ID;
-
-// const firebaseConfig = {
-//   apiKey: API_KEY,
-//   authDomain: AUTH_DOMAIN,
-//   databaseURL: DATABASE_URL,
-//   projectId: PROJECT_ID,
-//   storageBucket: STORA_BUCKET,
-//   messagingSenderId: MESSAGE_SENDER_ID,
-//   appId: APP_ID,
-//   measurementId: MEASUREMENT_ID,
-// };
-
-// if (!firebase.apps.length) {
-//   firebase.initializeApp(firebaseConfig);
-// } else {
-//   firebase.app();
-// }
 
 export type TSignInAction =
   | { type: "EMAIL"; payload: { email: string; password: string } }
