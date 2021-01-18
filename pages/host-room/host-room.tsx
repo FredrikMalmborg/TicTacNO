@@ -30,7 +30,7 @@ const HostRoom = ({ navigation }: Props) => {
 
   useEffect(() => {
     roomContext.hostRoom();
-    return () => roomContext.destroyRoom()
+    return () => roomContext.destroyRoom();
   }, []);
 
   const style: IStyles = StyleSheet.create({

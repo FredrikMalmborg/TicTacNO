@@ -62,7 +62,10 @@ const PageNavigator = () => {
                 <>
                   <Stack.Screen name={Pages.Start} component={StartPage} />
                   <Stack.Screen name={Pages.HostRoom} component={HostRoom} />
-                  <Stack.Screen name={Pages.JoinedRoom} component={JoinedRoom} />
+                  <Stack.Screen
+                    name={Pages.JoinedRoom}
+                    component={JoinedRoom}
+                  />
                   <Stack.Screen name={Pages.Play} component={PlayPage} />
                   <Stack.Screen
                     name={Pages.Game}

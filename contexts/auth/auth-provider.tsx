@@ -1,11 +1,7 @@
 import React, { FC, useEffect, useReducer } from "react";
 import { useMemo } from "react";
 import AuthContext, { INITIAL_STATE, TError, userState } from "./auth-context";
-import {
-  ANDROID_CLIENT_ID,
-  IOS_CLIENT_ID,
-  FACEBOOK_APP_ID,
-} from "@env";
+import { ANDROID_CLIENT_ID, IOS_CLIENT_ID, FACEBOOK_APP_ID } from "@env";
 import fb from "firebase";
 import { firebase } from "../../constants/firebase";
 import * as Google from "expo-google-app-auth";

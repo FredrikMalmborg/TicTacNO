@@ -1,9 +1,5 @@
 import React, { FC } from "react";
-import {
-  Modal,
-  View,
-  StyleSheet,
-} from "react-native";
+import { Modal, View, StyleSheet } from "react-native";
 import TicTacText from "../../components/text/Text";
 
 interface IProps {
@@ -38,7 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,.65)",
-  }
+  },
 });
 
 export default GameInfoModal;
