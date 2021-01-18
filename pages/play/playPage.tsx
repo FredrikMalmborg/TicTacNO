@@ -85,7 +85,11 @@ const PlayPage = ({ navigation }: Props) => {
           <TicTacText label="help" size="sm" color="white" />
         </Row>
       </Grid>
-      <JoinRoom modalVisible={modal} setVisible={setModal} navigation={navigation} />
+      <JoinRoom
+        modalVisible={modal}
+        setVisible={setModal}
+        navigation={navigation}
+      />
     </SafeAreaView>
   );
 };
