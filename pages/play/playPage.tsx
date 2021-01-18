@@ -21,27 +21,7 @@ interface Props {
 
 const PlayPage = ({ navigation }: Props) => {
   const [modal, setModal] = useState<boolean>(false);
-  const style: IStyles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: "center",
-      width: "100%",
-      height: "100%",
-      backgroundColor: "#F220",
-    },
-    section: {
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-    },
-    top: {
-      padding: 50,
-    },
-    bottom: {
-      flexDirection: "row",
-      justifyContent: "space-evenly",
-    },
-  });
+  
   //Place page on top of stack
   const resetAction = CommonActions.reset({
     index: 0,
@@ -52,7 +32,7 @@ const PlayPage = ({ navigation }: Props) => {
     navigation.navigate(Pages.Game);
     navigation.dispatch(resetAction);
   };
-  const navigateToHostRoom = () => navigation.navigate(Pages.HostRoom);
+  const navigateToHostRoom = () => navigation.navigate(Pages.PreGameRoom, {condition: "HOST"});
 
   return (
     <SafeAreaView style={style.container}>
@@ -93,5 +73,27 @@ const PlayPage = ({ navigation }: Props) => {
     </SafeAreaView>
   );
 };
+
+const style: IStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#F220",
+  },
+  section: {
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+  },
+  top: {
+    padding: 50,
+  },
+  bottom: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+});
 
 export default PlayPage;
