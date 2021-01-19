@@ -13,6 +13,7 @@ export type TCellState = 0 | 1 | 2 | 3 | 4;
 export type TCellPos = { y: number; x: number };
 
 interface ICellProps extends ColProps {
+  player: TCellState;
   state: TCellState;
   pos: TCellPos;
   click: ({ y, x }: TCellPos, state: TCellState) => void;
@@ -78,7 +79,7 @@ const Cell = ({ state, pos, ...props }: ICellProps) => {
   return (
     <TouchableOpacity
       style={style.container}
-      onPress={() => state === 2 && clickedCell(3)}
+      onPress={() => state === 2 && clickedCell(props.player)}
     >
       <Col style={[style.cell, state !== 0 && style[state]]} {...props}>
         {/* <TicTacText centered color="#fff" size="sm" label={(state === 3 && "X") || (state === 4 && "O") || ""} /> */}

@@ -2,25 +2,27 @@ import React, { memo, useEffect, useMemo, useReducer, useState } from "react";
 import { Grid, Row } from "react-native-easy-grid";
 import { gameState, INITIAL_GAME_STATE } from "./gameController";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
-import { availableCells as ACells, board } from "./DEFAULT_BOARD";
-import cell from "../cell/cell";
-import { idText } from "typescript";
 
-const Board = () => {
+import TicTacText from "../../text/Text";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { StackParamlist } from "../../../pages/page-navigation/PageNavigator";
+import { Pages } from "../../../pages/pages";
+import { View } from "react-native";
+interface Props {
+  winnerCallback: () => void
+}
+const Board = ({ ...props }: Props) => {
 
   const [game, dispatch] = useReducer(gameState, INITIAL_GAME_STATE);
+  const [player, setPlayer] = useState<TCellState>(3);
 
   useEffect(() => {
-    game.board.join("\n")
-    const x: any = []
-    game.availableCells.forEach(c => {
-      x.push(`y:${c.y} x:${c.x}`)
-    });
-    console.log("Available Cells :", x.length, x);
+    console.log("Player changed to: ", player === 3 ? "RED" : "TEAL");
+  }, [player]);
 
-  }, [game.board]);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
+
     let
       newBoard = [...game.board],
       expand = false;
@@ -28,7 +30,10 @@ const Board = () => {
     newBoard[y][x] = state;
     console.log("CLICKED : ", y, x);
 
-    // checkWin(newBoard, { y, x })
+
+    if (checkWin(newBoard, { y, x })) console.log("WINNER", player);
+
+    else setPlayer(player === 3 ? 4 : 3)
 
     const voidedCells: TCellState[] = Array()
       .concat(...game.board)
@@ -36,10 +41,8 @@ const Board = () => {
 
     const ratio = voidedCells.length / Math.pow(game.board.length, 2);
 
-
     if (ratio < 0.5) expand = true
-
-    if (expand) {
+    if (expand && !game.winner) {
       addNewLayer([...newBoard]);
     } else {
       addNewClickableCell([...newBoard]);
@@ -48,38 +51,62 @@ const Board = () => {
   };
 
   const checkWin = (board: TCellState[][], click: TCellPos) => {
-    const player = 3
-    const omni = [-1, 0, 1];
-    const lossArray: TCellPos[] = []
+    console.log("______");
+
+
+    let isLoss = false
+    const
+      omni = [-1, 0, 1],
+      lossArray: TCellPos[] = []
+
 
     omni.forEach((i) => {
-      omni.forEach((j) => {
-        if (i !== 0 || j !== 0) {
-          if (board[click.y + i][click.x + j] === player) {
-            console.log("player : ",
-              click.y + i,
-              click.x + j);
-            console.log("further :", {
-              y: click.y + i * 2,
-              x: click.x + j * 2
-            });
-            console.log("back :", {
-              y: click.y - i,
-              x: click.x - j
-            });
+      console.log(board[click.y + i] !== undefined && board[click.y - i] !== undefined);
 
-            if (board[click.y + i * 2][click.x + j * 2] === player) lossArray.push({ y: click.y + i * 2, x: click.x + j * 2 })
-            if (board[click.y - i][click.x - j] === player) lossArray.push({ y: click.y - i, x: click.x - j })
+      if (board[click.y + i] !== undefined && board[click.y - i] !== undefined) {
+        omni.forEach((j) => {
+          if ((i !== 0 || j !== 0) && board[click.y + i][click.x + j] !== undefined) {
+            console.log("Checking : ", click.y + i, click.x + j);
+
+            if (
+              board[click.y + i][click.x + j] === player) {
+              console.log("- found");
+
+              if (board[click.y + i * 2] !== undefined) {
+                if (board[click.y + i * 2][click.x + j * 2] === player) {
+                  console.log("- found further");
+                  if (!lossArray.some(c => c.y === click.y + i * 2 && c.x === click.x + j * 2)) lossArray.push({ y: click.y + i * 2, x: click.x + j * 2 })
+                  if (!lossArray.some(c => c.y === click.y + i && c.x === click.x + j)) lossArray.push({ y: click.y + i, x: click.x + j })
+                }
+              }
+              if (board[click.y - i][click.x - j] !== undefined) {
+                if (board[click.y - i][click.x - j] === player) {
+                  console.log("- back");
+                  if (!lossArray.some(c => c.y === click.y - i && c.x === click.x - j)) lossArray.push({ y: click.y - i, x: click.x - j })
+                  if (!lossArray.some(c => c.y === click.y + i && c.x === click.x + j)) lossArray.push({ y: click.y + i, x: click.x + j })
+                }
+                if (board[click.y - i * 2] !== undefined) {
+                  if (board[click.y - i * 2][click.x - j * 2] === player) {
+                    console.log("- back further");
+                    if (!lossArray.some(c => c.y === click.y - i * 2 && c.x === click.x - j * 2)) lossArray.push({ y: click.y - i * 2, x: click.x - j * 2 })
+                    if (!lossArray.some(c => c.y === click.y + i && c.x === click.x + j)) lossArray.push({ y: click.y + i, x: click.x + j })
+                  }
+                }
+              }
+
+            }
+
+            if (lossArray.length >= 2 && !lossArray.some(c => c.y === click.y && c.x === click.x)) lossArray.push({ y: click.y, x: click.x })
           }
-        }
-      });
+        });
+
+      }
     });
 
-    console.log(lossArray.length, lossArray);
+    if (lossArray.length >= 3) dispatch({ type: "WINNER", name: player === 3 ? "4" : "3" })
 
-
-    if (lossArray.length > 1) return true
-    return false
+    console.log(isLoss, "loss cells : ", lossArray.length, lossArray);
+    return isLoss
   }
 
   const getRng = (range: number) => Math.floor(Math.random() * range);
@@ -99,7 +126,6 @@ const Board = () => {
               (i !== 0 || j !== 0) &&
               newBoard[newCell.y + i][newCell.x + j] === 0
             ) {
-              console.log(newCell.y + i, newCell.x + j);
               newBoard[newCell.y + i][newCell.x + j] = 1;
               newCells.push({ y: newCell.y + i, x: newCell.x + j })
             }
@@ -113,8 +139,8 @@ const Board = () => {
       x.push(`y:${c.y} x:${c.x}`)
     });
 
-    console.log("NewCell :", `y:${newCell.y} x:${newCell.x}`);
-    console.log("NewCells : ", x.length, x);
+    // console.log("NewCell :", `y:${newCell.y} x:${newCell.x}`);
+    // console.log("NewCells : ", x.length, x);
 
     dispatch({ type: "UPDATE_AVAILABLECELLS", payload: { add: newCells, remove: newCell } })
     // dispatch({ type: "REMOVE_AVAILABLECELL", cell: cellPosition })
@@ -167,7 +193,7 @@ const Board = () => {
       }
     });
 
-    console.log(updatedBoard.join("\n"));
+    // console.log(updatedBoard.join("\n"));
 
     const cells = getAllAvailableCells(updatedBoard);
     const x: string[] = []
@@ -175,35 +201,44 @@ const Board = () => {
       x.push(`y:${c.y} x:${c.x}`)
     });
 
-    console.log("newly fetched CELLS : ", x.length, x);
-
     if (cells) addNewClickableCell(updatedBoard, cells)
     if (updatedBoard.length === updatedBoard[0].length) dispatch({ type: "UPDATE_BOARD", updatedBoard })
-    // return updatedBoard;
+
   };
 
+
+
   return (
-    <Grid
-      style={{
-        flex: 0,
-        borderWidth: 3,
-        borderColor: "purple",
-      }}
-    >
-      {[...game.board].map((row, rowIndex) => (
-        <Row style={{ height: 40 }} key={`row-${rowIndex}`}>
-          {row.map((col, colIndex) => (
-            <Cell
-              click={onClickCell}
-              pos={{ y: rowIndex, x: colIndex }}
-              key={`cell-${rowIndex}/${colIndex}`}
-              state={col}
-            />
-          ))}
-        </Row>
-      ))}
-    </Grid>
+    game.winner ?
+      <View>
+        <TicTacText label={`Winner is : ${game.winner.name === "3" ? "Red" : "Teal"}`} />
+        <TicTacText label="play again" size={15} centered button={{
+          onClick: props.winnerCallback
+        }} />
+      </View>
+      :
+      <Grid
+        style={{
+          flex: 0,
+          borderWidth: 3,
+          borderColor: "purple",
+        }}
+      >
+        {[...game.board].map((row, rowIndex) => (
+          <Row style={{ height: 40 }} key={`row-${rowIndex}`}>
+            {row.map((col, colIndex) => (
+              <Cell
+                player={player}
+                click={onClickCell}
+                pos={{ y: rowIndex, x: colIndex }}
+                key={`cell-${rowIndex}/${colIndex}`}
+                state={col}
+              />
+            ))}
+          </Row>
+        ))}
+      </Grid>
   );
 };
 
-export default memo(Board);
+export default Board;
