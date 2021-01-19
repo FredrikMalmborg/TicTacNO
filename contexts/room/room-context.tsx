@@ -1,4 +1,5 @@
 import React from "react";
+import fb from "firebase";
 
 export interface IRoomState {
   rid: string | undefined;
@@ -80,6 +81,10 @@ const RoomContext = React.createContext({
     hostRoom: () => {},
     destroyRoom: () => {},
     joinRoom: (roomId: string) => {},
+    checkForOngoingGame: async (): Promise<
+      undefined | { room: fb.database.DataSnapshot; host: boolean }
+    > => Promise.resolve(undefined),
+    reconnectToOngoing: (room: fb.database.DataSnapshot) => {},
     resetRoomStatus: () => {},
     leaveRoom: () => {},
   },

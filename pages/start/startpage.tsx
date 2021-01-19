@@ -1,5 +1,5 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 
@@ -7,6 +7,7 @@ import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
 import colors from "../../constants/colors";
 import AuthContext from "../../contexts/auth/auth-context";
+import RoomContext from "../../contexts/room/room-context";
 import { StackParamlist } from "../page-navigation/PageNavigator";
 
 import { Pages } from "../pages";
@@ -22,26 +23,29 @@ interface Props {
 }
 
 const StartPage = ({ navigation }: Props) => {
-  const { authContext } = useContext(AuthContext);
-  const style: IStyles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: "center",
-      width: "100%",
-      height: "100%",
-      backgroundColor: "#F220",
-    },
-    section: {
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-    },
-    bottom: {
-      flexDirection: "row",
-      justifyContent: "space-evenly",
-    },
-    animate: {},
-  });
+  const { user, authContext } = useContext(AuthContext);
+  const { roomContext } = useContext(RoomContext);
+
+  useEffect(() => {
+    if (user.userToken !== null) {
+      fetchGameAndReconnect();
+    }
+    // console.log(user);
+  }, [user]);
+
+  const fetchGameAndReconnect = useCallback(async () => {
+    const ongoingGame = await roomContext.checkForOngoingGame();
+    if (ongoingGame) {
+      // Reconnect to room and navigate to room state (pre or ongoing)
+      roomContext.reconnectToOngoing(ongoingGame.room);
+      if (ongoingGame.host) {
+        navigation.navigate(Pages.PreGameRoom, { condition: "RECON-HOST" });
+      } else {
+        navigation.navigate(Pages.PreGameRoom, { condition: "RECON-JOIN" });
+      }
+      console.log("GAME: ", ongoingGame);
+    }
+  }, [user.userToken]);
 
   const navigateToPlay = () => navigation.navigate(Pages.Play);
 
@@ -77,5 +81,25 @@ const StartPage = ({ navigation }: Props) => {
     </SafeAreaView>
   );
 };
+
+const style: IStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#F220",
+  },
+  section: {
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+  },
+  bottom: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+  animate: {},
+});
 
 export default StartPage;

@@ -60,7 +60,7 @@ const AuthProvider: FC = ({ children }) => {
           .then(() => {
             dispatch({ type: "SIGN_OUT" });
           })
-          .catch((e) => console.log(e));
+          .catch((error) => console.log("AUTH-ERROR: ", error));
       },
       signUp: async (payload: {
         email: string;
@@ -71,9 +71,9 @@ const AuthProvider: FC = ({ children }) => {
           firebase
             .auth()
             .createUserWithEmailAndPassword(payload.email, payload.password)
-            .then((user) => console.log(user))
+            .then((user) => user)
             .catch((error) => {
-              console.log(error);
+              console.log("AUTH-ERROR: ", error);
               dispatch({ type: "HANDLE_ERROR", error: "SIGNUP" });
             });
         }
@@ -110,8 +110,8 @@ const AuthProvider: FC = ({ children }) => {
       } else {
         return null;
       }
-    } catch (e) {
-      console.log("Error: ", e);
+    } catch (error) {
+      console.log("AUTH ERROR: ", error);
       return null;
     }
   };
@@ -155,8 +155,8 @@ const AuthProvider: FC = ({ children }) => {
       } else {
         return null;
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log("AUTH-ERROR: ", error);
       return null;
     }
   };
@@ -166,7 +166,7 @@ const AuthProvider: FC = ({ children }) => {
   // "user.additionalUserInfo?.isNewUser"
   // men förutser problem.
   const checkIfNewUser = async (userId: string) => {
-    console.log("Checking if new user");
+    // console.log("Checking if new user");
     const userData = await firebase
       .database()
       .ref(`users/${userId}`)
@@ -214,7 +214,7 @@ const AuthProvider: FC = ({ children }) => {
           }
           userToken = user.uid;
         }
-        console.log(userToken);
+        // console.log(userToken);
 
         dispatch({ type: "RESTORE", token: userToken });
       });

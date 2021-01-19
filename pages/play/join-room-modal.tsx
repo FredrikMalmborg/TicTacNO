@@ -30,7 +30,7 @@ const JoinRoom: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
       setTimeout(() => {
         roomContext.resetRoomStatus();
         setVisible(!modalVisible);
-        props.navigation.navigate(Pages.JoinedRoom);
+        props.navigation.navigate(Pages.PreGameRoom, { condition: "JOIN" });
       }, 1000);
     }
   }, [roomStatus.success]);

@@ -17,10 +17,6 @@ const RoomProvider: FC = ({ children }) => {
   const roomsRef = firebase.database().ref("rooms");
   const hostRoomRef = roomsRef.push();
 
-  useEffect(() => {
-    console.log("LOCAL ROOM STATE: ", room);
-  }, [room]);
-
   const roomContext = useMemo(
     () => ({
       hostRoom: async () => {
@@ -43,10 +39,13 @@ const RoomProvider: FC = ({ children }) => {
           }
         }
       },
-      destroyRoom: () => {
-        hostRoomRef.off();
-        hostRoomRef.remove();
-        setRoom(INITIAL_ROOM);
+      destroyRoom: async () => {
+        const room = await findRoomByUser();
+        if (room) {
+          room.ref.off();
+          room.ref.remove();
+          setRoom(INITIAL_ROOM);
+        }
       },
       joinRoom: async (roomId: string) => {
         dispatch({ type: "LOADING", isLoading: true });
@@ -95,6 +94,29 @@ const RoomProvider: FC = ({ children }) => {
           }
           dispatch({ type: "LOADING", isLoading: false });
         }
+      },
+      checkForOngoingGame: async () => {
+        let host = false;
+
+        const fbRoom = await findRoomByUser();
+        const user = firebase.auth().currentUser?.uid;
+
+        if (fbRoom && user) {
+          const room = fbRoom.val();
+          if (user === room.player1.id) {
+            host = true;
+          }
+          return { room: fbRoom, host: host };
+        }
+        return undefined;
+      },
+      reconnectToOngoing: (room: fb.database.DataSnapshot) => {
+        room.ref.on("value", (room) => {
+          const data = room.val();
+          if (data) {
+            setRoom(data);
+          }
+        });
       },
       resetRoomStatus: () => {
         dispatch({ type: "RESET" });
@@ -157,10 +179,12 @@ const RoomProvider: FC = ({ children }) => {
       .then((result) => {
         let wantedRoom;
         const user = firebase.auth().currentUser?.uid;
+
         result.forEach((room) => {
           const player1: string = room.child("player1").child("id").val();
           const player2: string = room.child("player2").child("id").val();
-          if (user && player1 && player2) {
+
+          if (user && (player1 || player2)) {
             if (player1 === user || player2 === user) {
               wantedRoom = room;
             }
