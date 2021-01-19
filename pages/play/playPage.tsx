@@ -21,7 +21,7 @@ interface Props {
 
 const PlayPage = ({ navigation }: Props) => {
   const [modal, setModal] = useState<boolean>(false);
-  
+
   //Place page on top of stack
   const resetAction = CommonActions.reset({
     index: 0,
@@ -32,7 +32,8 @@ const PlayPage = ({ navigation }: Props) => {
   //   navigation.navigate(Pages.Game);
   //   navigation.dispatch(resetAction);
   // };
-  const navigateToHostRoom = () => navigation.navigate(Pages.GamePage, {condition: "HOST"});
+  const navigateToHostRoom = () =>
+    navigation.navigate(Pages.GamePage, { condition: "HOST" });
 
   return (
     <SafeAreaView style={style.container}>

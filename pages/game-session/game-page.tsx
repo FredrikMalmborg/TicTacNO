@@ -64,10 +64,10 @@ const GamePage = ({ navigation, route }: Props) => {
   }, [room]);
 
   //Place page on top of stack
-//   const resetAction = CommonActions.reset({
-//     index: 0,
-//     routes: [{ name: "GamePage" }],
-//   });
+  //   const resetAction = CommonActions.reset({
+  //     index: 0,
+  //     routes: [{ name: "GamePage" }],
+  //   });
 
   // LEAVE FOR JOINERS
   const leaveRoom = () => {

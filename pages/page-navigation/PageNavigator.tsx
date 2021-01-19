@@ -18,7 +18,9 @@ import AuthContext from "../../contexts/auth/auth-context";
 
 export type StackParamlist = {
   [Pages.Start]: undefined;
-  [Pages.GamePage]: { condition: "RECON-JOIN" | "JOIN" | "RECON-HOST" | "HOST" };
+  [Pages.GamePage]: {
+    condition: "RECON-JOIN" | "JOIN" | "RECON-HOST" | "HOST";
+  };
   [Pages.Play]: undefined;
   [Pages.Login]: undefined;
   [Pages.Splash]: undefined;

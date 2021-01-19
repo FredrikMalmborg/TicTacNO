@@ -116,10 +116,10 @@ const RoomProvider: FC = ({ children }) => {
           }
         });
       },
-      startGame: async() => {
-        const foundRoom = await findRoomByUser()
+      startGame: async () => {
+        const foundRoom = await findRoomByUser();
         if (foundRoom) {
-          foundRoom.ref.child("gameStarted").set(true)
+          foundRoom.ref.child("gameStarted").set(true);
         } else {
           console.log("COUNDN'T FIND ROOM");
         }
