@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from "react";
+import React, { FC, useEffect, useMemo, useReducer, useState } from "react";
 import RoomContext, {
   INITIAL_ROOM,
   INITIAL_ROOM_STATUS,
@@ -46,10 +40,10 @@ const RoomProvider: FC = ({ children }) => {
         }
       },
       destroyRoom: async () => {
-        const room = await findRoomByUser()
+        const room = await findRoomByUser();
         if (room) {
-          room.ref.off()
-          room.ref.remove()
+          room.ref.off();
+          room.ref.remove();
           setRoom(INITIAL_ROOM);
         }
       },
@@ -74,7 +68,7 @@ const RoomProvider: FC = ({ children }) => {
                 foundRoom.ref.on("value", (room) => {
                   const data = room.val();
                   if (data) {
-                    console.log("JOINROOMDATA: ", data);
+                    // console.log("JOINROOMDATA: ", data);
                     setRoom(data);
                   }
                 });
@@ -103,10 +97,8 @@ const RoomProvider: FC = ({ children }) => {
       },
       checkForOngoingGame: async () => {
         let host = false;
-
         const fbRoom = await findRoomByUser();
         const user = firebase.auth().currentUser?.uid;
-
         if (fbRoom && user) {
           const room = fbRoom.val();
           if (user === room.player1.id) {
@@ -118,11 +110,19 @@ const RoomProvider: FC = ({ children }) => {
       },
       reconnectToOngoing: (room: fb.database.DataSnapshot) => {
         room.ref.on("value", (room) => {
-          const data = room.val()
+          const data = room.val();
           if (data) {
-            setRoom(data)
+            setRoom(data);
           }
         });
+      },
+      startGame: async() => {
+        const foundRoom = await findRoomByUser()
+        if (foundRoom) {
+          foundRoom.ref.child("gameStarted").set(true)
+        } else {
+          console.log("COUNDN'T FIND ROOM");
+        }
       },
       resetRoomStatus: () => {
         dispatch({ type: "RESET" });

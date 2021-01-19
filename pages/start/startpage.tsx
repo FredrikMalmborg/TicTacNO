@@ -39,11 +39,11 @@ const StartPage = ({ navigation }: Props) => {
       // Reconnect to room and navigate to room state (pre or ongoing)
       roomContext.reconnectToOngoing(ongoingGame.room);
       if (ongoingGame.host) {
-        navigation.navigate(Pages.PreGameRoom, { condition: "RECON-HOST" });
+        navigation.navigate(Pages.GamePage, { condition: "RECON-HOST" });
       } else {
-        navigation.navigate(Pages.PreGameRoom, { condition: "RECON-JOIN" });
+        navigation.navigate(Pages.GamePage, { condition: "RECON-JOIN" });
       }
-      console.log("GAME: ", ongoingGame);
+      // console.log("GAME: ", ongoingGame);
     }
   }, [user.userToken]);
 

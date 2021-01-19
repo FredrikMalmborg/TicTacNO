@@ -85,6 +85,7 @@ const RoomContext = React.createContext({
       undefined | { room: fb.database.DataSnapshot; host: boolean }
     > => Promise.resolve(undefined),
     reconnectToOngoing: (room: fb.database.DataSnapshot) => {},
+    startGame: () => {},
     resetRoomStatus: () => {},
     leaveRoom: () => {},
   },
