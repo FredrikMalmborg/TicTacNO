@@ -190,9 +190,6 @@ const Board = () => {
     game.winner ?
       <View>
         <TicTacText label={`Winner is : ${game.winner.name === "3" ? "Red" : "Teal"}`} />
-        <TicTacText label="play again" size={15} centered button={{
-          onClick: props.winnerCallback
-        }} />
       </View>
       :
       <Grid
