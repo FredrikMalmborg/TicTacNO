@@ -5,9 +5,15 @@ import TicTacText from "../../components/text/Text";
 interface IProps {
   modalVisible: boolean;
   setVisible: (arg: boolean) => void;
+  label: string;
 }
 
-const GameInfoModal: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
+const GameInfoModal: FC<IProps> = ({
+  modalVisible,
+  setVisible,
+  label,
+  ...props
+}) => {
   return (
     <Modal
       animationType="fade"
@@ -19,7 +25,7 @@ const GameInfoModal: FC<IProps> = ({ modalVisible, setVisible, ...props }) => {
         <TicTacText
           title
           style={{ paddingBottom: 20 }}
-          label="Game was cancelled"
+          label={label}
           centered
           size="md"
         />

@@ -68,7 +68,7 @@ const RoomProvider: FC = ({ children }) => {
                 foundRoom.ref.on("value", (room) => {
                   const data = room.val();
                   if (data) {
-                    console.log("JOINROOMDATA: ", data);
+                    // console.log("JOINROOMDATA: ", data);
                     setRoom(data);
                   }
                 });
@@ -97,10 +97,8 @@ const RoomProvider: FC = ({ children }) => {
       },
       checkForOngoingGame: async () => {
         let host = false;
-
         const fbRoom = await findRoomByUser();
         const user = firebase.auth().currentUser?.uid;
-
         if (fbRoom && user) {
           const room = fbRoom.val();
           if (user === room.player1.id) {
@@ -117,6 +115,14 @@ const RoomProvider: FC = ({ children }) => {
             setRoom(data);
           }
         });
+      },
+      startGame: async () => {
+        const foundRoom = await findRoomByUser();
+        if (foundRoom) {
+          foundRoom.ref.child("gameStarted").set(true);
+        } else {
+          console.log("COUNDN'T FIND ROOM");
+        }
       },
       resetRoomStatus: () => {
         dispatch({ type: "RESET" });

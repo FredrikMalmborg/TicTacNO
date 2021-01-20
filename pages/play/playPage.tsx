@@ -28,12 +28,12 @@ const PlayPage = ({ navigation }: Props) => {
     routes: [{ name: "GamePage" }],
   });
   const navigateBack = () => navigation.goBack();
-  const navigateToGame = () => {
-    navigation.navigate(Pages.Game);
-    navigation.dispatch(resetAction);
-  };
+  // const navigateToGame = () => {
+  //   navigation.navigate(Pages.Game);
+  //   navigation.dispatch(resetAction);
+  // };
   const navigateToHostRoom = () =>
-    navigation.navigate(Pages.PreGameRoom, { condition: "HOST" });
+    navigation.navigate(Pages.GamePage, { condition: "HOST" });
 
   return (
     <SafeAreaView style={style.container}>
