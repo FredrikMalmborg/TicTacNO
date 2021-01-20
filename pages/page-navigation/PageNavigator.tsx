@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import GamePage from "../gameplay/GamePage";
+import GamePage from "../game-session/game-page";
 import StartPage from "../start/startpage";
 import PlayPage from "../play/playPage";
 import LoginPage from "../login/loginPage";
-import HostRoom from "../host-room/host-room";
+// import PreGameRoom from "../pre-game-room/pre-game-room";
 import InitialSetup from "../initial-setup/initial-setup";
 
 import {
@@ -18,12 +18,13 @@ import AuthContext from "../../contexts/auth/auth-context";
 
 export type StackParamlist = {
   [Pages.Start]: undefined;
-  [Pages.Game]: undefined;
+  [Pages.GamePage]: {
+    condition: "RECON-JOIN" | "JOIN" | "RECON-HOST" | "HOST";
+  };
   [Pages.Play]: undefined;
   [Pages.Login]: undefined;
   [Pages.Splash]: undefined;
   [Pages.InitialSetup]: undefined;
-  [Pages.HostRoom]: undefined;
 };
 
 const PageNavigator = () => {
@@ -51,23 +52,14 @@ const PageNavigator = () => {
               <Stack.Screen name={Pages.Login} component={LoginPage} />
             ) : (
                 <>
-                  {user.newUser ? (
-                    <Stack.Screen
-                      name={Pages.InitialSetup}
-                      component={InitialSetup}
-                    />
-                  ) : (
-                      <>
-                        <Stack.Screen name={Pages.Start} component={StartPage} />
-                        <Stack.Screen name={Pages.HostRoom} component={HostRoom} />
-                        <Stack.Screen name={Pages.Play} component={PlayPage} />
-                        <Stack.Screen
-                          name={Pages.Game}
-                          component={GamePage}
-                          options={{ gestureEnabled: false }}
-                        />
-                      </>
-                    )}
+                  <Stack.Screen name={Pages.Start} component={StartPage} />
+                  {/* <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} /> */}
+                  <Stack.Screen name={Pages.Play} component={PlayPage} />
+                  <Stack.Screen
+                    name={Pages.GamePage}
+                    component={GamePage}
+                    options={{ gestureEnabled: false }}
+                  />
                 </>
               )}
           </>

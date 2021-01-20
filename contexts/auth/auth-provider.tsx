@@ -1,20 +1,9 @@
 import React, { FC, useEffect, useReducer } from "react";
 import { useMemo } from "react";
 import AuthContext, { INITIAL_STATE, TError, userState } from "./auth-context";
-import {
-  API_KEY,
-  AUTH_DOMAIN,
-  DATABASE_URL,
-  PROJECT_ID,
-  STORA_BUCKET,
-  MESSAGE_SENDER_ID,
-  APP_ID,
-  MEASUREMENT_ID,
-  ANDROID_CLIENT_ID,
-  IOS_CLIENT_ID,
-  FACEBOOK_APP_ID,
-} from "@env";
-import firebase from "firebase";
+import { ANDROID_CLIENT_ID, IOS_CLIENT_ID, FACEBOOK_APP_ID } from "@env";
+import fb from "firebase";
+import { firebase } from "../../constants/firebase";
 import * as Google from "expo-google-app-auth";
 import * as Facebook from "expo-facebook";
 import AlertAsync from "react-native-alert-async";
@@ -22,23 +11,6 @@ import AlertAsync from "react-native-alert-async";
 const androidClientId = ANDROID_CLIENT_ID;
 const iosClientId = IOS_CLIENT_ID;
 const facebookAppId = FACEBOOK_APP_ID;
-
-const firebaseConfig = {
-  apiKey: API_KEY,
-  authDomain: AUTH_DOMAIN,
-  databaseURL: DATABASE_URL,
-  projectId: PROJECT_ID,
-  storageBucket: STORA_BUCKET,
-  messagingSenderId: MESSAGE_SENDER_ID,
-  appId: APP_ID,
-  measurementId: MEASUREMENT_ID,
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-} else {
-  firebase.app();
-}
 
 export type TSignInAction =
   | { type: "EMAIL"; payload: { email: string; password: string } }
@@ -73,10 +45,13 @@ const AuthProvider: FC = ({ children }) => {
       },
       setUserName: async (username: string) => {
         //KAN AWAITAS FÖR ERROR HANTERING
-        const uniqueVal = Math.floor(1000 + Math.random() * 9000);
-        const userRef = firebase.database().ref(`users/${user.userToken}`);
-        userRef.child("username").set(`${username}#${uniqueVal}`);
-        dispatch({ type: "SET_USERNAME" });
+        const userId = firebase.auth().currentUser?.uid;
+        if (userId) {
+          const uniqueVal = Math.floor(1000 + Math.random() * 9000);
+          const newUserRef = firebase.database().ref(`users/${userId}`);
+          newUserRef.child("username").set(`${username}#${uniqueVal}`);
+          dispatch({ type: "SET_USERNAME" });
+        }
       },
       signOut: async () => {
         await firebase
@@ -85,30 +60,25 @@ const AuthProvider: FC = ({ children }) => {
           .then(() => {
             dispatch({ type: "SIGN_OUT" });
           })
-          .catch((err) => console.log(err));
+          .catch((error) => console.log("AUTH-ERROR: ", error));
       },
       signUp: async (payload: {
         email: string;
         password: string;
         passwordConfirm: string;
       }) => {
-        console.log("Sign up ##");
-
         if (payload.password === payload.passwordConfirm) {
           const result = await firebase
             .auth()
             .createUserWithEmailAndPassword(payload.email, payload.password)
-            .then((user) => {
-              if (user && user.user) return user.user.uid;
-              return null;
-            })
+            .then((user) => user)
             .catch((error) => {
-              console.log(error);
+              console.log("AUTH-ERROR: ", error);
               dispatch({ type: "HANDLE_ERROR", error: "SIGNUP" });
               return null;
             });
-          if (result !== null) {
-            dispatch({ type: "SIGN_IN", token: result });
+          if (result && result?.user) {
+            dispatch({ type: "SIGN_IN", token: result.user?.uid });
           } else {
             dispatch({ type: "SIGN_OUT" });
           }
@@ -130,10 +100,8 @@ const AuthProvider: FC = ({ children }) => {
         // iosStandaloneAppClientId: iosStandAloneClientId,
       });
       if (result.type === "success") {
-        await firebase
-          .auth()
-          .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-        const credential = firebase.auth.GoogleAuthProvider.credential(
+        await firebase.auth().setPersistence(fb.auth.Auth.Persistence.LOCAL);
+        const credential = fb.auth.GoogleAuthProvider.credential(
           result.idToken,
           result.accessToken
         );
@@ -148,8 +116,8 @@ const AuthProvider: FC = ({ children }) => {
       } else {
         return null;
       }
-    } catch (e) {
-      console.log("Error: ", e);
+    } catch (error) {
+      console.log("AUTH ERROR: ", error);
       return null;
     }
   };
@@ -164,10 +132,8 @@ const AuthProvider: FC = ({ children }) => {
         permissions: ["public_profile", "email"],
       });
       if (result.type === "success") {
-        await firebase
-          .auth()
-          .setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-        const credential = firebase.auth.FacebookAuthProvider.credential(
+        await firebase.auth().setPersistence(fb.auth.Auth.Persistence.LOCAL);
+        const credential = fb.auth.FacebookAuthProvider.credential(
           result.token
         );
         const facebookProfileData = await firebase
@@ -195,8 +161,8 @@ const AuthProvider: FC = ({ children }) => {
       } else {
         return null;
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log("AUTH-ERROR: ", error);
       return null;
     }
   };
@@ -206,7 +172,7 @@ const AuthProvider: FC = ({ children }) => {
   // "user.additionalUserInfo?.isNewUser"
   // men förutser problem.
   const checkIfNewUser = async (userId: string) => {
-    console.log("Checking if new user");
+    // console.log("Checking if new user");
     const userData = await firebase
       .database()
       .ref(`users/${userId}`)
@@ -254,7 +220,7 @@ const AuthProvider: FC = ({ children }) => {
           }
           userToken = user.uid;
         }
-        console.log(userToken);
+        // console.log(userToken);
 
         dispatch({ type: "RESTORE", token: userToken });
       });

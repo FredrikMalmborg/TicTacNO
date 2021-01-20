@@ -12,7 +12,7 @@ import Logotype from "../../components/logotype";
 import TicTacText from "../../components/text/Text";
 import colors from "../../constants/colors";
 import { TextInput } from "react-native-gesture-handler";
-import AuthContext, { userState } from "../../contexts/auth/auth-context";
+import AuthContext from "../../contexts/auth/auth-context";
 interface IStyles {
   section: StyleProp<ViewStyle>;
   content: StyleProp<ViewStyle>;
@@ -77,9 +77,9 @@ const LoginPage = () => {
       borderRadius: 50,
     },
     inputError: {
-      borderWidth: 3,
-      borderColor: colors.red.light,
-      backgroundColor: colors.red.dark,
+      borderWidth: 1.5,
+      borderColor: colors.red.dark,
+      backgroundColor: "#FFEFEA",
     },
   });
 
@@ -95,7 +95,7 @@ const LoginPage = () => {
               label={(() => {
                 switch (user.error) {
                   case "SIGNIN":
-                    return "Login failed";
+                    return "Wrong email and/or password";
                   case "SIGNUP":
                     return "Unable to register with this information, please try again.";
                 }

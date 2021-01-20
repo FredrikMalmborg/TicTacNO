@@ -1,18 +1,10 @@
-import { StackNavigationProp } from "@react-navigation/stack";
+
 import React, { useEffect } from "react";
 import { SafeAreaView, Dimensions, BackHandler } from "react-native";
 import Board from "../../components/game/board/board";
 import PanCamera from "../../components/game/camera/pan-camera";
-import { TCellState } from "../../components/game/cell/cell";
 
-import TicTacText from "../../components/text/Text";
-import { StackParamlist } from "../page-navigation/PageNavigator";
-import { Pages } from "../pages";
-interface Props {
-  navigation: StackNavigationProp<StackParamlist, "GamePage">;
-}
-
-const GamePage = ({ navigation }: Props) => {
+const GameBoard = () => {
   const windowSize = Dimensions.get("screen");
   const handleBackButton = () => {
     return true;
@@ -24,16 +16,13 @@ const GamePage = ({ navigation }: Props) => {
       BackHandler.removeEventListener("hardwareBackPress", handleBackButton);
   });
 
-
-  const navigateToPlay = () => navigation.navigate(Pages.Play);
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <PanCamera windowSize={windowSize}>
-        <Board winnerCallback={navigateToPlay} />
+        <Board />
       </PanCamera>
     </SafeAreaView>
   );
 };
 
-export default GamePage;
+export default GameBoard;

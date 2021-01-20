@@ -2,10 +2,9 @@ export const Pages = {
   Start: "StartPage",
   Play: "PlayPage",
   Profile: "ProfilePage",
-  Game: "GamePage",
+  GamePage: "GamePage",
   Login: "LoginPage",
   InitialSetup: "InitialSetup",
   Splash: "SplashPage",
-  HostRoom: "HostRoom",
 } as const;
 export type ScreenName = keyof typeof Pages;

@@ -1,12 +1,13 @@
 import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 import TicTacText from "../../components/text/Text";
 import { StackParamlist } from "../page-navigation/PageNavigator";
 
 import { Pages } from "../pages";
+import JoinRoom from "./join-room-modal";
 
 interface IStyles {
   container: StyleProp<ViewStyle>;
@@ -15,44 +16,24 @@ interface IStyles {
   bottom: StyleProp<ViewStyle>;
 }
 interface Props {
-  navigation: StackNavigationProp<StackParamlist, "PlayPage">;
+  navigation: StackNavigationProp<StackParamlist>;
 }
 
 const PlayPage = ({ navigation }: Props) => {
-  const style: IStyles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: "center",
-      width: "100%",
-      height: "100%",
-      backgroundColor: "#F220",
-    },
-    section: {
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-    },
-    top: {
-      padding: 50,
-    },
-    bottom: {
-      flexDirection: "row",
-      justifyContent: "space-evenly",
-    },
-  });
+  const [modal, setModal] = useState<boolean>(false);
+
   //Place page on top of stack
   const resetAction = CommonActions.reset({
     index: 0,
     routes: [{ name: "GamePage" }],
   });
-
-  // const navigateToStart = () => navigation.navigate(Pages.Start);
   const navigateBack = () => navigation.goBack();
-  const navigateToGame = () => {
-    navigation.navigate(Pages.Game);
-    navigation.dispatch(resetAction);
-  };
-  const navigateToHostRoom = () => navigation.navigate(Pages.HostRoom);
+  // const navigateToGame = () => {
+  //   navigation.navigate(Pages.Game);
+  //   navigation.dispatch(resetAction);
+  // };
+  const navigateToHostRoom = () =>
+    navigation.navigate(Pages.GamePage, { condition: "HOST" });
 
   return (
     <SafeAreaView style={style.container}>
@@ -65,7 +46,7 @@ const PlayPage = ({ navigation }: Props) => {
             title
             label="join"
             size="md"
-            button={{ onClick: navigateToGame }}
+            button={{ onClick: () => setModal(!modal) }}
           />
           <TicTacText
             title
@@ -85,8 +66,35 @@ const PlayPage = ({ navigation }: Props) => {
           <TicTacText label="help" size="sm" color="white" />
         </Row>
       </Grid>
+      <JoinRoom
+        modalVisible={modal}
+        setVisible={setModal}
+        navigation={navigation}
+      />
     </SafeAreaView>
   );
 };
+
+const style: IStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#F220",
+  },
+  section: {
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+  },
+  top: {
+    padding: 50,
+  },
+  bottom: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+});
 
 export default PlayPage;
