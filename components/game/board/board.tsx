@@ -22,7 +22,6 @@ const Board = ({ ...props }: Props) => {
 
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
-
     let
       newBoard = [...game.board],
       expand = false;
@@ -30,10 +29,8 @@ const Board = ({ ...props }: Props) => {
     newBoard[y][x] = state;
     console.log("CLICKED : ", y, x);
 
-
-    if (checkWin(newBoard, { y, x })) console.log("WINNER", player);
-
-    else setPlayer(player === 3 ? 4 : 3)
+    checkWin(newBoard, { y, x })
+    setPlayer(player === 3 ? 4 : 3)
 
     const voidedCells: TCellState[] = Array()
       .concat(...game.board)
@@ -50,63 +47,76 @@ const Board = ({ ...props }: Props) => {
 
   };
 
-  const checkWin = (board: TCellState[][], click: TCellPos) => {
-    console.log("______");
+  const isLossCell = (array: TCellPos[], y: number, x: number) => {
+    return !array.some(c => c.y === y && c.x === x)
+  }
 
+  const checkWin = (board: TCellState[][], click: TCellPos) => {
+    console.log("Player :", player);
 
     let isLoss = false
     const
       omni = [-1, 0, 1],
       lossArray: TCellPos[] = []
 
-
     omni.forEach((i) => {
-      console.log(board[click.y + i] !== undefined && board[click.y - i] !== undefined);
-
       if (board[click.y + i] !== undefined && board[click.y - i] !== undefined) {
         omni.forEach((j) => {
-          if ((i !== 0 || j !== 0) && board[click.y + i][click.x + j] !== undefined) {
-            console.log("Checking : ", click.y + i, click.x + j);
-
-            if (
-              board[click.y + i][click.x + j] === player) {
-              console.log("- found");
-
-              if (board[click.y + i * 2] !== undefined) {
-                if (board[click.y + i * 2][click.x + j * 2] === player) {
-                  console.log("- found further");
-                  if (!lossArray.some(c => c.y === click.y + i * 2 && c.x === click.x + j * 2)) lossArray.push({ y: click.y + i * 2, x: click.x + j * 2 })
-                  if (!lossArray.some(c => c.y === click.y + i && c.x === click.x + j)) lossArray.push({ y: click.y + i, x: click.x + j })
-                }
-              }
-              if (board[click.y - i][click.x - j] !== undefined) {
-                if (board[click.y - i][click.x - j] === player) {
-                  console.log("- back");
-                  if (!lossArray.some(c => c.y === click.y - i && c.x === click.x - j)) lossArray.push({ y: click.y - i, x: click.x - j })
-                  if (!lossArray.some(c => c.y === click.y + i && c.x === click.x + j)) lossArray.push({ y: click.y + i, x: click.x + j })
-                }
-                if (board[click.y - i * 2] !== undefined) {
-                  if (board[click.y - i * 2][click.x - j * 2] === player) {
-                    console.log("- back further");
-                    if (!lossArray.some(c => c.y === click.y - i * 2 && c.x === click.x - j * 2)) lossArray.push({ y: click.y - i * 2, x: click.x - j * 2 })
-                    if (!lossArray.some(c => c.y === click.y + i && c.x === click.x + j)) lossArray.push({ y: click.y + i, x: click.x + j })
-                  }
-                }
+          if ((i !== 0 || j !== 0)) {
+            const
+              f = {
+                value: board[click.y + i][click.x + j],
+                y: click.y + i,
+                x: click.x + j
+              },
+              b = {
+                value: board[click.y - i][click.x - j],
+                y: click.y - i,
+                x: click.x - j
+              },
+              f2 = {
+                value: board[click.y + i * 2] && board[click.y + i * 2][click.x + j * 2],
+                y: click.y + i * 2,
+                x: click.x + j * 2
+              },
+              b2 = {
+                value: board[click.y - i * 2] && board[click.y - i * 2][click.x - j * 2],
+                y: click.y - i * 2,
+                x: click.x - j * 2
               }
 
+            console.log(f.value, f2.value, "|", b.value, b2.value);
+
+
+            if (f.value === player) {
+              console.log("found");
+
+              if (f2.value === player) {
+                console.log("found further");
+                console.log("#", isLossCell(lossArray, f2.y, f2.x));
+                isLossCell(lossArray, f2.y, f2.x) && lossArray.push({ y: f2.y, x: f2.x })
+                isLossCell(lossArray, f.y, f.x) && lossArray.push({ y: f.y, x: f.x })
+              }
+              if (b.value === player) {
+                console.log("back");
+                isLossCell(lossArray, b.y, b.x) && lossArray.push({ y: f2.y, x: b.x })
+                isLossCell(lossArray, f.y, f.x) && lossArray.push({ y: f.y, x: f.x })
+                if (b2.value === player) {
+                  console.log("back further");
+                  isLossCell(lossArray, b2.y, b2.x) && lossArray.push({ y: b2.y, x: b2.x })
+                  isLossCell(lossArray, f.y, f.x) && lossArray.push({ y: f.y, x: f.x })
+                }
+              }
+              lossArray.length >= 2 && isLossCell(lossArray, click.y, click.x) && lossArray.push({ y: click.y, x: click.x });
             }
-
-            if (lossArray.length >= 2 && !lossArray.some(c => c.y === click.y && c.x === click.x)) lossArray.push({ y: click.y, x: click.x })
           }
         });
-
       }
     });
 
     if (lossArray.length >= 3) dispatch({ type: "WINNER", name: player === 3 ? "4" : "3" })
 
-    console.log(isLoss, "loss cells : ", lossArray.length, lossArray);
-    return isLoss
+    console.log("loss cells : ", lossArray.length, lossArray);
   }
 
   const getRng = (range: number) => Math.floor(Math.random() * range);
@@ -116,7 +126,7 @@ const Board = ({ ...props }: Props) => {
     newBoard: TCellState[][]
   ) => {
     const omni = [-1, 0, 1];
-    const newCells: TCellPos[] = []
+    const newAvailableCells: TCellPos[] = []
 
     omni.forEach((i) => {
       omni.forEach((j) => {
@@ -127,30 +137,19 @@ const Board = ({ ...props }: Props) => {
               newBoard[newCell.y + i][newCell.x + j] === 0
             ) {
               newBoard[newCell.y + i][newCell.x + j] = 1;
-              newCells.push({ y: newCell.y + i, x: newCell.x + j })
+              newAvailableCells.push({ y: newCell.y + i, x: newCell.x + j })
             }
           }
         }
       });
     });
 
-    const x: string[] = []
-    newCells.forEach(c => {
-      x.push(`y:${c.y} x:${c.x}`)
-    });
-
-    // console.log("NewCell :", `y:${newCell.y} x:${newCell.x}`);
-    // console.log("NewCells : ", x.length, x);
-
-    dispatch({ type: "UPDATE_AVAILABLECELLS", payload: { add: newCells, remove: newCell } })
-    // dispatch({ type: "REMOVE_AVAILABLECELL", cell: cellPosition })
-    // dispatch({ type: "ADD_AVAILABLECELLS", cells: newCells })
-
+    dispatch({ type: "REMOVE_AVAILABLECELL", cell: newCell })
+    dispatch({ type: "ADD_AVAILABLECELLS", cells: newAvailableCells })
     dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard })
   };
 
   const getAllAvailableCells = (B: TCellState[][]) => {
-    game.board
     const cells: any[] = [];
 
     B.forEach((Y, y) => {
@@ -165,14 +164,11 @@ const Board = ({ ...props }: Props) => {
 
   const addNewClickableCell = (newBoard: TCellState[][], altCells?: TCellPos[]) => {
     const newCell = altCells ? altCells[getRng(altCells.length)] : game.availableCells[getRng(game.availableCells.length)];
-
     newBoard[newCell.y][newCell.x] = 2;
-
     updateValidPositions(newCell, newBoard);
   };
 
   const addNewLayer = (updatedBoard: TCellState[][]) => {
-    console.log("EXPAND");
     const layer: TCellState[] = [];
     for (let i = 0; i < game.board.length; i++) {
       layer.push(0);
@@ -193,20 +189,10 @@ const Board = ({ ...props }: Props) => {
       }
     });
 
-    // console.log(updatedBoard.join("\n"));
-
     const cells = getAllAvailableCells(updatedBoard);
-    const x: string[] = []
-    cells.forEach(c => {
-      x.push(`y:${c.y} x:${c.x}`)
-    });
-
     if (cells) addNewClickableCell(updatedBoard, cells)
     if (updatedBoard.length === updatedBoard[0].length) dispatch({ type: "UPDATE_BOARD", updatedBoard })
-
   };
-
-
 
   return (
     game.winner ?
