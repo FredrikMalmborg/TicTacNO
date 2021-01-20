@@ -4,7 +4,7 @@ import Board from "../../components/game/board/board";
 import PanCamera from "../../components/game/camera/pan-camera";
 import { TCellState } from "../../components/game/cell/cell";
 
-const GamePage = () => {
+const GameBoard = () => {
   const windowSize = Dimensions.get("screen");
   const handleBackButton = () => {
     return true;
@@ -59,4 +59,4 @@ const GamePage = () => {
   );
 };
 
-export default GamePage;
+export default GameBoard;

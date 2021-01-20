@@ -3,7 +3,6 @@ import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Background from "./components/background/background";
 import PageNavigator from "./pages/page-navigation/PageNavigator";
 import { StatusBar } from "expo-status-bar";
-import AppLoading from "expo-app-loading";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   useFonts,
@@ -13,6 +12,7 @@ import AuthProvider from "./contexts/auth/auth-provider";
 
 // To ignore firebase warning temporarily. https://github.com/facebook/react-native/issues/12981
 import { LogBox } from "react-native";
+import RoomProvider from "./contexts/room/room-provider";
 LogBox.ignoreLogs(["Setting a timer"]);
 
 export default function App() {
@@ -29,17 +29,21 @@ export default function App() {
     },
   });
 
-  return fontsLoaded ? (
+  return (
     <View style={style.appContainer}>
       <Background />
-      <NavigationContainer>
-        <AuthProvider>
-          <PageNavigator />
-        </AuthProvider>
-      </NavigationContainer>
-      <StatusBar style="dark" />
+      {fontsLoaded && (
+        <>
+          <NavigationContainer>
+            <AuthProvider>
+              <RoomProvider>
+                <PageNavigator />
+              </RoomProvider>
+            </AuthProvider>
+          </NavigationContainer>
+          <StatusBar style="dark" />
+        </>
+      )}
     </View>
-  ) : (
-    <AppLoading />
   );
 }
