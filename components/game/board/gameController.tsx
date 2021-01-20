@@ -15,6 +15,7 @@ export const INITIAL_GAME_STATE: IGameState = {
 
 type TReducerAction =
     | { type: "WINNER"; name: string }
+    | { type: "UPDATE_AVAILABLECELLS"; payload: { add: TCellPos[], remove: TCellPos }; }
     | { type: "REMOVE_AVAILABLECELL"; cell: TCellPos; }
     | { type: "ADD_AVAILABLECELLS"; cells: TCellPos[]; }
     | { type: "SET_AVAILABLECELLS"; cells: TCellPos[]; }
@@ -24,9 +25,19 @@ export const gameState = (prevState: IGameState, action: TReducerAction) => {
     switch (action.type) {
         case "WINNER": return {
             ...prevState,
-            board: INITIAL_GAME_STATE.board,
             winner: { name: action.name }
         } as IGameState;
+
+        case "UPDATE_AVAILABLECELLS":
+            let updated = [...prevState.availableCells]
+
+            if (action.payload.remove) updated.splice(updated.indexOf(action.payload.remove), 1, ...action.payload.add)
+            else updated.push(...action.payload.add)
+
+            return {
+                ...prevState,
+                availableCells: updated
+            } as IGameState;
 
         case "REMOVE_AVAILABLECELL":
             let updatedRemove = [...prevState.availableCells]
@@ -54,6 +65,7 @@ export const gameState = (prevState: IGameState, action: TReducerAction) => {
 
         case "UPDATE_BOARD":
             const updatedBoard = [...action.updatedBoard]
+            console.log("DISPATCHED : \n\n", updatedBoard.join("\n"));
 
             return {
                 ...prevState,

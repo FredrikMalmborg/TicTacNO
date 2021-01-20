@@ -52,9 +52,6 @@ const Board = ({ ...props }: Props) => {
   }
 
   const checkWin = (board: TCellState[][], click: TCellPos) => {
-    console.log("Player :", player);
-
-    let isLoss = false
     const
       omni = [-1, 0, 1],
       lossArray: TCellPos[] = []
@@ -85,15 +82,11 @@ const Board = ({ ...props }: Props) => {
                 x: click.x - j * 2
               }
 
-            console.log(f.value, f2.value, "|", b.value, b2.value);
-
-
             if (f.value === player) {
               console.log("found");
 
               if (f2.value === player) {
                 console.log("found further");
-                console.log("#", isLossCell(lossArray, f2.y, f2.x));
                 isLossCell(lossArray, f2.y, f2.x) && lossArray.push({ y: f2.y, x: f2.x })
                 isLossCell(lossArray, f.y, f.x) && lossArray.push({ y: f.y, x: f.x })
               }
@@ -144,8 +137,9 @@ const Board = ({ ...props }: Props) => {
       });
     });
 
-    dispatch({ type: "REMOVE_AVAILABLECELL", cell: newCell })
-    dispatch({ type: "ADD_AVAILABLECELLS", cells: newAvailableCells })
+    dispatch({ type: "UPDATE_AVAILABLECELLS", payload: { remove: newCell, add: newAvailableCells } })
+    // dispatch({ type: "REMOVE_AVAILABLECELL", cell: newCell })
+    // dispatch({ type: "ADD_AVAILABLECELLS", cells: newAvailableCells })
     dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard })
   };
 

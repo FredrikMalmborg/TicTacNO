@@ -29,9 +29,6 @@ const GamePage = ({ navigation }: Props) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <TicTacText label="play again" size={15} centered button={{
-        onClick: navigateToPlay
-      }} />
       <PanCamera windowSize={windowSize}>
         <Board winnerCallback={navigateToPlay} />
       </PanCamera>
