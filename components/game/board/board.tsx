@@ -8,10 +8,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { StackParamlist } from "../../../pages/page-navigation/PageNavigator";
 import { Pages } from "../../../pages/pages";
 import { View } from "react-native";
-interface Props {
-  winnerCallback: () => void
-}
-const Board = ({ ...props }: Props) => {
+
+const Board = () => {
 
   const [game, dispatch] = useReducer(gameState, INITIAL_GAME_STATE);
   const [player, setPlayer] = useState<TCellState>(3);
