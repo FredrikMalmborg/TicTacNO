@@ -49,7 +49,7 @@ const RoomProvider: FC = ({ children }) => {
         if (room) {
           room.ref.off();
           room.ref.remove();
-          setRoom(INITIAL_ROOM); 
+          setRoom(INITIAL_ROOM);
         }
       },
       joinRoom: async (roomId: string) => {
@@ -179,16 +179,16 @@ const RoomProvider: FC = ({ children }) => {
             availableCells: aCells
           })
         } else {
-          console.log("COULDN'T FIND ROOM (UPDATE)"); 
+          console.log("COULDN'T FIND ROOM (UPDATE)");
         }
       },
       updateGameLoser: async () => {
-        const foundRoom = await findRoomByUser()
+        const foundRoom = await findRoomByUser();
         if (foundRoom) {
             const loser = foundRoom.child("playerTurn").val()
             foundRoom.ref.child("losingPlayer").set(loser)
         }
-      }
+      },
     }),
     []
   );
