@@ -21,8 +21,8 @@ type TReducerAction =
     }
   | { type: "REMOVE_AVAILABLECELL"; cell: TCellPos }
   | { type: "ADD_AVAILABLECELLS"; cells: TCellPos[] }
-  | { type: "SET_AVAILABLECELLS"; cells: TCellPos[] }
-  // | { type: "UPDATE_BOARD"; updatedBoard: TCellState[][] };
+  | { type: "SET_AVAILABLECELLS"; cells: TCellPos[] };
+// | { type: "UPDATE_BOARD"; updatedBoard: TCellState[][] };
 
 export const gameState = (prevState: IGameState, action: TReducerAction) => {
   switch (action.type) {

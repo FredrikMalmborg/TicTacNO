@@ -25,7 +25,7 @@ const Board = ({ gameBoard, playerState }: IProps) => {
   const { roomContext } = useContext(RoomContext);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
-    roomContext.updateGameLoser()
+    roomContext.updateGameLoser();
     let newBoard = [...gameBoard],
       expand = false;
     newBoard[y][x] = state;
