@@ -25,9 +25,6 @@ const GameBoard = () => {
   });
 
   useEffect(() => {
-    console.log("TURN EFFECT");
-    console.log(yourPlayer());
-
     if (
       yourPlayer() !== null &&
       playerTurn !== null &&

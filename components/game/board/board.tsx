@@ -45,7 +45,6 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
       const { NB, NC } = addNewClickableCell([...newBoard], newCells);
       newBoard = NB;
       newCells = NC;
-      // newCells = updateValidPositions({ y, x }, newBoard);
 
       // Uppdatera Firebase
       roomContext.updateGameState(newBoard, newCells);
@@ -137,7 +136,8 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
 
   const updateValidPositions = (
     newCell: TCellPos,
-    newBoard: TCellState[][]
+    newBoard: TCellState[][],
+    aCells: TCellPos[]
   ) => {
     const omni = [-1, 0, 1];
     const newAvailableCells: TCellPos[] = [];
@@ -157,13 +157,8 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
         }
       });
     });
-
-    // dispatch({
-    //   type: "UPDATE_AVAILABLECELLS",
-    //   payload: { remove: newCell, add: newAvailableCells },
-    // });
-    return { NB: newBoard, NC: newAvailableCells };
-    // dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard });
+    aCells.push(...newAvailableCells)
+    return { NB: newBoard, NC: [...aCells] };
   };
 
   const updateACellsPosition = (B: TCellState[][]) => {
@@ -184,7 +179,7 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
   ) => {
     const newCell = aCells[getRng(aCells.length)];
     newBoard[newCell.y][newCell.x] = 2;
-    return updateValidPositions(newCell, newBoard);
+    return updateValidPositions(newCell, newBoard, aCells);
   };
 
   const addNewLayer = (updatedBoard: TCellState[][]) => {
