@@ -8,7 +8,7 @@ import RoomContext from "../../contexts/room/room-context";
 const GameBoard = () => {
   const windowSize = Dimensions.get("screen");
   const {
-    room: { player1, player2, playerTurn },
+    room: { player1, player2, playerTurn, gameBoard, availableCells },
   } = useContext(RoomContext);
   const {
     user: { userToken },
@@ -16,9 +16,6 @@ const GameBoard = () => {
   const handleBackButton = () => {
     return true;
   };
-  const {
-    room: { gameBoard },
-  } = useContext(RoomContext);
   const [yourTurn, setYourTurn] = useState<boolean>(false);
 
   useEffect(() => {
@@ -47,11 +44,12 @@ const GameBoard = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <PanCamera windowSize={windowSize}>
-        {gameBoard && (
+        {gameBoard && availableCells && (
           <Board
             gameBoard={gameBoard}
             yourTurn={yourTurn}
             playerState={yourPlayer()?.cellId}
+            aCells={availableCells}
           />
         )}
       </PanCamera>

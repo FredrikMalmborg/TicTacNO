@@ -9,7 +9,7 @@ import RoomContext, {
 } from "./room-context";
 import { firebase } from "../../constants/firebase";
 import fb from "firebase";
-import { TCellState } from "../../components/game/cell/cell";
+import { TCellPos, TCellState } from "../../components/game/cell/cell";
 
 const RoomProvider: FC = ({ children }) => {
   const [roomStatus, dispatch] = useReducer(
@@ -159,10 +159,25 @@ const RoomProvider: FC = ({ children }) => {
           console.log("COUNDN'T FIND ROOM (STARTGAME)");
         }
       },
-      updateGameBoard: async (board: TCellState[][]) => {
+      updateGameState: async (board: TCellState[][], aCells: TCellPos[]) => {
         const foundRoom = await findRoomByUser()
         if (foundRoom) {
+          const player1 = foundRoom.child("player1").val()
+          const player2 = foundRoom.child("player2").val()
+          const currentPlayer = foundRoom.child("playerTurn").val()
+          let nextPlayer
+          if (currentPlayer === player1) {
+            nextPlayer = player2
+          } else {
+            nextPlayer = player1
+          }
           foundRoom.ref.child("gameBoard").set(board)
+          foundRoom.ref.set({
+            ...room,
+            gameBoard: board,
+            playerTurn: nextPlayer,
+            availableCells: aCells
+          })
         } else {
           console.log("COULDN'T FIND ROOM (UPDATE)"); 
         }
@@ -171,7 +186,7 @@ const RoomProvider: FC = ({ children }) => {
         const foundRoom = await findRoomByUser()
         if (foundRoom) {
             const loser = foundRoom.child("playerTurn").val()
-            console.log(loser);
+            foundRoom.ref.child("losingPlayer").set(loser)
         }
       }
     }),

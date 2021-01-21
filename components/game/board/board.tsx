@@ -16,39 +16,39 @@ import RoomContext from "../../../contexts/room/room-context";
 
 interface IProps {
   gameBoard: TCellState[][];
+  aCells: TCellPos[];
   playerState?: 3 | 4;
   yourTurn: boolean;
 }
 
-const Board = ({ gameBoard, playerState }: IProps) => {
-  // const [game, dispatch] = useReducer(gameState, INITIAL_GAME_STATE);
+const Board = ({ gameBoard, aCells, playerState }: IProps) => {
   const { roomContext } = useContext(RoomContext);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
-    roomContext.updateGameLoser()
     let newBoard = [...gameBoard],
-      expand = false;
+      newCells = [...aCells];
+
     newBoard[y][x] = state;
 
     const loser = checkLoss(newBoard, { y, x });
-    // setPlayer(player === 3 ? 4 : 3);
 
     if (!loser) {
       const voidedCells: TCellState[] = Array()
         .concat(...newBoard)
         .filter((x) => x === 0 || x === 1);
-
       const ratio = voidedCells.length / Math.pow(newBoard.length, 2);
-
-      if (ratio < 0.5) expand = true;
-      if (expand) {
-        // newBoard = addNewLayer([...newBoard]);
-      } else {
-        // newBoard = addNewClickableCell([...newBoard]);
+      if (ratio < 0.5) {
+        newBoard = addNewLayer([...newBoard]);
+        newCells = updateACellsPosition(newBoard);
       }
 
+      const {NB, NC} = addNewClickableCell([...newBoard], newCells);
+      newBoard = NB
+      newCells = NC
+      // newCells = updateValidPositions({ y, x }, newBoard);
+
       // Uppdatera Firebase
-      roomContext.updateGameBoard(newBoard);
+      roomContext.updateGameState(newBoard, newCells);
       // dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard });
     }
   };
@@ -127,13 +127,10 @@ const Board = ({ gameBoard, playerState }: IProps) => {
     });
 
     if (lossArray.length >= 3) {
-      // TA SPELAREN FRÅN DATABASEN
       roomContext.updateGameLoser();
-      // dispatch({ type: "LOSER" });
       return true;
     }
     return false;
-    // console.log("loss cells : ", lossArray.length, lossArray);
   };
 
   const getRng = (range: number) => Math.floor(Math.random() * range);
@@ -165,11 +162,11 @@ const Board = ({ gameBoard, playerState }: IProps) => {
     //   type: "UPDATE_AVAILABLECELLS",
     //   payload: { remove: newCell, add: newAvailableCells },
     // });
-    return newBoard;
+    return {NB: newBoard, NC: newAvailableCells};
     // dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard });
   };
 
-  const getAllAvailableCells = (B: TCellState[][]) => {
+  const updateACellsPosition = (B: TCellState[][]) => {
     const cells: any[] = [];
 
     B.forEach((Y, y) => {
@@ -178,20 +175,17 @@ const Board = ({ gameBoard, playerState }: IProps) => {
       });
     });
 
-    // dispatch({ type: "SET_AVAILABLECELLS", cells });
     return cells;
   };
 
-  // const addNewClickableCell = (
-  //   newBoard: TCellState[][],
-  //   altCells?: TCellPos[]
-  // ) => {
-  //   const newCell = altCells
-  //     ? altCells[getRng(altCells.length)]
-  //     : game.availableCells[getRng(game.availableCells.length)];
-  //   newBoard[newCell.y][newCell.x] = 2;
-  //   return updateValidPositions(newCell, newBoard);
-  // };
+  const addNewClickableCell = (
+    newBoard: TCellState[][],
+    aCells: TCellPos[]
+  ) => {
+    const newCell = aCells[getRng(aCells.length)];
+    newBoard[newCell.y][newCell.x] = 2;
+    return updateValidPositions(newCell, newBoard);
+  };
 
   const addNewLayer = (updatedBoard: TCellState[][]) => {
     const layer: TCellState[] = [];
@@ -214,12 +208,7 @@ const Board = ({ gameBoard, playerState }: IProps) => {
       }
     });
 
-    const cells = getAllAvailableCells(updatedBoard);
-    // return addNewClickableCell(updatedBoard, cells);
-    // if (updatedBoard.length === updatedBoard[0].length) {
-    // dispatch({ type: "UPDATE_BOARD", updatedBoard });
-    // }
-    // return updatedBoard
+    return updatedBoard;
   };
 
   return (
