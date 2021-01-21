@@ -21,7 +21,7 @@ interface IProps {
   yourTurn: boolean;
 }
 
-const Board = ({ gameBoard, aCells, playerState }: IProps) => {
+const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
   const { roomContext } = useContext(RoomContext);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
@@ -42,9 +42,9 @@ const Board = ({ gameBoard, aCells, playerState }: IProps) => {
         newCells = updateACellsPosition(newBoard);
       }
 
-      const {NB, NC} = addNewClickableCell([...newBoard], newCells);
-      newBoard = NB
-      newCells = NC
+      const { NB, NC } = addNewClickableCell([...newBoard], newCells);
+      newBoard = NB;
+      newCells = NC;
       // newCells = updateValidPositions({ y, x }, newBoard);
 
       // Uppdatera Firebase
@@ -162,7 +162,7 @@ const Board = ({ gameBoard, aCells, playerState }: IProps) => {
     //   type: "UPDATE_AVAILABLECELLS",
     //   payload: { remove: newCell, add: newAvailableCells },
     // });
-    return {NB: newBoard, NC: newAvailableCells};
+    return { NB: newBoard, NC: newAvailableCells };
     // dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard });
   };
 
@@ -226,7 +226,9 @@ const Board = ({ gameBoard, aCells, playerState }: IProps) => {
             {row.map((col, colIndex) => (
               <Cell
                 player={playerState}
-                click={onClickCell}
+                click={
+                  yourTurn ? onClickCell : () => console.log("NOT YOUR TURN")
+                }
                 pos={{ y: rowIndex, x: colIndex }}
                 key={`cell-${rowIndex}/${colIndex}`}
                 state={col}
