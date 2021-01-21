@@ -25,13 +25,18 @@ const GameBoard = () => {
   });
 
   useEffect(() => {
+    console.log("TURN EFFECT");
+    console.log(yourPlayer());
+    
     if (
       yourPlayer() !== null &&
       playerTurn !== null &&
-      yourPlayer() === playerTurn
-    ) {
+      yourPlayer()?.id === playerTurn.id
+      ) {
+      console.log("TURN TRUE");
       setYourTurn(true);
     } else {
+      console.log("TURN FALSE");
       setYourTurn(false);
     }
   }, [playerTurn]);
