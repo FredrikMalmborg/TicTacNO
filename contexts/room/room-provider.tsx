@@ -190,8 +190,8 @@ const RoomProvider: FC = ({ children }) => {
           foundRoom.ref.set({
             ...room,
             gameBoard: board,
-            losingPlayer: loser
-          })
+            losingPlayer: loser,
+          });
         }
       },
     }),
