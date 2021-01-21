@@ -127,7 +127,7 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
     });
 
     if (lossArray.length >= 3) {
-      roomContext.updateGameLoser();
+      roomContext.updateGameLoser(board);
       return true;
     }
     return false;
