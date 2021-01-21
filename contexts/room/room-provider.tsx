@@ -30,7 +30,7 @@ const RoomProvider: FC = ({ children }) => {
               ...INITIAL_ROOM,
               player1: { id: user, displayName: username },
               rid: roomId,
-              gameBoard: INITIAL_BOARD
+              gameBoard: INITIAL_BOARD,
             });
             hostRoomRef.on("value", (room) => {
               const data = room.val();
@@ -122,7 +122,7 @@ const RoomProvider: FC = ({ children }) => {
         const foundRoom = await findRoomByUser();
         if (foundRoom) {
           foundRoom.ref.child("gameStarted").set(true);
-          foundRoom.ref.child("gameBoard").set(INITIAL_BOARD)
+          foundRoom.ref.child("gameBoard").set(INITIAL_BOARD);
         } else {
           console.log("COUNDN'T FIND ROOM");
         }

@@ -8,7 +8,7 @@ export interface IRoomState {
   player1: { id: string | null; displayName: string } | null;
   player2: { id: string | null; displayName: string } | null;
   gameStarted: boolean;
-  gameBoard: TCellState[][] | undefined
+  gameBoard: TCellState[][] | undefined;
 }
 
 export const INITIAL_ROOM: IRoomState = {
@@ -17,7 +17,7 @@ export const INITIAL_ROOM: IRoomState = {
   player1: null,
   player2: null,
   gameStarted: false,
-  gameBoard: undefined
+  gameBoard: undefined,
 };
 
 interface IRoomStatus {
