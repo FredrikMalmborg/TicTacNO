@@ -52,23 +52,14 @@ const PageNavigator = () => {
             <Stack.Screen name={Pages.Login} component={LoginPage} />
           ) : (
             <>
-              {user.newUser ? (
-                <Stack.Screen
-                  name={Pages.InitialSetup}
-                  component={InitialSetup}
-                />
-              ) : (
-                <>
-                  <Stack.Screen name={Pages.Start} component={StartPage} />
-                  {/* <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} /> */}
-                  <Stack.Screen name={Pages.Play} component={PlayPage} />
-                  <Stack.Screen
-                    name={Pages.GamePage}
-                    component={GamePage}
-                    options={{ gestureEnabled: false }}
-                  />
-                </>
-              )}
+              <Stack.Screen name={Pages.Start} component={StartPage} />
+              {/* <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} /> */}
+              <Stack.Screen name={Pages.Play} component={PlayPage} />
+              <Stack.Screen
+                name={Pages.GamePage}
+                component={GamePage}
+                options={{ gestureEnabled: false }}
+              />
             </>
           )}
         </>

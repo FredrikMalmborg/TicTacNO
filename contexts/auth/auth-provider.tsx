@@ -68,14 +68,20 @@ const AuthProvider: FC = ({ children }) => {
         passwordConfirm: string;
       }) => {
         if (payload.password === payload.passwordConfirm) {
-          firebase
+          const result = await firebase
             .auth()
             .createUserWithEmailAndPassword(payload.email, payload.password)
             .then((user) => user)
             .catch((error) => {
               console.log("AUTH-ERROR: ", error);
               dispatch({ type: "HANDLE_ERROR", error: "SIGNUP" });
+              return null;
             });
+          if (result && result?.user) {
+            dispatch({ type: "SIGN_IN", token: result.user?.uid });
+          } else {
+            dispatch({ type: "SIGN_OUT" });
+          }
         }
       },
       setError: async (error: TError) => {
