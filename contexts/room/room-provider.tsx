@@ -5,9 +5,11 @@ import RoomContext, {
   INITIAL_ROOM_STATUS,
   IRoomState,
   roomStatusReducer,
+  TPlayer,
 } from "./room-context";
 import { firebase } from "../../constants/firebase";
 import fb from "firebase";
+import { TCellState } from "../../components/game/cell/cell";
 
 const RoomProvider: FC = ({ children }) => {
   const [roomStatus, dispatch] = useReducer(
@@ -26,11 +28,12 @@ const RoomProvider: FC = ({ children }) => {
         if (user) {
           const username = await findUsername(user);
           if (username !== undefined) {
+            const player = { id: user, displayName: username, cellId: 3 };
             hostRoomRef.set({
               ...INITIAL_ROOM,
-              player1: { id: user, displayName: username },
+              player1: player,
               rid: roomId,
-              gameBoard: INITIAL_BOARD
+              playerTurn: player,
             });
             hostRoomRef.on("value", (room) => {
               const data = room.val();
@@ -61,7 +64,7 @@ const RoomProvider: FC = ({ children }) => {
               const username = await findUsername(user);
               const addPlayer = await foundRoom.ref
                 .child("player2")
-                .set({ displayName: username, id: user })
+                .set({ displayName: username, id: user, cellId: 4 })
                 .catch(() => false)
                 .then(() => true);
               if (addPlayer) {
@@ -118,15 +121,6 @@ const RoomProvider: FC = ({ children }) => {
           }
         });
       },
-      startGame: async () => {
-        const foundRoom = await findRoomByUser();
-        if (foundRoom) {
-          foundRoom.ref.child("gameStarted").set(true);
-          foundRoom.ref.child("gameBoard").set(INITIAL_BOARD)
-        } else {
-          console.log("COUNDN'T FIND ROOM");
-        }
-      },
       resetRoomStatus: () => {
         dispatch({ type: "RESET" });
       },
@@ -157,6 +151,29 @@ const RoomProvider: FC = ({ children }) => {
           dispatch({ type: "LOADING", isLoading: false });
         }
       },
+      startGame: async () => {
+        const foundRoom = await findRoomByUser();
+        if (foundRoom) {
+          foundRoom.ref.child("gameStarted").set(true);
+        } else {
+          console.log("COUNDN'T FIND ROOM (STARTGAME)");
+        }
+      },
+      updateGameBoard: async (board: TCellState[][]) => {
+        const foundRoom = await findRoomByUser()
+        if (foundRoom) {
+          foundRoom.ref.child("gameBoard").set(board)
+        } else {
+          console.log("COULDN'T FIND ROOM (UPDATE)"); 
+        }
+      },
+      updateGameLoser: async () => {
+        const foundRoom = await findRoomByUser()
+        if (foundRoom) {
+            const loser = foundRoom.child("playerTurn").val()
+            console.log(loser);
+        }
+      }
     }),
     []
   );

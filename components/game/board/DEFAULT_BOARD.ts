@@ -1,6 +1,6 @@
 import { TCellPos, TCellState } from "../cell/cell";
 
-export const availableCells: TCellPos[] = [
+export const INITIAL_ACELLS: TCellPos[] = [
   {
     y: 1,
     x: 1,
