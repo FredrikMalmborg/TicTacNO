@@ -1,19 +1,23 @@
 import React, { FC, useEffect, useMemo, useReducer, useState } from "react";
 import RoomContext, {
+  INITIAL_BOARD,
   INITIAL_ROOM,
   INITIAL_ROOM_STATUS,
   IRoomState,
   roomStatusReducer,
+  TPlayer,
 } from "./room-context";
 import { firebase } from "../../constants/firebase";
 import fb from "firebase";
+import { TCellPos, TCellState } from "../../components/game/cell/cell";
+import { board } from "../../components/game/board/DEFAULT_BOARD";
 
 const RoomProvider: FC = ({ children }) => {
   const [roomStatus, dispatch] = useReducer(
     roomStatusReducer,
     INITIAL_ROOM_STATUS
   );
-  const [room, setRoom] = useState<IRoomState>(INITIAL_ROOM);
+  const [roomState, setRoomState] = useState<IRoomState>(INITIAL_ROOM);
   const roomsRef = firebase.database().ref("rooms");
   const hostRoomRef = roomsRef.push();
 
@@ -25,15 +29,18 @@ const RoomProvider: FC = ({ children }) => {
         if (user) {
           const username = await findUsername(user);
           if (username !== undefined) {
+            const player = { id: user, displayName: username, cellId: 3 };
             hostRoomRef.set({
               ...INITIAL_ROOM,
-              player1: { id: user, displayName: username },
+              player1: player,
               rid: roomId,
+              playerTurn: player,
             });
             hostRoomRef.on("value", (room) => {
               const data = room.val();
+              console.log("HOST ROOM LISTENER", data);
               if (data) {
-                setRoom(data);
+                setRoomState(data);
               }
             });
           }
@@ -44,7 +51,7 @@ const RoomProvider: FC = ({ children }) => {
         if (room) {
           room.ref.off();
           room.ref.remove();
-          setRoom(INITIAL_ROOM);
+          setRoomState(INITIAL_ROOM);
         }
       },
       joinRoom: async (roomId: string) => {
@@ -59,7 +66,7 @@ const RoomProvider: FC = ({ children }) => {
               const username = await findUsername(user);
               const addPlayer = await foundRoom.ref
                 .child("player2")
-                .set({ displayName: username, id: user })
+                .set({ displayName: username, id: user, cellId: 4 })
                 .catch(() => false)
                 .then(() => true);
               if (addPlayer) {
@@ -67,9 +74,9 @@ const RoomProvider: FC = ({ children }) => {
                 roomKeyId = foundRoom.key;
                 foundRoom.ref.on("value", (room) => {
                   const data = room.val();
+                  console.log("JOIN ROOM LISTENER: ", data);
                   if (data) {
-                    // console.log("JOINROOMDATA: ", data);
-                    setRoom(data);
+                    setRoomState(data);
                   }
                 });
                 roomsRef.on("child_removed", (child) => {
@@ -78,7 +85,7 @@ const RoomProvider: FC = ({ children }) => {
                     | { id: string; displayName: string }
                     | undefined = child.val().player2 || undefined;
                   if (player2 && player2.id && player2.id === user) {
-                    setRoom(INITIAL_ROOM);
+                    setRoomState(INITIAL_ROOM);
                   }
                 });
               }
@@ -112,17 +119,9 @@ const RoomProvider: FC = ({ children }) => {
         room.ref.on("value", (room) => {
           const data = room.val();
           if (data) {
-            setRoom(data);
+            setRoomState(data);
           }
         });
-      },
-      startGame: async () => {
-        const foundRoom = await findRoomByUser();
-        if (foundRoom) {
-          foundRoom.ref.child("gameStarted").set(true);
-        } else {
-          console.log("COUNDN'T FIND ROOM");
-        }
       },
       resetRoomStatus: () => {
         dispatch({ type: "RESET" });
@@ -152,6 +151,54 @@ const RoomProvider: FC = ({ children }) => {
             dispatch({ type: "ERROR", message: "Something went wrong" });
           }
           dispatch({ type: "LOADING", isLoading: false });
+        }
+      },
+      startGame: async () => {
+        const foundRoom = await findRoomByUser();
+        if (foundRoom) {
+          foundRoom.ref.child("gameStarted").set(true);
+        } else {
+          console.log("COUNDN'T FIND ROOM (STARTGAME)");
+        }
+      },
+      updateGameState: async (board: TCellState[][], aCells: TCellPos[]) => {
+        const foundRoom = await findRoomByUser();
+        if (foundRoom) {
+          const fbRoom = foundRoom.val();
+          const player1 = foundRoom.child("player1").val();
+          const player2 = foundRoom.child("player2").val();
+          const currentPlayer = foundRoom.child("playerTurn").val();
+
+          let nextPlayer;
+          if (currentPlayer.id === player1.id) {
+            nextPlayer = player2;
+          } else {
+            nextPlayer = player1;
+          }
+
+          const updatedRoom = {
+            ...fbRoom,
+            gameBoard: board,
+            playerTurn: nextPlayer,
+            availableCells: aCells,
+          };
+
+          console.log("ROOM SHOULD UPDATE TO: ", updatedRoom);
+          foundRoom.ref.set(updatedRoom).catch((e) => console.log(e));
+        } else {
+          console.log("COULDN'T FIND ROOM (UPDATE)");
+        }
+      },
+      updateGameLoser: async (board: TCellState[][]) => {
+        const foundRoom = await findRoomByUser();
+        if (foundRoom) {
+          const fbRoom = foundRoom.val();
+          const loser = foundRoom.child("playerTurn").val();
+          foundRoom.ref.set({
+            ...fbRoom,
+            gameBoard: board,
+            losingPlayer: loser,
+          });
         }
       },
     }),
@@ -222,7 +269,7 @@ const RoomProvider: FC = ({ children }) => {
   }, [roomStatus.errorMsg]);
 
   return (
-    <RoomContext.Provider value={{ roomContext, roomStatus, room }}>
+    <RoomContext.Provider value={{ roomContext, roomStatus, roomState }}>
       {children}
     </RoomContext.Provider>
   );

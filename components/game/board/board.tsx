@@ -1,43 +1,54 @@
-import React, { memo, useEffect, useMemo, useReducer, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { Grid, Row } from "react-native-easy-grid";
-import { gameState, INITIAL_GAME_STATE } from "./gameController";
+import { gameState } from "./gameController";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 
 import TicTacText from "../../text/Text";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StackParamlist } from "../../../pages/page-navigation/PageNavigator";
-import { Pages } from "../../../pages/pages";
 import { View } from "react-native";
+import RoomContext from "../../../contexts/room/room-context";
 
-const Board = () => {
-  const [game, dispatch] = useReducer(gameState, INITIAL_GAME_STATE);
-  const [player, setPlayer] = useState<TCellState>(3);
+interface IProps {
+  gameBoard: TCellState[][];
+  aCells: TCellPos[];
+  playerState?: 3 | 4;
+  yourTurn: boolean;
+}
 
-  useEffect(() => {
-    console.log("Player changed to: ", player === 3 ? "RED" : "TEAL");
-  }, [player]);
+const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
+  const { roomContext } = useContext(RoomContext);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
-    let newBoard = [...game.board],
-      expand = false;
+    let newBoard = [...gameBoard],
+      newCells = [...aCells];
 
     newBoard[y][x] = state;
-    console.log("CLICKED : ", y, x);
 
-    checkWin(newBoard, { y, x });
-    setPlayer(player === 3 ? 4 : 3);
+    const loser = checkLoss(newBoard, { y, x });
 
-    const voidedCells: TCellState[] = Array()
-      .concat(...game.board)
-      .filter((x) => x === 0 || x === 1);
+    if (!loser) {
+      const voidedCells: TCellState[] = Array()
+        .concat(...newBoard)
+        .filter((x) => x === 0 || x === 1);
+      const ratio = voidedCells.length / Math.pow(newBoard.length, 2);
+      if (ratio < 0.5) {
+        newBoard = addNewLayer([...newBoard]);
+        newCells = updateACellsPosition(newBoard);
+      }
 
-    const ratio = voidedCells.length / Math.pow(game.board.length, 2);
+      const { NB, NC } = addNewClickableCell([...newBoard], newCells);
+      newBoard = NB;
+      newCells = NC;
 
-    if (ratio < 0.5) expand = true;
-    if (expand && !game.winner) {
-      addNewLayer([...newBoard]);
-    } else {
-      addNewClickableCell([...newBoard]);
+      // Uppdatera Firebase
+      roomContext.updateGameState(newBoard, newCells);
+      // dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard });
     }
   };
 
@@ -45,7 +56,7 @@ const Board = () => {
     return !array.some((c) => c.y === y && c.x === x);
   };
 
-  const checkWin = (board: TCellState[][], click: TCellPos) => {
+  const checkLoss = (board: TCellState[][], click: TCellPos) => {
     const omni = [-1, 0, 1],
       lossArray: TCellPos[] = [];
 
@@ -81,23 +92,23 @@ const Board = () => {
                 x: click.x - j * 2,
               };
 
-            if (f.value === player) {
+            if (f.value === playerState) {
               console.log("found");
 
-              if (f2.value === player) {
+              if (f2.value === playerState) {
                 console.log("found further");
                 isLossCell(lossArray, f2.y, f2.x) &&
                   lossArray.push({ y: f2.y, x: f2.x });
                 isLossCell(lossArray, f.y, f.x) &&
                   lossArray.push({ y: f.y, x: f.x });
               }
-              if (b.value === player) {
+              if (b.value === playerState) {
                 console.log("back");
                 isLossCell(lossArray, b.y, b.x) &&
                   lossArray.push({ y: f2.y, x: b.x });
                 isLossCell(lossArray, f.y, f.x) &&
                   lossArray.push({ y: f.y, x: f.x });
-                if (b2.value === player) {
+                if (b2.value === playerState) {
                   console.log("back further");
                   isLossCell(lossArray, b2.y, b2.x) &&
                     lossArray.push({ y: b2.y, x: b2.x });
@@ -114,20 +125,23 @@ const Board = () => {
       }
     });
 
-    if (lossArray.length >= 3)
-      dispatch({ type: "WINNER", name: player === 3 ? "4" : "3" });
-
-    console.log("loss cells : ", lossArray.length, lossArray);
+    if (lossArray.length >= 3) {
+      roomContext.updateGameLoser(board);
+      return true;
+    }
+    return false;
   };
 
   const getRng = (range: number) => Math.floor(Math.random() * range);
 
   const updateValidPositions = (
     newCell: TCellPos,
-    newBoard: TCellState[][]
+    newBoard: TCellState[][],
+    aCells: TCellPos[]
   ) => {
     const omni = [-1, 0, 1];
     const newAvailableCells: TCellPos[] = [];
+    const aCellsCopy = [...aCells];
 
     omni.forEach((i) => {
       omni.forEach((j) => {
@@ -145,16 +159,11 @@ const Board = () => {
       });
     });
 
-    dispatch({
-      type: "UPDATE_AVAILABLECELLS",
-      payload: { remove: newCell, add: newAvailableCells },
-    });
-    // dispatch({ type: "REMOVE_AVAILABLECELL", cell: newCell })
-    // dispatch({ type: "ADD_AVAILABLECELLS", cells: newAvailableCells })
-    dispatch({ type: "UPDATE_BOARD", updatedBoard: newBoard });
+    aCellsCopy.splice(aCells.indexOf(newCell), 1, ...newAvailableCells);
+    return { NB: newBoard, NC: aCellsCopy };
   };
 
-  const getAllAvailableCells = (B: TCellState[][]) => {
+  const updateACellsPosition = (B: TCellState[][]) => {
     const cells: any[] = [];
 
     B.forEach((Y, y) => {
@@ -163,24 +172,21 @@ const Board = () => {
       });
     });
 
-    dispatch({ type: "SET_AVAILABLECELLS", cells });
     return cells;
   };
 
   const addNewClickableCell = (
     newBoard: TCellState[][],
-    altCells?: TCellPos[]
+    aCells: TCellPos[]
   ) => {
-    const newCell = altCells
-      ? altCells[getRng(altCells.length)]
-      : game.availableCells[getRng(game.availableCells.length)];
+    const newCell = aCells[getRng(aCells.length)];
     newBoard[newCell.y][newCell.x] = 2;
-    updateValidPositions(newCell, newBoard);
+    return updateValidPositions(newCell, newBoard, aCells);
   };
 
   const addNewLayer = (updatedBoard: TCellState[][]) => {
     const layer: TCellState[] = [];
-    for (let i = 0; i < game.board.length; i++) {
+    for (let i = 0; i < updatedBoard.length; i++) {
       layer.push(0);
     }
     updatedBoard.push([...layer]);
@@ -199,19 +205,10 @@ const Board = () => {
       }
     });
 
-    const cells = getAllAvailableCells(updatedBoard);
-    if (cells) addNewClickableCell(updatedBoard, cells);
-    if (updatedBoard.length === updatedBoard[0].length)
-      dispatch({ type: "UPDATE_BOARD", updatedBoard });
+    return updatedBoard;
   };
 
-  return game.winner ? (
-    <View>
-      <TicTacText
-        label={`Winner is : ${game.winner.name === "3" ? "Red" : "Teal"}`}
-      />
-    </View>
-  ) : (
+  return (
     <Grid
       style={{
         flex: 0,
@@ -219,21 +216,25 @@ const Board = () => {
         borderColor: "purple",
       }}
     >
-      {[...game.board].map((row, rowIndex) => (
-        <Row style={{ height: 40 }} key={`row-${rowIndex}`}>
-          {row.map((col, colIndex) => (
-            <Cell
-              player={player}
-              click={onClickCell}
-              pos={{ y: rowIndex, x: colIndex }}
-              key={`cell-${rowIndex}/${colIndex}`}
-              state={col}
-            />
-          ))}
-        </Row>
-      ))}
+      {gameBoard &&
+        playerState &&
+        [...gameBoard].map((row, rowIndex) => (
+          <Row style={{ height: 40 }} key={`row-${rowIndex}`}>
+            {row.map((col, colIndex) => (
+              <Cell
+                player={playerState}
+                click={
+                  yourTurn ? onClickCell : () => console.log("NOT YOUR TURN")
+                }
+                pos={{ y: rowIndex, x: colIndex }}
+                key={`cell-${rowIndex}/${colIndex}`}
+                state={col}
+              />
+            ))}
+          </Row>
+        ))}
     </Grid>
   );
 };
 
-export default Board;
+export default memo(Board);
