@@ -160,7 +160,6 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
     });
 
     aCellsCopy.splice(aCells.indexOf(newCell), 1, ...newAvailableCells)
-    
     return { NB: newBoard, NC: aCellsCopy };
   };
 
