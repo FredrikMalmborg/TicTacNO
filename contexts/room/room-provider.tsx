@@ -160,24 +160,24 @@ const RoomProvider: FC = ({ children }) => {
         }
       },
       updateGameState: async (board: TCellState[][], aCells: TCellPos[]) => {
-        const foundRoom = await findRoomByUser()
+        const foundRoom = await findRoomByUser();
         if (foundRoom) {
-          const player1 = foundRoom.child("player1").val()
-          const player2 = foundRoom.child("player2").val()
-          const currentPlayer = foundRoom.child("playerTurn").val()
-          let nextPlayer
+          const player1 = foundRoom.child("player1").val();
+          const player2 = foundRoom.child("player2").val();
+          const currentPlayer = foundRoom.child("playerTurn").val();
+          let nextPlayer;
           if (currentPlayer === player1) {
-            nextPlayer = player2
+            nextPlayer = player2;
           } else {
-            nextPlayer = player1
+            nextPlayer = player1;
           }
-          foundRoom.ref.child("gameBoard").set(board)
+          foundRoom.ref.child("gameBoard").set(board);
           foundRoom.ref.set({
             ...room,
             gameBoard: board,
             playerTurn: nextPlayer,
-            availableCells: aCells
-          })
+            availableCells: aCells,
+          });
         } else {
           console.log("COULDN'T FIND ROOM (UPDATE)");
         }
@@ -185,8 +185,8 @@ const RoomProvider: FC = ({ children }) => {
       updateGameLoser: async () => {
         const foundRoom = await findRoomByUser();
         if (foundRoom) {
-            const loser = foundRoom.child("playerTurn").val()
-            foundRoom.ref.child("losingPlayer").set(loser)
+          const loser = foundRoom.child("playerTurn").val();
+          foundRoom.ref.child("losingPlayer").set(loser);
         }
       },
     }),
