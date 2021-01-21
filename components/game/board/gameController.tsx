@@ -3,13 +3,13 @@ import { TCellPos, TCellState } from "../cell/cell";
 
 export interface IGameState {
   winner: false | { name: string };
-  board: TCellState[][];
+  board: TCellState[][] | undefined;
   availableCells: TCellPos[];
 }
 
 export const INITIAL_GAME_STATE: IGameState = {
   winner: false,
-  board: board,
+  board: undefined,
   availableCells: AC,
 };
 

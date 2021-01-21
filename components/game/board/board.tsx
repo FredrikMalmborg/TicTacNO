@@ -1,17 +1,16 @@
-import React, { memo, useEffect, useMemo, useReducer, useState } from "react";
+import React, { memo, useContext, useEffect, useMemo, useReducer, useState } from "react";
 import { Grid, Row } from "react-native-easy-grid";
 import { gameState, INITIAL_GAME_STATE } from "./gameController";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 
 import TicTacText from "../../text/Text";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StackParamlist } from "../../../pages/page-navigation/PageNavigator";
-import { Pages } from "../../../pages/pages";
 import { View } from "react-native";
+import RoomContext from "../../../contexts/room/room-context";
 
 const Board = () => {
   const [game, dispatch] = useReducer(gameState, INITIAL_GAME_STATE);
   const [player, setPlayer] = useState<TCellState>(3);
+  const { room: {gameBoard} } = useContext(RoomContext)
 
   useEffect(() => {
     console.log("Player changed to: ", player === 3 ? "RED" : "TEAL");
@@ -219,7 +218,7 @@ const Board = () => {
         borderColor: "purple",
       }}
     >
-      {[...game.board].map((row, rowIndex) => (
+      {gameBoard && [...gameBoard].map((row, rowIndex) => (
         <Row style={{ height: 40 }} key={`row-${rowIndex}`}>
           {row.map((col, colIndex) => (
             <Cell

@@ -1,5 +1,6 @@
 import React from "react";
 import fb from "firebase";
+import { TCellState } from "../../components/game/cell/cell";
 
 export interface IRoomState {
   rid: string | undefined;
@@ -7,6 +8,7 @@ export interface IRoomState {
   player1: { id: string | null; displayName: string } | null;
   player2: { id: string | null; displayName: string } | null;
   gameStarted: boolean;
+  gameBoard: TCellState[][] | undefined
 }
 
 export const INITIAL_ROOM: IRoomState = {
@@ -15,6 +17,7 @@ export const INITIAL_ROOM: IRoomState = {
   player1: null,
   player2: null,
   gameStarted: false,
+  gameBoard: undefined
 };
 
 interface IRoomStatus {
@@ -30,6 +33,16 @@ export const INITIAL_ROOM_STATUS: IRoomStatus = {
   success: false,
   roomKey: undefined,
 };
+
+export const INITIAL_BOARD: TCellState[][] = [
+  [0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 1, 1, 0],
+  [0, 1, 2, 2, 2, 1, 0],
+  [0, 1, 2, 2, 2, 1, 0],
+  [0, 1, 2, 2, 2, 1, 0],
+  [0, 1, 1, 1, 1, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0],
+];
 
 type TStatusAction =
   | { type: "ERROR"; message: string | false }

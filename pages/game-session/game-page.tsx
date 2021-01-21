@@ -33,7 +33,7 @@ const GamePage = ({ navigation, route }: Props) => {
     }
     return () => {
       if (condition === "HOST" || condition === "RECON-HOST") {
-        console.log("DESTROY", room.gameStarted);
+        // console.log("DESTROY", room.gameStarted);
         roomContext.destroyRoom();
       }
     };
