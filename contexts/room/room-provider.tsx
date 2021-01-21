@@ -49,7 +49,7 @@ const RoomProvider: FC = ({ children }) => {
         if (room) {
           room.ref.off();
           room.ref.remove();
-          setRoom(INITIAL_ROOM);
+          setRoom(INITIAL_ROOM); 
         }
       },
       joinRoom: async (roomId: string) => {
