@@ -184,9 +184,7 @@ const RoomProvider: FC = ({ children }) => {
           };
 
           console.log("ROOM SHOULD UPDATE TO: ", updatedRoom);
-          foundRoom.ref
-            .set(updatedRoom)
-            .catch((e) => console.log(e));
+          foundRoom.ref.set(updatedRoom).catch((e) => console.log(e));
         } else {
           console.log("COULDN'T FIND ROOM (UPDATE)");
         }
@@ -194,7 +192,7 @@ const RoomProvider: FC = ({ children }) => {
       updateGameLoser: async (board: TCellState[][]) => {
         const foundRoom = await findRoomByUser();
         if (foundRoom) {
-          const fbRoom = foundRoom.val()
+          const fbRoom = foundRoom.val();
           const loser = foundRoom.child("playerTurn").val();
           foundRoom.ref.set({
             ...fbRoom,
