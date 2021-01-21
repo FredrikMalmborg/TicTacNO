@@ -141,6 +141,7 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
   ) => {
     const omni = [-1, 0, 1];
     const newAvailableCells: TCellPos[] = [];
+    const aCellsCopy = [...aCells]
 
     omni.forEach((i) => {
       omni.forEach((j) => {
@@ -157,8 +158,10 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
         }
       });
     });
-    aCells.push(...newAvailableCells)
-    return { NB: newBoard, NC: [...aCells] };
+
+    aCellsCopy.splice(aCells.indexOf(newCell), 1, ...newAvailableCells)
+    
+    return { NB: newBoard, NC: aCellsCopy };
   };
 
   const updateACellsPosition = (B: TCellState[][]) => {

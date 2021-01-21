@@ -172,7 +172,6 @@ const RoomProvider: FC = ({ children }) => {
           } else {
             nextPlayer = player1;
           }
-          foundRoom.ref.child("gameBoard").set(board);
           foundRoom.ref.set({
             ...room,
             gameBoard: board,
