@@ -47,23 +47,23 @@ const PageNavigator = () => {
           options={pageOptions}
         />
       ) : (
-          <>
-            {user.userToken === null ? (
-              <Stack.Screen name={Pages.Login} component={LoginPage} />
-            ) : (
-                <>
-                  <Stack.Screen name={Pages.Start} component={StartPage} />
-                  {/* <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} /> */}
-                  <Stack.Screen name={Pages.Play} component={PlayPage} />
-                  <Stack.Screen
-                    name={Pages.GamePage}
-                    component={GamePage}
-                    options={{ gestureEnabled: false }}
-                  />
-                </>
-              )}
-          </>
-        )}
+        <>
+          {user.userToken === null ? (
+            <Stack.Screen name={Pages.Login} component={LoginPage} />
+          ) : (
+            <>
+              <Stack.Screen name={Pages.Start} component={StartPage} />
+              {/* <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} /> */}
+              <Stack.Screen name={Pages.Play} component={PlayPage} />
+              <Stack.Screen
+                name={Pages.GamePage}
+                component={GamePage}
+                options={{ gestureEnabled: false }}
+              />
+            </>
+          )}
+        </>
+      )}
     </Stack.Navigator>
   );
 };

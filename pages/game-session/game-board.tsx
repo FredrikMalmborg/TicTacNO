@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { SafeAreaView, Dimensions, BackHandler } from "react-native";
 import Board from "../../components/game/board/board";
