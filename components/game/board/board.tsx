@@ -157,7 +157,7 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
         }
       });
     });
-    aCells.push(...newAvailableCells)
+    aCells.push(...newAvailableCells);
     return { NB: newBoard, NC: [...aCells] };
   };
 
