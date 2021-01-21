@@ -17,7 +17,7 @@ const RoomProvider: FC = ({ children }) => {
     roomStatusReducer,
     INITIAL_ROOM_STATUS
   );
-  const [room, setRoom] = useState<IRoomState>(INITIAL_ROOM);
+  const [roomState, setRoomState] = useState<IRoomState>(INITIAL_ROOM);
   const roomsRef = firebase.database().ref("rooms");
   const hostRoomRef = roomsRef.push();
 
@@ -38,8 +38,9 @@ const RoomProvider: FC = ({ children }) => {
             });
             hostRoomRef.on("value", (room) => {
               const data = room.val();
+              console.log("HOST ROOM LISTENER", data);
               if (data) {
-                setRoom(data);
+                setRoomState(data);
               }
             });
           }
@@ -50,7 +51,7 @@ const RoomProvider: FC = ({ children }) => {
         if (room) {
           room.ref.off();
           room.ref.remove();
-          setRoom(INITIAL_ROOM);
+          setRoomState(INITIAL_ROOM);
         }
       },
       joinRoom: async (roomId: string) => {
@@ -73,9 +74,9 @@ const RoomProvider: FC = ({ children }) => {
                 roomKeyId = foundRoom.key;
                 foundRoom.ref.on("value", (room) => {
                   const data = room.val();
+                  console.log("JOIN ROOM LISTENER: ", data);
                   if (data) {
-                    // console.log("JOINROOMDATA: ", data);
-                    setRoom(data);
+                    setRoomState(data);
                   }
                 });
                 roomsRef.on("child_removed", (child) => {
@@ -84,7 +85,7 @@ const RoomProvider: FC = ({ children }) => {
                     | { id: string; displayName: string }
                     | undefined = child.val().player2 || undefined;
                   if (player2 && player2.id && player2.id === user) {
-                    setRoom(INITIAL_ROOM);
+                    setRoomState(INITIAL_ROOM);
                   }
                 });
               }
@@ -118,7 +119,7 @@ const RoomProvider: FC = ({ children }) => {
         room.ref.on("value", (room) => {
           const data = room.val();
           if (data) {
-            setRoom(data);
+            setRoomState(data);
           }
         });
       },
@@ -163,21 +164,29 @@ const RoomProvider: FC = ({ children }) => {
       updateGameState: async (board: TCellState[][], aCells: TCellPos[]) => {
         const foundRoom = await findRoomByUser();
         if (foundRoom) {
+          const fbRoom = foundRoom.val();
           const player1 = foundRoom.child("player1").val();
           const player2 = foundRoom.child("player2").val();
           const currentPlayer = foundRoom.child("playerTurn").val();
+
           let nextPlayer;
           if (currentPlayer.id === player1.id) {
             nextPlayer = player2;
           } else {
             nextPlayer = player1;
           }
-          foundRoom.ref.set({
-            ...room,
+
+          const updatedRoom = {
+            ...fbRoom,
             gameBoard: board,
             playerTurn: nextPlayer,
             availableCells: aCells,
-          });
+          };
+
+          console.log("ROOM SHOULD UPDATE TO: ", updatedRoom);
+          foundRoom.ref
+            .set(updatedRoom)
+            .catch((e) => console.log(e));
         } else {
           console.log("COULDN'T FIND ROOM (UPDATE)");
         }
@@ -185,9 +194,10 @@ const RoomProvider: FC = ({ children }) => {
       updateGameLoser: async (board: TCellState[][]) => {
         const foundRoom = await findRoomByUser();
         if (foundRoom) {
+          const fbRoom = foundRoom.val()
           const loser = foundRoom.child("playerTurn").val();
           foundRoom.ref.set({
-            ...room,
+            ...fbRoom,
             gameBoard: board,
             losingPlayer: loser,
           });
@@ -261,7 +271,7 @@ const RoomProvider: FC = ({ children }) => {
   }, [roomStatus.errorMsg]);
 
   return (
-    <RoomContext.Provider value={{ roomContext, roomStatus, room }}>
+    <RoomContext.Provider value={{ roomContext, roomStatus, roomState }}>
       {children}
     </RoomContext.Provider>
   );

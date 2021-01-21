@@ -8,7 +8,7 @@ import RoomContext from "../../contexts/room/room-context";
 const GameBoard = () => {
   const windowSize = Dimensions.get("screen");
   const {
-    room: { player1, player2, playerTurn, gameBoard, availableCells },
+    roomState: { player1, player2, playerTurn, gameBoard, availableCells },
   } = useContext(RoomContext);
   const {
     user: { userToken },

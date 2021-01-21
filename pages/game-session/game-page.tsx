@@ -23,7 +23,7 @@ interface Props {
 
 const GamePage = ({ navigation, route }: Props) => {
   const { condition } = route.params;
-  const { room, roomContext } = useContext(RoomContext);
+  const { roomState, roomContext } = useContext(RoomContext);
   const [modal, setModal] = useState<boolean>(false);
 
   // CREATE ROOM ON HOST OR DESTROY ON HOST DEMOUNT
@@ -41,19 +41,21 @@ const GamePage = ({ navigation, route }: Props) => {
 
   // START GAME
   useEffect(() => {
-    if (room.gameStarted) {
+    if (roomState.gameStarted) {
       setModal(true);
       setTimeout(() => {
         setModal(false);
         // navigation.dispatch(resetAction);
       }, 2000);
     }
-  }, [room.gameStarted]);
+  }, [roomState.gameStarted]);
 
   // LEAVE ROOM IF DESTROYED
   useEffect(() => {
-    if (condition === "JOIN" && !room.gameStarted) {
-      if (room === INITIAL_ROOM) {
+    console.log("local room: ", roomState);
+
+    if (condition === "JOIN" && !roomState.gameStarted) {
+      if (roomState === INITIAL_ROOM) {
         setModal(true);
         setTimeout(() => {
           setModal(false);
@@ -61,7 +63,7 @@ const GamePage = ({ navigation, route }: Props) => {
         }, 2000);
       }
     }
-  }, [room]);
+  }, [roomState]);
 
   //Place page on top of stack
   //   const resetAction = CommonActions.reset({
@@ -83,14 +85,14 @@ const GamePage = ({ navigation, route }: Props) => {
   return (
     <SafeAreaView style={style.container}>
       <>
-        {room.gameStarted ? (
+        {roomState.gameStarted ? (
           <GameBoard />
         ) : (
           <PreGameRoom
             condition={condition}
-            rid={room.rid}
-            player1={room.player1}
-            player2={room.player2}
+            rid={roomState.rid}
+            player1={roomState.player1}
+            player2={roomState.player2}
             destroyRoom={destroyRoom}
             leaveRoom={leaveRoom}
             startGame={roomContext.startGame}
@@ -99,7 +101,7 @@ const GamePage = ({ navigation, route }: Props) => {
       </>
       <GameInfoModal
         modalVisible={modal}
-        label={!room.gameStarted ? "Game was cancelled" : "Loading game"}
+        label={!roomState.gameStarted ? "Game was cancelled" : "Loading game"}
         setVisible={setModal}
       />
     </SafeAreaView>
