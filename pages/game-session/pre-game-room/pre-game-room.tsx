@@ -7,8 +7,11 @@ import {
   View,
 } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
+import Svg, { Path, Circle } from "react-native-svg";
 import TicTacText from "../../../components/text/Text";
 import colors from "../../../constants/colors";
+
+import Cell from "../../../components/game/cell/cell"
 
 interface IStyles {
   container: StyleProp<ViewStyle>;
@@ -63,26 +66,48 @@ const PreGameRoom = ({
         <Row size={4} style={[style.section, style.roomData]}>
           <View style={style.content}>
             <TicTacText title label={`Room ID:`} centered size="sm" />
-            {rid && <TicTacText title label={rid} centered size={40} />}
+            {rid && <TicTacText title label={rid} centered size={50} color={colors.red.dark} />}
           </View>
           <View style={style.content}>
             <TicTacText title label="Players:" centered size="sm" />
             {player1 && player1 !== null && (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Cell
+                  zoomLevel={0}
+                  state={3}
+                  player={3}
+                  pos={{ y: 0, x: 0 }}
+                />
+                <TicTacText
+                  style={{ width: "auto" }}
+                  title
+                  color={colors.red.light}
+                  label={`  ${player1.displayName}`}
+                  centered
+                  size={30}
+                />
+              </View>
+            )}
+            {/* {player2 && player2 !== null && ( */}
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Cell
+                zoomLevel={0}
+                state={4}
+                player={3}
+                pos={{ y: 0, x: 0 }}
+              />
               <TicTacText
+                style={{ width: "auto" }}
                 title
-                label={`1: ${player1.displayName}`}
+                color={colors.teal.light}
+                // label={`${player2.displayName}`}
+                label={"  testdude#1337"}
                 centered
                 size={30}
               />
-            )}
-            {player2 && player2 !== null && (
-              <TicTacText
-                title
-                label={`2: ${player2.displayName}`}
-                centered
-                size={30}
-              />
-            )}
+            </View>
+
+            {/* )} */}
           </View>
           <View style={style.content}>
             <TicTacText title label={gameStatus} centered size="sm" />
@@ -101,7 +126,7 @@ const PreGameRoom = ({
             )}
           </View>
         </Row>
-        <Row size={2} style={[style.section, style.bottom]}>
+        <Row size={1} style={[style.section, style.bottom]}>
           {condition && (
             <TicTacText
               label={hostOrJoin === "HOST" ? "Cancel room" : "Leave room"}

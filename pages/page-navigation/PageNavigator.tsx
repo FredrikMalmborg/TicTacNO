@@ -15,6 +15,7 @@ import { Pages } from "../pages";
 import { forSlide } from "./page-animations";
 import SplashScreen from "./splash-screen";
 import AuthContext from "../../contexts/auth/auth-context";
+import DEV_board from "../DEV/DEV_board";
 
 export type StackParamlist = {
   [Pages.Start]: undefined;
@@ -25,6 +26,7 @@ export type StackParamlist = {
   [Pages.Login]: undefined;
   [Pages.Splash]: undefined;
   [Pages.InitialSetup]: undefined;
+  [Pages.DEV]: undefined;
 };
 
 const PageNavigator = () => {
@@ -47,23 +49,24 @@ const PageNavigator = () => {
           options={pageOptions}
         />
       ) : (
-        <>
-          {user.userToken === null ? (
-            <Stack.Screen name={Pages.Login} component={LoginPage} />
-          ) : (
-            <>
-              <Stack.Screen name={Pages.Start} component={StartPage} />
-              {/* <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} /> */}
-              <Stack.Screen name={Pages.Play} component={PlayPage} />
-              <Stack.Screen
-                name={Pages.GamePage}
-                component={GamePage}
-                options={{ gestureEnabled: false }}
-              />
-            </>
-          )}
-        </>
-      )}
+          <>
+            {user.userToken === null ? (
+              <Stack.Screen name={Pages.Login} component={LoginPage} />
+            ) : (
+                <>
+                  <Stack.Screen name={Pages.Start} component={StartPage} />
+                  <Stack.Screen name={Pages.DEV} component={DEV_board} />
+                  {/* <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} /> */}
+                  <Stack.Screen name={Pages.Play} component={PlayPage} />
+                  <Stack.Screen
+                    name={Pages.GamePage}
+                    component={GamePage}
+                    options={{ gestureEnabled: false }}
+                  />
+                </>
+              )}
+          </>
+        )}
     </Stack.Navigator>
   );
 };

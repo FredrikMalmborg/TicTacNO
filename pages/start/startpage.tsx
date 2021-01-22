@@ -48,6 +48,7 @@ const StartPage = ({ navigation }: Props) => {
   }, [user.userToken]);
 
   const navigateToPlay = () => navigation.navigate(Pages.Play);
+  const navigateToDev = () => navigation.navigate(Pages.DEV);
 
   return (
     <SafeAreaView style={style.container}>
@@ -63,6 +64,12 @@ const StartPage = ({ navigation }: Props) => {
             button={{ onClick: navigateToPlay }}
           />
           <TicTacText title label="profile" size="md" />
+          <TicTacText
+            title
+            label="DEV"
+            size="md"
+            button={{ onClick: navigateToDev }}
+          />
         </Row>
         <Row size={1} style={[style.section, style.bottom]}>
           <TicTacText

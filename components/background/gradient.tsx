@@ -10,18 +10,18 @@ import { useWindowDimensions, View } from "react-native";
 
 // created using: https://react-svgr.com/playground/?native=true&typescript=true
 
-const Gradient = ({ style, ...props }: SvgProps) => {
+const Gradient = () => {
   const width = useWindowDimensions().width;
   const height = useWindowDimensions().height;
 
   return (
-    <View style={style}>
+    <View>
       <Svg
         width="100%"
         height="100%"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
-        {...props}
+
       >
         <Defs>
           <RadialGradient

@@ -6,7 +6,6 @@ import BackgroundText from "./background-text";
 interface IStyleProps {
   backgroundContainer: StyleProp<ViewStyle>;
   backgroundText: StyleProp<ViewStyle>;
-  backgroundGradient: StyleProp<ViewStyle>;
 }
 
 const Background = () => {
@@ -22,13 +21,6 @@ const Background = () => {
       position: "absolute",
       width: "100%",
     },
-    backgroundGradient: {
-      // position: "absolute",
-      // top: 0,
-      // right: 0,
-      // bottom: 0,
-      // left: 0,
-    },
   });
 
   return (
@@ -39,7 +31,7 @@ const Background = () => {
         preserveAspectRatio="xMidYMid slice"
         style={styles.backgroundText}
       />
-      <Gradient style={styles.backgroundGradient} width="100%" height="100%" />
+      <Gradient width="100%" height="100%" />
     </View>
   );
 };

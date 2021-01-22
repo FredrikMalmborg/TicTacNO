@@ -10,18 +10,19 @@ import { Grid, Row } from "react-native-easy-grid";
 import { gameState } from "./gameController";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 
-import TicTacText from "../../text/Text";
 import { View } from "react-native";
 import RoomContext from "../../../contexts/room/room-context";
+import { ZoomLevel } from "../../../pages/game-session/game-board";
 
 interface IProps {
   gameBoard: TCellState[][];
   aCells: TCellPos[];
   playerState?: 3 | 4;
   yourTurn: boolean;
+  zoomLevel: ZoomLevel
 }
 
-const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
+const Board = ({ gameBoard, aCells, playerState, yourTurn, ...props }: IProps) => {
   const { roomContext } = useContext(RoomContext);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
@@ -68,10 +69,10 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
         omni.forEach((j) => {
           if (i !== 0 || j !== 0) {
             const f = {
-                value: board[click.y + i][click.x + j],
-                y: click.y + i,
-                x: click.x + j,
-              },
+              value: board[click.y + i][click.x + j],
+              y: click.y + i,
+              x: click.x + j,
+            },
               b = {
                 value: board[click.y - i][click.x - j],
                 y: click.y - i,
@@ -211,17 +212,24 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
   return (
     <Grid
       style={{
-        flex: 0,
-        borderWidth: 3,
-        borderColor: "purple",
+        flex: 0
       }}
     >
       {gameBoard &&
         playerState &&
         [...gameBoard].map((row, rowIndex) => (
-          <Row style={{ height: 40 }} key={`row-${rowIndex}`}>
+          <Row style={{
+            height: (() => {
+              switch (props.zoomLevel) {
+                case 0: return 40
+                case 1: return 60
+                case 2: return 100
+              }
+            })()
+          }} key={`row-${rowIndex}`}>
             {row.map((col, colIndex) => (
               <Cell
+                zoomLevel={props.zoomLevel}
                 player={playerState}
                 click={
                   yourTurn ? onClickCell : () => console.log("NOT YOUR TURN")
