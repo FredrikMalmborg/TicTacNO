@@ -1,6 +1,12 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useCallback, useContext } from "react";
-import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
+import React, { useContext } from "react";
+import {
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+  SafeAreaView,
+  View,
+} from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 import TicTacText from "../../components/text/Text";
 import colors from "../../constants/colors";
@@ -24,11 +30,57 @@ const ProfilePage = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
-        <Row size={3} style={[style.section, style.top]}>
-          <TicTacText title label="Profile" size="lg" />
-        </Row>
-        <Row size={4} style={style.section}>
-          <TicTacText label={`Your username: ${user.userName}`} />
+        <Row size={7} style={[style.section, style.top]}>
+          {user.userName && (
+            <View
+              style={{
+                backgroundColor: colors.teal.light,
+                padding: 20,
+                borderRadius: 10,
+              }}
+            >
+              <TicTacText size={30} label={user.userName} />
+            </View>
+          )}
+          <View
+            style={{
+              width: "100%",
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <TicTacText size={30} centered label="Statistics" />
+            <View style={{ width: "80%", maxWidth: 200 }}>
+              <TicTacText size="sm" label={`Wins: 0`} />
+              <TicTacText size="sm" label={`Losses: 0`} />
+              <TicTacText size="sm" label={`Winrate: 0`} />
+            </View>
+          </View>
+          <TicTacText
+            label="Game history"
+            size="sm"
+            button={{
+              onClick: () => console.log("history")
+              ,
+              bgColor: colors.teal,
+              form: "square",
+              disabled: true
+            }}
+            color="white"
+          />
+          <TicTacText
+            label="Remove account"
+            size="sm"
+            button={{
+              onClick: () => console.log("Remove account")
+              ,
+              bgColor: colors.red,
+              form: "square",
+              disabled: true
+            }}
+            color="white"
+          />
         </Row>
         <Row size={3} style={[style.section, style.bottom]}>
           <TicTacText
@@ -71,7 +123,7 @@ const style: IStyles = StyleSheet.create({
     flexDirection: "column",
   },
   top: {
-    padding: 50,
+    paddingTop: 50,
   },
   bottom: {
     flexDirection: "row",
