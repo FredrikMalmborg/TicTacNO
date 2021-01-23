@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
 import TicTacText from "../../components/text/Text";
+import colors from "../../constants/colors";
 import { StackParamlist } from "../page-navigation/PageNavigator";
 
 import { Pages } from "../pages";
+import HelpModal from "./help-modal";
 import JoinRoom from "./join-room-modal";
 
 interface IStyles {
@@ -20,7 +22,8 @@ interface Props {
 }
 
 const PlayPage = ({ navigation }: Props) => {
-  const [modal, setModal] = useState<boolean>(false);
+  const [joinModal, setJoinModal] = useState<boolean>(false);
+  const [helpModal, setHelpModal] = useState<boolean>(false);
 
   //Place page on top of stack
   const resetAction = CommonActions.reset({
@@ -38,7 +41,7 @@ const PlayPage = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
-        <Row size={1} style={[style.section, style.top]}>
+        <Row size={3} style={[style.section, style.top]}>
           <TicTacText title label="play" size="lg" />
         </Row>
         <Row size={4} style={style.section}>
@@ -46,31 +49,46 @@ const PlayPage = ({ navigation }: Props) => {
             title
             label="join"
             size="md"
-            button={{ onClick: () => setModal(!modal) }}
+            style={{ margin: 20 }}
+            button={{ onClick: () => setJoinModal(!joinModal) }}
           />
           <TicTacText
             title
             label="host"
             size="md"
+            style={{ margin: 20 }}
             button={{ onClick: navigateToHostRoom }}
           />
-          <TicTacText title label="matchmaking" size="md" />
         </Row>
-        <Row size={1} style={[style.section, style.bottom]}>
+        <Row size={3} style={[style.section, style.bottom]}>
           <TicTacText
-            label="back"
+            label="Back"
             size="sm"
-            button={{ onClick: navigateBack }}
+            button={{
+              onClick: navigateBack,
+              bgColor: colors.red,
+              form: "square",
+            }}
             color="white"
           />
-          <TicTacText label="help" size="sm" color="white" />
+          <TicTacText
+            label="Help"
+            size="sm"
+            button={{
+              onClick: () => setHelpModal(!helpModal),
+              bgColor: colors.teal,
+              form: "square",
+            }}
+            color="white"
+          />
         </Row>
       </Grid>
       <JoinRoom
-        modalVisible={modal}
-        setVisible={setModal}
+        modalVisible={joinModal}
+        setVisible={setJoinModal}
         navigation={navigation}
       />
+      <HelpModal modalVisible={helpModal} setVisible={setHelpModal} />
     </SafeAreaView>
   );
 };
