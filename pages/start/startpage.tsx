@@ -52,7 +52,7 @@ const StartPage = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
-        <Row size={2} style={[style.section]}>
+        <Row size={3} style={[style.section]}>
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={3} style={style.section}>
@@ -60,11 +60,12 @@ const StartPage = ({ navigation }: Props) => {
             title
             label="play"
             size="md"
+            style={{margin: 20}}
             button={{ onClick: navigateToPlay }}
           />
-          <TicTacText title label="profile" size="md" />
+          <TicTacText title style={{margin: 20}} label="profile" size="md" />
         </Row>
-        <Row size={1} style={[style.section, style.bottom]}>
+        <Row size={2} style={[style.section, style.bottom]}>
           <TicTacText
             label="Log out"
             size="sm"
@@ -75,7 +76,6 @@ const StartPage = ({ navigation }: Props) => {
               form: "square",
             }}
           />
-          {/* <TicTacText label="About us" size="md" color="white" /> */}
         </Row>
       </Grid>
     </SafeAreaView>
