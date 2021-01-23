@@ -8,9 +8,11 @@ import {
   View,
 } from "react-native";
 import { Grid, Row } from "react-native-easy-grid";
+import { gameState } from "../../components/game/board/gameController";
 import TicTacText from "../../components/text/Text";
 import colors from "../../constants/colors";
 import AuthContext from "../../contexts/auth/auth-context";
+import RoomContext from "../../contexts/room/room-context";
 import { StackParamlist } from "../page-navigation/PageNavigator";
 
 interface IStyles {
@@ -24,14 +26,30 @@ interface Props {
 }
 
 const ProfilePage = ({ navigation }: Props) => {
-  const { user, authContext } = useContext(AuthContext);
+  const {
+    authContext,
+    userInfo: { username, gameStats },
+  } = useContext(AuthContext);
+  const { roomContext } = useContext(RoomContext);
   const navigateBack = () => navigation.goBack();
+
+  const addLoss = () => {
+    roomContext.addGameStats("losses");
+  };
+
+  const addWin = () => {
+    roomContext.addGameStats("wins");
+  };
+
+  const winRate = () =>
+    gameStats &&
+    (gameStats.wins / (gameStats.losses + gameStats.wins)).toFixed(2);
 
   return (
     <SafeAreaView style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
         <Row size={7} style={[style.section, style.top]}>
-          {user.userName && (
+          {username && (
             <View
               style={{
                 backgroundColor: colors.teal.light,
@@ -39,7 +57,7 @@ const ProfilePage = ({ navigation }: Props) => {
                 borderRadius: 10,
               }}
             >
-              <TicTacText size={30} label={user.userName} />
+              <TicTacText size={30} label={username} />
             </View>
           )}
           <View
@@ -50,14 +68,40 @@ const ProfilePage = ({ navigation }: Props) => {
               alignItems: "center",
             }}
           >
-            <TicTacText size={30} centered label="Statistics" />
-            <View style={{ width: "80%", maxWidth: 200 }}>
-              <TicTacText size="sm" label={`Wins: 0`} />
-              <TicTacText size="sm" label={`Losses: 0`} />
-              <TicTacText size="sm" label={`Winrate: 0`} />
-            </View>
+            {gameStats && (
+              <>
+                <TicTacText size={30} centered label="Statistics" />
+                <View style={{ width: "80%", maxWidth: 200 }}>
+                  <TicTacText size="sm" label={`Wins: ${gameStats.wins}`} />
+                  <TicTacText size="sm" label={`Losses: ${gameStats.losses}`} />
+                  {(gameStats.losses != 0 && gameStats.wins != 0) && (
+                    <TicTacText size="sm" label={`Winrate: ${winRate()}`} />
+                  )}
+                </View>
+              </>
+            )}
           </View>
           <TicTacText
+            label="+"
+            size="sm"
+            button={{
+              onClick: addWin,
+              bgColor: colors.teal,
+              form: "square",
+            }}
+            color="white"
+          />
+          <TicTacText
+            label="-"
+            size="sm"
+            button={{
+              onClick: addLoss,
+              bgColor: colors.teal,
+              form: "square",
+            }}
+            color="white"
+          />
+          {/* <TicTacText
             label="Game history"
             size="sm"
             button={{
@@ -80,7 +124,7 @@ const ProfilePage = ({ navigation }: Props) => {
               disabled: true
             }}
             color="white"
-          />
+          /> */}
         </Row>
         <Row size={3} style={[style.section, style.bottom]}>
           <TicTacText

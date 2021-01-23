@@ -23,15 +23,14 @@ interface Props {
 }
 
 const StartPage = ({ navigation }: Props) => {
-  const { user, authContext } = useContext(AuthContext);
+  const { userStatus, authContext } = useContext(AuthContext);
   const { roomContext } = useContext(RoomContext);
 
   useEffect(() => {
-    if (user.userToken !== null) {
+    if (userStatus.userToken !== null) {
       fetchGameAndReconnect();
     }
-    // console.log(user);
-  }, [user]);
+  }, [userStatus]);
 
   const fetchGameAndReconnect = useCallback(async () => {
     const ongoingGame = await roomContext.checkForOngoingGame();
@@ -45,7 +44,7 @@ const StartPage = ({ navigation }: Props) => {
       }
       // console.log("GAME: ", ongoingGame);
     }
-  }, [user.userToken]);
+  }, [userStatus.userToken]);
 
   const navigateToPlay = () => navigation.navigate(Pages.Play);
   const navigateToProfile = () => navigation.navigate(Pages.Profile);
