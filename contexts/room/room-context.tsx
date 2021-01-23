@@ -109,6 +109,7 @@ const RoomContext = React.createContext({
     resetRoomStatus: () => {},
     leaveRoom: () => {},
     startGame: () => {},
+    addGameStats: (key: "losses" | "wins") => {},
     updateGameState: (board: TCellState[][], aCells: TCellPos[]) => {},
     updateGameLoser: (board: TCellState[][]) => {},
   },

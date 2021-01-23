@@ -20,6 +20,7 @@ const RoomProvider: FC = ({ children }) => {
   const [roomState, setRoomState] = useState<IRoomState>(INITIAL_ROOM);
   const roomsRef = firebase.database().ref("rooms");
   const hostRoomRef = roomsRef.push();
+  const userRef = firebase.database().ref("users");
 
   const roomContext = useMemo(
     () => ({
@@ -187,6 +188,20 @@ const RoomProvider: FC = ({ children }) => {
           foundRoom.ref.set(updatedRoom).catch((e) => console.log(e));
         } else {
           console.log("COULDN'T FIND ROOM (UPDATE)");
+        }
+      },
+      addGameStats: async (key: "losses" | "wins") => {
+        const user = firebase.auth().currentUser?.uid;
+        if (user) {
+          await userRef
+            .child(user)
+            .once("value", (userSnap) => userSnap)
+            .then(async (result) => {
+              const gameStats = result.child("gameStats");
+              const prevStat: number = gameStats.child(key).val();
+              const newStat = prevStat + 1;
+              await gameStats.ref.child(key).set(newStat);
+            });
         }
       },
       updateGameLoser: async (board: TCellState[][]) => {

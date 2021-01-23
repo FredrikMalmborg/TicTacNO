@@ -1,6 +1,12 @@
-import React, { FC, useEffect, useReducer } from "react";
+import React, { FC, useEffect, useReducer, useState } from "react";
 import { useMemo } from "react";
-import AuthContext, { INITIAL_STATE, TError, userState } from "./auth-context";
+import AuthContext, {
+  INITIAL_STATE,
+  INITIAL_USER,
+  IUserState,
+  TError,
+  userState,
+} from "./auth-context";
 import { ANDROID_CLIENT_ID, IOS_CLIENT_ID, FACEBOOK_APP_ID } from "@env";
 import fb from "firebase";
 import { firebase } from "../../constants/firebase";
@@ -18,7 +24,8 @@ export type TSignInAction =
   | { type: "FACEBOOK" };
 
 const AuthProvider: FC = ({ children }) => {
-  const [user, dispatch] = useReducer(userState, INITIAL_STATE);
+  const [userStatus, dispatch] = useReducer(userState, INITIAL_STATE);
+  const [userInfo, setUserInfo] = useState(INITIAL_USER);
 
   const authContext = useMemo(
     () => ({
@@ -39,6 +46,13 @@ const AuthProvider: FC = ({ children }) => {
         })();
         if (result !== null) {
           dispatch({ type: "SIGN_IN", token: result });
+          const userData = await findUserDataById(result);
+          if (userData) {
+            setUserInfo({
+              username: userData.username,
+              gameStats: userData.gameStats,
+            });
+          }
         } else {
           dispatch({ type: "SIGN_OUT" });
         }
@@ -48,9 +62,10 @@ const AuthProvider: FC = ({ children }) => {
         const userId = firebase.auth().currentUser?.uid;
         if (userId) {
           const uniqueVal = Math.floor(1000 + Math.random() * 9000);
-          const newUsername = `${username}#${uniqueVal}`;
+          const newUsername = `${username}#${uniqueVal}`.replace(/\s+/g, "");
           const newUserRef = firebase.database().ref(`users/${userId}`);
           newUserRef.child("username").set(newUsername);
+          newUserRef.child("gameStats").set({ wins: 0, losses: 0 });
           dispatch({ type: "SET_USERNAME", username: newUsername });
         }
       },
@@ -59,6 +74,7 @@ const AuthProvider: FC = ({ children }) => {
           .auth()
           .signOut()
           .then(() => {
+            setUserInfo(INITIAL_USER);
             dispatch({ type: "SIGN_OUT" });
           })
           .catch((error) => console.log("AUTH-ERROR: ", error));
@@ -80,6 +96,13 @@ const AuthProvider: FC = ({ children }) => {
             });
           if (result && result?.user) {
             dispatch({ type: "SIGN_IN", token: result.user?.uid });
+            const userData = await findUserDataById(result.user.uid);
+            if (userData) {
+              setUserInfo({
+                username: userData.username,
+                gameStats: userData.gameStats,
+              });
+            }
           } else {
             dispatch({ type: "SIGN_OUT" });
           }
@@ -209,8 +232,30 @@ const AuthProvider: FC = ({ children }) => {
       });
   };
 
+  const findUserDataById = async (
+    id: string
+  ): Promise<undefined | IUserState> => {
+    let foundUser: undefined | IUserState = undefined;
+    await firebase
+      .database()
+      .ref(`users/${id}`)
+      .once("value", (result) => {
+        const data = result.val();
+
+        if (data && data.username && data.gameStats)
+          foundUser = {
+            username: data.username,
+            gameStats: {
+              wins: data.gameStats.wins,
+              losses: data.gameStats.losses,
+            },
+          };
+      });
+    return foundUser;
+  };
+
   useEffect(() => {
-    if (user.userToken === null) {
+    if (userStatus.userToken === null) {
       firebase.auth().onAuthStateChanged(async (user) => {
         let userToken = null;
         if (user) {
@@ -221,16 +266,49 @@ const AuthProvider: FC = ({ children }) => {
             dispatch({ type: "SET_USERNAME", username: username });
           }
           userToken = user.uid;
+          dispatch({ type: "SIGN_IN", token: userToken });
+        } else {
+          dispatch({ type: "SIGN_OUT" });
         }
-        // console.log(userToken);
-
-        dispatch({ type: "RESTORE", token: userToken });
+        dispatch({ type: "LOADING_USER", isLoading: false });
       });
     }
   }, []);
 
+  // Lyssnare på användardata
+  useEffect(() => {
+    firebase
+      .database()
+      .ref("users")
+      .on("value", (result) => {
+        const currUser = firebase.auth().currentUser;
+        if (currUser) {
+          let foundUser: undefined | IUserState = undefined;
+          result.forEach((user) => {
+            if (user.key === currUser.uid) {
+              const userData = user.val();
+              if (userData && userData.username && userData.gameStats)
+                foundUser = {
+                  username: userData.username,
+                  gameStats: {
+                    wins: userData.gameStats.wins,
+                    losses: userData.gameStats.losses,
+                  },
+                };
+            }
+          });
+          if (foundUser) {
+            setUserInfo(foundUser);
+          }
+        }
+      });
+    return () => {
+      firebase.database().ref("users").off();
+    };
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, authContext }}>
+    <AuthContext.Provider value={{ userStatus, userInfo, authContext }}>
       {children}
     </AuthContext.Provider>
   );
