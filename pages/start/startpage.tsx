@@ -71,9 +71,7 @@ const StartPage = ({ navigation }: Props) => {
             button={{ onClick: navigateToProfile }}
           />
         </Row>
-        <Row size={2} style={[style.section, style.bottom]}>
-          
-        </Row>
+        <Row size={2} style={[style.section, style.bottom]}></Row>
       </Grid>
     </SafeAreaView>
   );

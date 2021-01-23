@@ -74,7 +74,7 @@ const ProfilePage = ({ navigation }: Props) => {
                 <View style={{ width: "80%", maxWidth: 200 }}>
                   <TicTacText size="sm" label={`Wins: ${gameStats.wins}`} />
                   <TicTacText size="sm" label={`Losses: ${gameStats.losses}`} />
-                  {(gameStats.losses != 0 && gameStats.wins != 0) && (
+                  {gameStats.losses != 0 && gameStats.wins != 0 && (
                     <TicTacText size="sm" label={`Winrate: ${winRate()}`} />
                   )}
                 </View>
