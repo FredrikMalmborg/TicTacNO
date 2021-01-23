@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import GamePage from "../game-session/game-page";
 import StartPage from "../start/startpage";
 import PlayPage from "../play/playPage";
+import ProfilePage from "../profile/profile-page";
 import LoginPage from "../login/loginPage";
 import InitialSetup from "../initial-setup/initial-setup";
 
@@ -21,6 +22,7 @@ export type StackParamlist = {
     condition: "RECON-JOIN" | "JOIN" | "RECON-HOST" | "HOST";
   };
   [Pages.Play]: undefined;
+  [Pages.Profile]: undefined;
   [Pages.Login]: undefined;
   [Pages.Splash]: undefined;
   [Pages.InitialSetup]: undefined;
@@ -47,14 +49,15 @@ const PageNavigator = () => {
         />
       ) : (
         <>
-          {user.userToken === null ? (
+          {user.isSignedOut ? (
             <Stack.Screen name={Pages.Login} component={LoginPage} />
-          ) : user.newUser ? (
+          ) : !user.userName ? (
             <Stack.Screen name={Pages.InitialSetup} component={InitialSetup} />
           ) : (
             <>
               <Stack.Screen name={Pages.Start} component={StartPage} />
               <Stack.Screen name={Pages.Play} component={PlayPage} />
+              <Stack.Screen name={Pages.Profile} component={ProfilePage} />
               <Stack.Screen
                 name={Pages.GamePage}
                 component={GamePage}

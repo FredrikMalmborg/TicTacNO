@@ -24,7 +24,7 @@ const AuthProvider: FC = ({ children }) => {
     () => ({
       signIn: async (action: TSignInAction) => {
         const result = await (async () => {
-          dispatch({ type: "LOADING_USER" });
+          dispatch({ type: "LOADING_USER", isLoading: true });
           switch (action.type) {
             case "GOOGLE":
               const googlePromise = await signInWithGoogle();
@@ -48,9 +48,10 @@ const AuthProvider: FC = ({ children }) => {
         const userId = firebase.auth().currentUser?.uid;
         if (userId) {
           const uniqueVal = Math.floor(1000 + Math.random() * 9000);
+          const newUsername = `${username}#${uniqueVal}`;
           const newUserRef = firebase.database().ref(`users/${userId}`);
-          newUserRef.child("username").set(`${username}#${uniqueVal}`);
-          dispatch({ type: "SET_USERNAME" });
+          newUserRef.child("username").set(newUsername);
+          dispatch({ type: "SET_USERNAME", username: newUsername });
         }
       },
       signOut: async () => {
@@ -171,16 +172,17 @@ const AuthProvider: FC = ({ children }) => {
   // Går att kontrollera om en användare är ny via
   // "user.additionalUserInfo?.isNewUser"
   // men förutser problem.
-  const checkIfNewUser = async (userId: string) => {
+  const checkIfNewUser = async (userId: string): Promise<false | string> => {
     // console.log("Checking if new user");
     const userData = await firebase
       .database()
       .ref(`users/${userId}`)
       .once("value", (snap) => snap.val);
     if (userData.hasChild("username")) {
-      return Promise.resolve(false);
+      const username = userData.child("username").val();
+      return Promise.resolve(username);
     } else {
-      return Promise.resolve(true);
+      return Promise.resolve(false);
     }
   };
 
@@ -212,11 +214,11 @@ const AuthProvider: FC = ({ children }) => {
       firebase.auth().onAuthStateChanged(async (user) => {
         let userToken = null;
         if (user) {
-          const newUser = await checkIfNewUser(user.uid);
-          if (newUser) {
+          const username = await checkIfNewUser(user.uid);
+          if (!username) {
             dispatch({ type: "NEW_USER" });
           } else {
-            dispatch({ type: "SET_USERNAME" });
+            dispatch({ type: "SET_USERNAME", username: username });
           }
           userToken = user.uid;
         }

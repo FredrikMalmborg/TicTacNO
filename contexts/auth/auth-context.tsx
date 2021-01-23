@@ -7,23 +7,23 @@ export interface IUserState {
   error: TError;
   isSignedOut: boolean;
   userToken: string | null;
-  newUser: boolean;
+  userName: false | string;
 }
 
 type TReducerAction =
   | { type: "RESTORE"; token: string | null }
   | { type: "HANDLE_ERROR"; error: TError }
-  | { type: "LOADING_USER" }
+  | { type: "LOADING_USER"; isLoading: boolean }
   | { type: "SIGN_IN"; token: string }
   | { type: "SIGN_OUT" }
   | { type: "NEW_USER" }
-  | { type: "SET_USERNAME" };
+  | { type: "SET_USERNAME"; username: string };
 
 export const INITIAL_STATE: IUserState = {
   isLoading: true,
   isSignedOut: false,
   userToken: null,
-  newUser: false,
+  userName: false,
   error: null,
 };
 
@@ -33,49 +33,48 @@ export const userState = (prevState: IUserState, action: TReducerAction) => {
       return {
         ...prevState,
         userToken: action.token,
-        isLoading: false,
         error: null,
-      };
+      } as IUserState;
     case "HANDLE_ERROR":
       return {
         ...prevState,
-        isLoading: false,
         error: action.error,
-      };
+      } as IUserState;
     case "LOADING_USER":
       return {
         ...prevState,
-        isLoading: true,
+        isLoading: action.isLoading,
         error: null,
-      };
+      } as IUserState;
     case "SIGN_IN":
       return {
         ...prevState,
-        isLoading: false,
         isSignedOut: false,
         userToken: action.token,
         error: null,
-      };
+      } as IUserState;
     case "SIGN_OUT":
       return {
         ...prevState,
-        isLoading: false,
         userToken: null,
         isSignedOut: true,
-        newUser: false,
-      };
+        isLoading: false,
+        userName: false,
+      } as IUserState;
     case "NEW_USER": {
       return {
         ...prevState,
-        newUser: true,
-      };
+        userName: false,
+        isLoading: false,
+      } as IUserState;
     }
     case "SET_USERNAME": {
       return {
         ...prevState,
-        newUser: false,
+        userName: action.username,
+        isLoading: false,
         error: null,
-      };
+      } as IUserState;
     }
   }
 };

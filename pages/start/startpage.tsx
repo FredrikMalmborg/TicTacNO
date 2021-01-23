@@ -48,6 +48,7 @@ const StartPage = ({ navigation }: Props) => {
   }, [user.userToken]);
 
   const navigateToPlay = () => navigation.navigate(Pages.Play);
+  const navigateToProfile = () => navigation.navigate(Pages.Profile);
 
   return (
     <SafeAreaView style={style.container}>
@@ -60,22 +61,19 @@ const StartPage = ({ navigation }: Props) => {
             title
             label="play"
             size="md"
-            style={{margin: 20}}
+            style={{ margin: 20 }}
             button={{ onClick: navigateToPlay }}
           />
-          <TicTacText title style={{margin: 20}} label="profile" size="md" />
+          <TicTacText
+            title
+            style={{ margin: 20 }}
+            label="profile"
+            size="md"
+            button={{ onClick: navigateToProfile }}
+          />
         </Row>
         <Row size={2} style={[style.section, style.bottom]}>
-          <TicTacText
-            label="Log out"
-            size="sm"
-            centered
-            button={{
-              onClick: () => authContext.signOut(),
-              bgColor: colors.red,
-              form: "square",
-            }}
-          />
+          
         </Row>
       </Grid>
     </SafeAreaView>
