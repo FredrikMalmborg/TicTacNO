@@ -15,7 +15,7 @@ export type TCellState = 0 | 1 | 2 | 3 | 4;
 export type TCellPos = { y: number; x: number };
 
 interface ICellProps extends ColProps {
-  zoomLevel: ZoomLevel
+  zoomLevel: ZoomLevel;
   player: TCellState;
   state: TCellState;
   pos: TCellPos;
@@ -36,16 +36,22 @@ const Cell = ({ state, pos, zoomLevel, ...props }: ICellProps) => {
     container: {
       width: (() => {
         switch (zoomLevel) {
-          case 0: return 40
-          case 1: return 60
-          case 2: return 100
+          case 0:
+            return 40;
+          case 1:
+            return 60;
+          case 2:
+            return 100;
         }
       })(),
       height: (() => {
         switch (zoomLevel) {
-          case 0: return 40
-          case 1: return 60
-          case 2: return 100
+          case 0:
+            return 40;
+          case 1:
+            return 60;
+          case 2:
+            return 100;
         }
       })(),
     },
@@ -55,16 +61,22 @@ const Cell = ({ state, pos, zoomLevel, ...props }: ICellProps) => {
       fontFamily: "FredokaOne_400Regular",
       margin: (() => {
         switch (zoomLevel) {
-          case 0: return 2
-          case 1: return 3
-          case 2: return 4
+          case 0:
+            return 2;
+          case 1:
+            return 3;
+          case 2:
+            return 4;
         }
       })(),
       borderRadius: (() => {
         switch (zoomLevel) {
-          case 0: return 5
-          case 1: return 8
-          case 2: return 11
+          case 0:
+            return 5;
+          case 1:
+            return 8;
+          case 2:
+            return 11;
         }
       })(),
       borderWidth: 0,
@@ -99,30 +111,37 @@ const Cell = ({ state, pos, zoomLevel, ...props }: ICellProps) => {
   });
 
   const clickedCell = (state: TCellState) => {
-    props.click ? props.click(pos, state) : null
+    props.click ? props.click(pos, state) : null;
   };
-  const content = <Col style={[style.cell, state !== 0 && style[state]]} {...props}>
-    <TicTacText centered color="#fff" size={(() => {
-      switch (zoomLevel) {
-        case 0: return 20
-        case 1: return 40
-        case 2: return 80
-      }
-    })()} label={(state === 3 && "X") || (state === 4 && "O") || ""} />
-  </Col>
+  const content = (
+    <Col style={[style.cell, state !== 0 && style[state]]} {...props}>
+      <TicTacText
+        centered
+        color="#fff"
+        size={(() => {
+          switch (zoomLevel) {
+            case 0:
+              return 20;
+            case 1:
+              return 40;
+            case 2:
+              return 80;
+          }
+        })()}
+        label={(state === 3 && "X") || (state === 4 && "O") || ""}
+      />
+    </Col>
+  );
 
-  return (
-    props.click ?
-      <TouchableOpacity
-        style={style.container}
-        onPress={() => state === 2 && clickedCell(props.player)}
-      >
-        {content}
-      </TouchableOpacity>
-      : <View
-        style={style.container}>
-        {content}
-      </View>
+  return props.click ? (
+    <TouchableOpacity
+      style={style.container}
+      onPress={() => state === 2 && clickedCell(props.player)}
+    >
+      {content}
+    </TouchableOpacity>
+  ) : (
+    <View style={style.container}>{content}</View>
   );
 };
 

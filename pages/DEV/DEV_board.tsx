@@ -1,6 +1,24 @@
 import React, { memo, useContext, useEffect, useState } from "react";
-import { SafeAreaView, Dimensions, BackHandler, TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle } from "react-native";
-import { Svg, Image as SvgImage, Circle, Path, Defs, RadialGradient, Stop, LinearGradient } from "react-native-svg";
+import {
+  SafeAreaView,
+  Dimensions,
+  BackHandler,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
+import {
+  Svg,
+  Image as SvgImage,
+  Circle,
+  Path,
+  Defs,
+  RadialGradient,
+  Stop,
+  LinearGradient,
+} from "react-native-svg";
 
 import Board from "../../components/game/board/board";
 import PanCamera from "../../components/game/camera/pan-camera";
@@ -14,16 +32,15 @@ import { color } from "react-native-reanimated";
 export type ZoomLevel = 0 | 1 | 2;
 
 interface UIstyle {
-  turnviewContainer: StyleProp<ViewStyle>
-  turnviewGradient: StyleProp<ViewStyle>
-  turnviewIcon: StyleProp<ViewStyle>
+  turnviewContainer: StyleProp<ViewStyle>;
+  turnviewGradient: StyleProp<ViewStyle>;
+  turnviewIcon: StyleProp<ViewStyle>;
 }
 
 const DEV_Board = () => {
   const windowSize = Dimensions.get("screen");
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(1);
   const [yourTurn, setYourTurn] = useState<boolean>(false);
-
 
   const TEST_BOARD: TCellState[][] = [
     [1, 1, 1, 0, 0, 0, 0],
@@ -33,8 +50,8 @@ const DEV_Board = () => {
     [0, 1, 2, 2, 4, 1, 0],
     [0, 1, 1, 1, 2, 1, 0],
     [0, 0, 0, 1, 1, 1, 0],
-  ]; ''
-
+  ];
+  ("");
 
   const zoomIn = require("../../assets/images/icons/zoomIn.png");
   const zoomOut = require("../../assets/images/icons/zoomOut.png");
@@ -44,7 +61,7 @@ const DEV_Board = () => {
       position: "absolute",
       width: "100%",
       height: "50%",
-      alignItems: "center"
+      alignItems: "center",
     },
     turnviewGradient: {
       width: "100%",
@@ -52,11 +69,9 @@ const DEV_Board = () => {
     },
     turnviewIcon: {
       position: "absolute",
-      top: 50
-    }
-  })
-
-
+      top: 50,
+    },
+  });
 
   const turnGradient = (
     <View style={UI.turnviewGradient}>
@@ -67,17 +82,17 @@ const DEV_Board = () => {
         preserveAspectRatio="none"
       >
         <Defs>
-          <LinearGradient id="grad"
-            x1="1"
-            x2="1"
-            y1="1"
-            y2="0">
+          <LinearGradient id="grad" x1="1" x2="1" y1="1" y2="0">
             <Stop offset="0" stopColor="#0000" stopOpacity="0" />
-            <Stop offset="1" stopColor={yourTurn ? colors.red.light : colors.teal.light} stopOpacity="1" />
+            <Stop
+              offset="1"
+              stopColor={yourTurn ? colors.red.light : colors.teal.light}
+              stopOpacity="1"
+            />
           </LinearGradient>
         </Defs>
         <Path
-          fillOpacity={.6}
+          fillOpacity={0.6}
           fill="url(#grad)"
           d={`M0 0
             h100
@@ -92,13 +107,8 @@ const DEV_Board = () => {
     <SafeAreaView style={{ flex: 1, alignItems: "center" }}>
       <View style={UI.turnviewContainer}>
         {turnGradient}
-        <Svg
-          style={UI.turnviewIcon}
-          width={60}
-          height={60}
-          viewBox="0 0 60 60"
-        >
-          {yourTurn ?
+        <Svg style={UI.turnviewIcon} width={60} height={60} viewBox="0 0 60 60">
+          {yourTurn ? (
             <>
               <Path
                 d="M57.0644 42.8908C60.9783 46.8048 60.9783 53.1506 57.0644 57.0645C53.1504 60.9785 46.8046 60.9785 42.8907 57.0645L2.93547 17.1093C-0.978494 13.1954 -0.978485 6.8496 2.93547 2.93564C6.84944 -0.978323 13.1952 -0.978324 17.1092 2.93564L57.0644 42.8908Z"
@@ -109,9 +119,15 @@ const DEV_Board = () => {
                 fill={colors.red.dark}
               />
             </>
-            :
-            <Circle cx="30" cy="30" r="20" stroke={colors.teal.dark} strokeWidth="20" />
-          }
+          ) : (
+            <Circle
+              cx="30"
+              cy="30"
+              r="20"
+              stroke={colors.teal.dark}
+              strokeWidth="20"
+            />
+          )}
         </Svg>
       </View>
       <PanCamera windowSize={windowSize}>
@@ -123,19 +139,49 @@ const DEV_Board = () => {
           aCells={INCELLS}
         />
       </PanCamera>
-      <View style={{ width: "100%", height: 60, padding: 8, justifyContent: "space-between", flexDirection: "row" }}>
-        <TicTacText label="switch turn" size="sm" button={{ onClick: () => setYourTurn(!yourTurn) }} />
-        <TouchableOpacity style={{ width: 60, height: "100%" }} onPress={() => {
-          setZoomLevel(zoomLevel === 0 ? 1 : zoomLevel === 1 ? 2 : zoomLevel === 2 ? 0 : zoomLevel)
-        }}>
+      <View
+        style={{
+          width: "100%",
+          height: 60,
+          padding: 8,
+          justifyContent: "space-between",
+          flexDirection: "row",
+        }}
+      >
+        <TicTacText
+          label="switch turn"
+          size="sm"
+          button={{ onClick: () => setYourTurn(!yourTurn) }}
+        />
+        <TouchableOpacity
+          style={{ width: 60, height: "100%" }}
+          onPress={() => {
+            setZoomLevel(
+              zoomLevel === 0
+                ? 1
+                : zoomLevel === 1
+                ? 2
+                : zoomLevel === 2
+                ? 0
+                : zoomLevel
+            );
+          }}
+        >
           <Svg width="100%" height="100%">
-            <SvgImage width="100%" height="100%" href={(() => {
-              switch (zoomLevel) {
-                case 0: return zoomIn
-                case 1: return zoomIn
-                case 2: return zoomOut
-              }
-            })()} />
+            <SvgImage
+              width="100%"
+              height="100%"
+              href={(() => {
+                switch (zoomLevel) {
+                  case 0:
+                    return zoomIn;
+                  case 1:
+                    return zoomIn;
+                  case 2:
+                    return zoomOut;
+                }
+              })()}
+            />
           </Svg>
         </TouchableOpacity>
       </View>

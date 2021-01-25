@@ -19,10 +19,16 @@ interface IProps {
   aCells: TCellPos[];
   playerState?: 3 | 4;
   yourTurn: boolean;
-  zoomLevel: ZoomLevel
+  zoomLevel: ZoomLevel;
 }
 
-const Board = ({ gameBoard, aCells, playerState, yourTurn, ...props }: IProps) => {
+const Board = ({
+  gameBoard,
+  aCells,
+  playerState,
+  yourTurn,
+  ...props
+}: IProps) => {
   const { roomContext } = useContext(RoomContext);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
@@ -69,10 +75,10 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn, ...props }: IProps) =
         omni.forEach((j) => {
           if (i !== 0 || j !== 0) {
             const f = {
-              value: board[click.y + i][click.x + j],
-              y: click.y + i,
-              x: click.x + j,
-            },
+                value: board[click.y + i][click.x + j],
+                y: click.y + i,
+                x: click.x + j,
+              },
               b = {
                 value: board[click.y - i][click.x - j],
                 y: click.y - i,
@@ -212,21 +218,27 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn, ...props }: IProps) =
   return (
     <Grid
       style={{
-        flex: 0
+        flex: 0,
       }}
     >
       {gameBoard &&
         playerState &&
         [...gameBoard].map((row, rowIndex) => (
-          <Row style={{
-            height: (() => {
-              switch (props.zoomLevel) {
-                case 0: return 40
-                case 1: return 60
-                case 2: return 100
-              }
-            })()
-          }} key={`row-${rowIndex}`}>
+          <Row
+            style={{
+              height: (() => {
+                switch (props.zoomLevel) {
+                  case 0:
+                    return 40;
+                  case 1:
+                    return 60;
+                  case 2:
+                    return 100;
+                }
+              })(),
+            }}
+            key={`row-${rowIndex}`}
+          >
             {row.map((col, colIndex) => (
               <Cell
                 zoomLevel={props.zoomLevel}

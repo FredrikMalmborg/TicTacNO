@@ -11,7 +11,7 @@ import Svg, { Path, Circle } from "react-native-svg";
 import TicTacText from "../../../components/text/Text";
 import colors from "../../../constants/colors";
 
-import Cell from "../../../components/game/cell/cell"
+import Cell from "../../../components/game/cell/cell";
 
 interface IStyles {
   container: StyleProp<ViewStyle>;
@@ -69,12 +69,7 @@ const PreGameRoom = ({
             <TicTacText title label="Players:" centered size="sm" />
             {player1 && player1 !== null && (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Cell
-                  zoomLevel={0}
-                  state={3}
-                  player={3}
-                  pos={{ y: 0, x: 0 }}
-                />
+                <Cell zoomLevel={0} state={3} player={3} pos={{ y: 0, x: 0 }} />
                 <TicTacText
                   style={{ width: "auto" }}
                   title
@@ -87,12 +82,7 @@ const PreGameRoom = ({
             )}
             {player2 && player2 !== null && (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Cell
-                  zoomLevel={0}
-                  state={4}
-                  player={3}
-                  pos={{ y: 0, x: 0 }}
-                />
+                <Cell zoomLevel={0} state={4} player={3} pos={{ y: 0, x: 0 }} />
                 <TicTacText
                   style={{ width: "auto" }}
                   title
@@ -102,7 +92,6 @@ const PreGameRoom = ({
                   size={30}
                 />
               </View>
-
             )}
           </View>
           <View style={style.content}>

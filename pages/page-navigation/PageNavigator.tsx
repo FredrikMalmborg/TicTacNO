@@ -50,26 +50,26 @@ const PageNavigator = () => {
           options={pageOptions}
         />
       ) : (
-          <>
-            {userStatus.isSignedOut ? (
-              <Stack.Screen name={Pages.Login} component={LoginPage} />
-            ) : !userStatus.userName ? (
-              <Stack.Screen name={Pages.InitialSetup} component={InitialSetup} />
-            ) : (
-                  <>
-                    <Stack.Screen name={Pages.Start} component={StartPage} />
-                    <Stack.Screen name={Pages.Play} component={PlayPage} />
-                    <Stack.Screen name={Pages.Profile} component={ProfilePage} />
-                    <Stack.Screen name={Pages.DEV} component={DEV_board} />
-                    <Stack.Screen
-                      name={Pages.GamePage}
-                      component={GamePage}
-                      options={{ gestureEnabled: false }}
-                    />
-                  </>
-                )}
-          </>
-        )}
+        <>
+          {userStatus.isSignedOut ? (
+            <Stack.Screen name={Pages.Login} component={LoginPage} />
+          ) : !userStatus.userName ? (
+            <Stack.Screen name={Pages.InitialSetup} component={InitialSetup} />
+          ) : (
+            <>
+              <Stack.Screen name={Pages.Start} component={StartPage} />
+              <Stack.Screen name={Pages.Play} component={PlayPage} />
+              <Stack.Screen name={Pages.Profile} component={ProfilePage} />
+              <Stack.Screen name={Pages.DEV} component={DEV_board} />
+              <Stack.Screen
+                name={Pages.GamePage}
+                component={GamePage}
+                options={{ gestureEnabled: false }}
+              />
+            </>
+          )}
+        </>
+      )}
     </Stack.Navigator>
   );
 };
