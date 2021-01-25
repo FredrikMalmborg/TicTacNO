@@ -14,23 +14,16 @@ import { color } from "react-native-reanimated";
 export type ZoomLevel = 0 | 1 | 2;
 
 interface UIstyle {
-  turnview: StyleProp<ViewStyle>
-  turnviewBG: StyleProp<ViewStyle>
+  turnviewContainer: StyleProp<ViewStyle>
+  turnviewGradient: StyleProp<ViewStyle>
+  turnviewIcon: StyleProp<ViewStyle>
 }
 
 const DEV_Board = () => {
   const windowSize = Dimensions.get("screen");
-  const handleBackButton = () => {
-    return true;
-  };
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(1);
   const [yourTurn, setYourTurn] = useState<boolean>(false);
 
-  useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleBackButton);
-    return () =>
-      BackHandler.removeEventListener("hardwareBackPress", handleBackButton);
-  });
 
   const TEST_BOARD: TCellState[][] = [
     [1, 1, 1, 0, 0, 0, 0],
@@ -40,35 +33,33 @@ const DEV_Board = () => {
     [0, 1, 2, 2, 4, 1, 0],
     [0, 1, 1, 1, 2, 1, 0],
     [0, 0, 0, 1, 1, 1, 0],
-  ];
+  ]; ''
 
 
   const zoomIn = require("../../assets/images/icons/zoomIn.png");
   const zoomOut = require("../../assets/images/icons/zoomOut.png");
 
   const UI: UIstyle = StyleSheet.create({
-    turnview: {
-      width: "30%",
-      alignItems: "center",
-      flexDirection: "column",
-      padding: 10,
-      paddingTop: 30,
-      borderBottomLeftRadius: 30,
-      borderBottomRightRadius: 30,
-    },
-    turnviewBG: {
+    turnviewContainer: {
       position: "absolute",
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: "50%",
+      width: "100%",
+      height: "50%",
+      alignItems: "center"
+    },
+    turnviewGradient: {
+      width: "100%",
+      height: "100%",
+    },
+    turnviewIcon: {
+      position: "absolute",
+      top: 50
     }
   })
 
 
 
   const turnGradient = (
-    <View style={UI.turnviewBG}>
+    <View style={UI.turnviewGradient}>
       <Svg
         width="100%"
         height="100%"
@@ -99,9 +90,10 @@ const DEV_Board = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, alignItems: "center" }}>
-      {turnGradient}
-      <View style={UI.turnview}>
+      <View style={UI.turnviewContainer}>
+        {turnGradient}
         <Svg
+          style={UI.turnviewIcon}
           width={60}
           height={60}
           viewBox="0 0 60 60"
