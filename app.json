@@ -8,7 +8,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -27,7 +29,15 @@
     "facebookDisplayName": "TicTacNo",
     "packagerOpts": {
       "config": "metro.config.js",
-      "sourceExts": ["js", "jsx", "ts", "tsx", "svg"]
-    }
+      "sourceExts": [
+        "js",
+        "jsx",
+        "ts",
+        "tsx",
+        "svg"
+      ]
+    },
+    "description": "A classic with a twist. TicTacNo, as the name implies is regular old tic-tac-toe, but instead of trying to get three-in-a-row you try NOT to. As you progress through the game with a friend, new available cells appear for you to claim.",
+    "githubUrl": "https://github.com/FredrikMalmborg/TicTacNo/"
   }
 }

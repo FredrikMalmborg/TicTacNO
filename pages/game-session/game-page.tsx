@@ -26,7 +26,7 @@ const GamePage = ({ navigation, route }: Props) => {
   const { condition } = route.params;
   const { roomState, roomContext } = useContext(RoomContext);
   const [gameInfoModal, setGameInfoModal] = useState<boolean>(false);
-  const [postGameModal, setPostGameModal] = useState<boolean>(true);
+  const [postGameModal, setPostGameModal] = useState<boolean>(false);
 
   // CREATE ROOM ON HOST OR DESTROY ON HOST DEMOUNT
   useEffect(() => {
