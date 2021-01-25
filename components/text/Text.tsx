@@ -151,7 +151,7 @@ const TicTacText = ({
         ios: {
           shadowRadius: 0,
           shadowColor: button?.bgColor?.dark,
-          shadowOpacity: .9,
+          shadowOpacity: 0.9,
           shadowOffset: {
             height: 3,
             width: -3,

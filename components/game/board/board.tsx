@@ -223,9 +223,7 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
             {row.map((col, colIndex) => (
               <Cell
                 player={playerState}
-                click={
-                  yourTurn ? onClickCell : () => {}
-                }
+                click={yourTurn ? onClickCell : () => {}}
                 pos={{ y: rowIndex, x: colIndex }}
                 key={`cell-${rowIndex}/${colIndex}`}
                 state={col}
