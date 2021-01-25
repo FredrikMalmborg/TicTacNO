@@ -39,10 +39,6 @@ const PageNavigator = () => {
 
   const { userStatus } = useContext(AuthContext);
 
-  useEffect(() => {
-    console.log(userStatus);
-  }, [userStatus]);
-
   return (
     <Stack.Navigator initialRouteName={Pages.Login} screenOptions={pageOptions}>
       {userStatus.isLoading ? (

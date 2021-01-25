@@ -30,16 +30,7 @@ const ProfilePage = ({ navigation }: Props) => {
     authContext,
     userInfo: { username, gameStats },
   } = useContext(AuthContext);
-  const { roomContext } = useContext(RoomContext);
   const navigateBack = () => navigation.goBack();
-
-  const addLoss = () => {
-    roomContext.addGameStats("losses");
-  };
-
-  const addWin = () => {
-    roomContext.addGameStats("wins");
-  };
 
   const winRate = () =>
     gameStats &&
@@ -82,34 +73,13 @@ const ProfilePage = ({ navigation }: Props) => {
             )}
           </View>
           <TicTacText
-            label="+"
-            size="sm"
-            button={{
-              onClick: addWin,
-              bgColor: colors.teal,
-              form: "square",
-            }}
-            color="white"
-          />
-          <TicTacText
-            label="-"
-            size="sm"
-            button={{
-              onClick: addLoss,
-              bgColor: colors.teal,
-              form: "square",
-            }}
-            color="white"
-          />
-          {/* <TicTacText
             label="Game history"
             size="sm"
             button={{
-              onClick: () => console.log("history")
-              ,
+              onClick: () => console.log("history"),
               bgColor: colors.teal,
               form: "square",
-              disabled: true
+              disabled: true,
             }}
             color="white"
           />
@@ -117,14 +87,13 @@ const ProfilePage = ({ navigation }: Props) => {
             label="Remove account"
             size="sm"
             button={{
-              onClick: () => console.log("Remove account")
-              ,
+              onClick: () => console.log("Remove account"),
               bgColor: colors.red,
               form: "square",
-              disabled: true
+              disabled: true,
             }}
             color="white"
-          /> */}
+          />
         </Row>
         <Row size={3} style={[style.section, style.bottom]}>
           <TicTacText

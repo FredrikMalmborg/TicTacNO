@@ -1,5 +1,4 @@
 import React from "react";
-import { gameState } from "../../components/game/board/gameController";
 import { TSignInAction } from "./auth-provider";
 
 export type TError = "SIGNIN" | "SIGNUP" | null;
