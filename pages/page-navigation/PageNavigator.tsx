@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import GamePage from "../game-session/game-page";
 import StartPage from "../start/startpage";
 import PlayPage from "../play/playPage";
+import ProfilePage from "../profile/profile-page";
 import LoginPage from "../login/loginPage";
-// import PreGameRoom from "../pre-game-room/pre-game-room";
 import InitialSetup from "../initial-setup/initial-setup";
 
 import {
@@ -22,6 +22,7 @@ export type StackParamlist = {
     condition: "RECON-JOIN" | "JOIN" | "RECON-HOST" | "HOST";
   };
   [Pages.Play]: undefined;
+  [Pages.Profile]: undefined;
   [Pages.Login]: undefined;
   [Pages.Splash]: undefined;
   [Pages.InitialSetup]: undefined;
@@ -36,11 +37,11 @@ const PageNavigator = () => {
     cardStyle: { backgroundColor: "transparent" },
   };
 
-  const { user } = useContext(AuthContext);
+  const { userStatus } = useContext(AuthContext);
 
   return (
     <Stack.Navigator initialRouteName={Pages.Login} screenOptions={pageOptions}>
-      {user.isLoading ? (
+      {userStatus.isLoading ? (
         <Stack.Screen
           name={Pages.Splash}
           component={SplashScreen}
@@ -48,13 +49,15 @@ const PageNavigator = () => {
         />
       ) : (
         <>
-          {user.userToken === null ? (
+          {userStatus.isSignedOut ? (
             <Stack.Screen name={Pages.Login} component={LoginPage} />
+          ) : !userStatus.userName ? (
+            <Stack.Screen name={Pages.InitialSetup} component={InitialSetup} />
           ) : (
             <>
               <Stack.Screen name={Pages.Start} component={StartPage} />
-              {/* <Stack.Screen name={Pages.PreGameRoom} component={PreGameRoom} /> */}
               <Stack.Screen name={Pages.Play} component={PlayPage} />
+              <Stack.Screen name={Pages.Profile} component={ProfilePage} />
               <Stack.Screen
                 name={Pages.GamePage}
                 component={GamePage}

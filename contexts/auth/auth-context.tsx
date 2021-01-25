@@ -2,80 +2,82 @@ import React from "react";
 import { TSignInAction } from "./auth-provider";
 
 export type TError = "SIGNIN" | "SIGNUP" | null;
-export interface IUserState {
+
+type TReducerAction =
+  | { type: "HANDLE_ERROR"; error: TError }
+  | { type: "LOADING_USER"; isLoading: boolean }
+  | { type: "SIGN_IN"; token: string }
+  | { type: "SIGN_OUT" }
+  | { type: "NEW_USER" }
+  | { type: "SET_USERNAME"; username: string };
+export interface IUserStatus {
   isLoading: boolean;
   error: TError;
   isSignedOut: boolean;
   userToken: string | null;
-  newUser: boolean;
+  userName: false | string;
 }
 
-type TReducerAction =
-  | { type: "RESTORE"; token: string | null }
-  | { type: "HANDLE_ERROR"; error: TError }
-  | { type: "LOADING_USER" }
-  | { type: "SIGN_IN"; token: string }
-  | { type: "SIGN_OUT" }
-  | { type: "NEW_USER" }
-  | { type: "SET_USERNAME" };
-
-export const INITIAL_STATE: IUserState = {
+export const INITIAL_STATE: IUserStatus = {
   isLoading: true,
   isSignedOut: false,
   userToken: null,
-  newUser: false,
+  userName: false,
   error: null,
 };
 
-export const userState = (prevState: IUserState, action: TReducerAction) => {
+export interface IUserState {
+  username: string | null;
+  gameStats: {
+    wins: number;
+    losses: number;
+  } | null;
+}
+
+export const INITIAL_USER: IUserState = {
+  username: null,
+  gameStats: null,
+};
+
+export const userState = (prevState: IUserStatus, action: TReducerAction) => {
   switch (action.type) {
-    case "RESTORE":
-      return {
-        ...prevState,
-        userToken: action.token,
-        isLoading: false,
-        error: null,
-      };
     case "HANDLE_ERROR":
       return {
         ...prevState,
-        isLoading: false,
         error: action.error,
-      };
+      } as IUserStatus;
     case "LOADING_USER":
       return {
         ...prevState,
-        isLoading: true,
+        isLoading: action.isLoading,
         error: null,
-      };
+      } as IUserStatus;
     case "SIGN_IN":
       return {
         ...prevState,
-        isLoading: false,
         isSignedOut: false,
         userToken: action.token,
         error: null,
-      };
+      } as IUserStatus;
     case "SIGN_OUT":
       return {
         ...prevState,
-        isLoading: false,
         userToken: null,
         isSignedOut: true,
-        newUser: false,
-      };
+        userName: false,
+      } as IUserStatus;
     case "NEW_USER": {
       return {
         ...prevState,
-        newUser: true,
-      };
+        userName: false,
+      } as IUserStatus;
     }
     case "SET_USERNAME": {
       return {
         ...prevState,
-        newUser: false,
+        userName: action.username,
         error: null,
-      };
+      } as IUserStatus;
     }
   }
 };
@@ -92,7 +94,8 @@ const AuthContext = React.createContext({
     }) => {},
     setError: (error: TError) => {},
   },
-  user: INITIAL_STATE,
+  userStatus: INITIAL_STATE,
+  userInfo: INITIAL_USER,
 });
 
 export default AuthContext;

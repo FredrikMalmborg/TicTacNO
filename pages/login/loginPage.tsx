@@ -21,7 +21,7 @@ interface IStyles {
 }
 
 const LoginPage = () => {
-  const { authContext, user } = useContext(AuthContext);
+  const { authContext, userStatus } = useContext(AuthContext);
 
   const [register, setRegister] = useState<boolean>(false);
   const [inputFields, setInputFields] = useState<{
@@ -90,10 +90,10 @@ const LoginPage = () => {
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={4} style={[style.section, style.content]}>
-          {user.error && (
+          {userStatus.error && (
             <TicTacText
               label={(() => {
-                switch (user.error) {
+                switch (userStatus.error) {
                   case "SIGNIN":
                     return "Wrong email and/or password";
                   case "SIGNUP":
@@ -107,7 +107,7 @@ const LoginPage = () => {
           )}
           <TextInput
             autoCompleteType={"email"}
-            style={[style.input, user.error && style.inputError]}
+            style={[style.input, userStatus.error && style.inputError]}
             placeholder="Email-address"
             onChangeText={(text) => changeInputValue("email", text)}
             value={inputFields.email}
@@ -115,7 +115,7 @@ const LoginPage = () => {
           <TextInput
             autoCompleteType={"password"}
             secureTextEntry
-            style={[style.input, user.error && style.inputError]}
+            style={[style.input, userStatus.error && style.inputError]}
             placeholder="Password"
             onChangeText={(text) => changeInputValue("password", text)}
             value={inputFields.password}

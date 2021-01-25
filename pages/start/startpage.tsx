@@ -23,15 +23,14 @@ interface Props {
 }
 
 const StartPage = ({ navigation }: Props) => {
-  const { user, authContext } = useContext(AuthContext);
+  const { userStatus, authContext } = useContext(AuthContext);
   const { roomContext } = useContext(RoomContext);
 
   useEffect(() => {
-    if (user.userToken !== null) {
+    if (userStatus.userToken !== null) {
       fetchGameAndReconnect();
     }
-    // console.log(user);
-  }, [user]);
+  }, [userStatus]);
 
   const fetchGameAndReconnect = useCallback(async () => {
     const ongoingGame = await roomContext.checkForOngoingGame();
@@ -45,14 +44,15 @@ const StartPage = ({ navigation }: Props) => {
       }
       // console.log("GAME: ", ongoingGame);
     }
-  }, [user.userToken]);
+  }, [userStatus.userToken]);
 
   const navigateToPlay = () => navigation.navigate(Pages.Play);
+  const navigateToProfile = () => navigation.navigate(Pages.Profile);
 
   return (
     <SafeAreaView style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
-        <Row size={2} style={[style.section]}>
+        <Row size={3} style={[style.section]}>
           <Logotype width="90%" height="100%" />
         </Row>
         <Row size={3} style={style.section}>
@@ -60,23 +60,18 @@ const StartPage = ({ navigation }: Props) => {
             title
             label="play"
             size="md"
+            style={{ margin: 20 }}
             button={{ onClick: navigateToPlay }}
           />
-          <TicTacText title label="profile" size="md" />
-        </Row>
-        <Row size={1} style={[style.section, style.bottom]}>
           <TicTacText
-            label="Log out"
-            size="sm"
-            centered
-            button={{
-              onClick: () => authContext.signOut(),
-              bgColor: colors.red,
-              form: "square",
-            }}
+            title
+            style={{ margin: 20 }}
+            label="profile"
+            size="md"
+            button={{ onClick: navigateToProfile }}
           />
-          {/* <TicTacText label="About us" size="md" color="white" /> */}
         </Row>
+        <Row size={2} style={[style.section, style.bottom]}></Row>
       </Grid>
     </SafeAreaView>
   );

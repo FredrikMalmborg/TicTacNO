@@ -5,12 +5,11 @@ import RoomContext, {
   INITIAL_ROOM_STATUS,
   IRoomState,
   roomStatusReducer,
-  TPlayer,
 } from "./room-context";
 import { firebase } from "../../constants/firebase";
 import fb from "firebase";
 import { TCellPos, TCellState } from "../../components/game/cell/cell";
-import { board } from "../../components/game/board/DEFAULT_BOARD";
+import { INITIAL_ACELLS } from "../../components/game/board/DEFAULT_BOARD";
 
 const RoomProvider: FC = ({ children }) => {
   const [roomStatus, dispatch] = useReducer(
@@ -20,6 +19,7 @@ const RoomProvider: FC = ({ children }) => {
   const [roomState, setRoomState] = useState<IRoomState>(INITIAL_ROOM);
   const roomsRef = firebase.database().ref("rooms");
   const hostRoomRef = roomsRef.push();
+  const userRef = firebase.database().ref("users");
 
   const roomContext = useMemo(
     () => ({
@@ -38,7 +38,7 @@ const RoomProvider: FC = ({ children }) => {
             });
             hostRoomRef.on("value", (room) => {
               const data = room.val();
-              console.log("HOST ROOM LISTENER", data);
+              // console.log("HOST ROOM LISTENER", data);
               if (data) {
                 setRoomState(data);
               }
@@ -64,40 +64,45 @@ const RoomProvider: FC = ({ children }) => {
             const user = firebase.auth().currentUser?.uid;
             if (user) {
               const username = await findUsername(user);
-              const addPlayer = await foundRoom.ref
-                .child("player2")
-                .set({ displayName: username, id: user, cellId: 4 })
-                .catch(() => false)
-                .then(() => true);
-              if (addPlayer) {
-                success = true;
-                roomKeyId = foundRoom.key;
-                foundRoom.ref.on("value", (room) => {
-                  const data = room.val();
-                  console.log("JOIN ROOM LISTENER: ", data);
-                  if (data) {
-                    setRoomState(data);
-                  }
-                });
-                roomsRef.on("child_removed", (child) => {
-                  const user = firebase.auth().currentUser?.uid;
-                  const player2:
-                    | { id: string; displayName: string }
-                    | undefined = child.val().player2 || undefined;
-                  if (player2 && player2.id && player2.id === user) {
-                    setRoomState(INITIAL_ROOM);
-                  }
-                });
+              const player2 = foundRoom.child("player2").val();
+              if (!player2) {
+                const addPlayer = await foundRoom.ref
+                  .child("player2")
+                  .set({ displayName: username, id: user, cellId: 4 })
+                  .catch(() => false)
+                  .then(() => true);
+                if (addPlayer) {
+                  success = true;
+                  roomKeyId = foundRoom.key;
+                  foundRoom.ref.on("value", (room) => {
+                    const data = room.val();
+                    // console.log("JOIN ROOM LISTENER: ", data);
+                    if (data) {
+                      setRoomState(data);
+                    }
+                  });
+                  roomsRef.on("child_removed", (child) => {
+                    const user = firebase.auth().currentUser?.uid;
+                    const player2:
+                      | { id: string; displayName: string }
+                      | undefined = child.val().player2 || undefined;
+                    if (player2 && player2.id && player2.id === user) {
+                      setRoomState(INITIAL_ROOM);
+                    }
+                  });
+                }
+              } else {
+                dispatch({ type: "ERROR", message: "Room is full" });
               }
             }
+          } else {
+            dispatch({ type: "ERROR", message: "Found no room" });
           }
         } catch (e) {
-          console.log("ERROR: ", e);
+          console.log("JOIN-ROOM ERROR: ", e);
         } finally {
           if (success && roomKeyId) {
             dispatch({ type: "SUCCESS", roomKey: roomKeyId });
-          } else {
-            dispatch({ type: "ERROR", message: "Found no room" });
           }
           dispatch({ type: "LOADING", isLoading: false });
         }
@@ -143,7 +148,7 @@ const RoomProvider: FC = ({ children }) => {
             }
           }
         } catch (e) {
-          console.log("ERROR: ", e);
+          console.log("LEAVE-ROOM ERROR: ", e);
         } finally {
           if (success) {
             dispatch({ type: "RESET" });
@@ -158,7 +163,7 @@ const RoomProvider: FC = ({ children }) => {
         if (foundRoom) {
           foundRoom.ref.child("gameStarted").set(true);
         } else {
-          console.log("COUNDN'T FIND ROOM (STARTGAME)");
+          console.log("START-GAME ERROR: COUNDN'T FIND ROOM");
         }
       },
       updateGameState: async (board: TCellState[][], aCells: TCellPos[]) => {
@@ -182,22 +187,92 @@ const RoomProvider: FC = ({ children }) => {
             playerTurn: nextPlayer,
             availableCells: aCells,
           };
-
-          console.log("ROOM SHOULD UPDATE TO: ", updatedRoom);
-          foundRoom.ref.set(updatedRoom).catch((e) => console.log(e));
+          foundRoom.ref
+            .set(updatedRoom)
+            .catch((e) => console.log("UPDATE ROOM ERROR: ", e));
         } else {
-          console.log("COULDN'T FIND ROOM (UPDATE)");
+          console.log("UPDATE ROOM ERROR: COULDN'T FIND ROOM");
+        }
+      },
+      restartGame: async () => {
+        const foundRoom = await findRoomByUser();
+        if (foundRoom) {
+          const fbRoom = foundRoom.val();
+          const restartRoom: IRoomState = {
+            ...fbRoom,
+            gameBoard: INITIAL_BOARD,
+            availableCells: INITIAL_ACELLS,
+            rematchValidity: { player1: false, player2: false },
+            gameOver: false,
+            gameStarted: true,
+          };
+          foundRoom.ref
+            .set(restartRoom)
+            .catch((e) => console.log("RESTART GAME ERROR: ", e));
+        } else {
+          console.log("RESTART GAME ERROR: COULDN'T FIND ROOM");
+        }
+      },
+      resetGame: async () => {
+        const foundRoom = await findRoomByUser();
+        if (foundRoom) {
+          const fbRoom = foundRoom.val();
+          const resetRoom: IRoomState = {
+            ...fbRoom,
+            gameBoard: INITIAL_BOARD,
+            availableCells: INITIAL_ACELLS,
+            rematchValidity: { player1: false, player2: false },
+            gameOver: false,
+            gameStarted: false,
+          };
+          foundRoom.ref
+            .set(resetRoom)
+            .catch((e) => console.log("RESET TO PRE ERROR: ", e));
+        }
+      },
+      updateRematchValidity: async (valid: boolean) => {
+        const currUser = firebase.auth().currentUser?.uid;
+        if (currUser) {
+          const foundRoom = await findRoomByUser();
+          if (foundRoom) {
+            let yourPlayer;
+            const player1 = foundRoom.child("player1").val();
+            if (player1.id === currUser) {
+              yourPlayer = "player1";
+            } else {
+              yourPlayer = "player2";
+            }
+            foundRoom.ref
+              .child("rematchValidity")
+              .child(yourPlayer)
+              .set(valid ? currUser : false)
+              .catch((e) => console.log("REMATCH ERROR: ", e));
+          } else {
+            console.log("REMATCH ERROR: FOUND NO ROOM");
+          }
+        } else {
+          console.log("REMATCH ERROR: FOUND NO USER");
         }
       },
       updateGameLoser: async (board: TCellState[][]) => {
         const foundRoom = await findRoomByUser();
         if (foundRoom) {
           const fbRoom = foundRoom.val();
+          const player1 = foundRoom.child("player1").val();
+          const player2 = foundRoom.child("player2").val();
           const loser = foundRoom.child("playerTurn").val();
+          if (player1.id === loser.id) {
+            addGameStats("losses", player1.id);
+            addGameStats("wins", player2.id);
+          } else {
+            addGameStats("wins", player1.id);
+            addGameStats("losses", player2.id);
+          }
           foundRoom.ref.set({
             ...fbRoom,
             gameBoard: board,
             losingPlayer: loser,
+            gameOver: true,
           });
         }
       },
@@ -205,6 +280,22 @@ const RoomProvider: FC = ({ children }) => {
     []
   );
 
+  // Adds losses/wins to current user
+  const addGameStats = async (key: "losses" | "wins", user: string) => {
+    if (user) {
+      await userRef
+        .child(user)
+        .once("value", (userSnap) => userSnap)
+        .then(async (result) => {
+          const gameStats = result.child("gameStats");
+          const prevStat: number = gameStats.child(key).val();
+          const newStat = prevStat + 1;
+          await gameStats.ref.child(key).set(newStat);
+        });
+    }
+  };
+
+  // Finds room by roomID
   const findRoomById = async (
     roomId: string
   ): Promise<undefined | fb.database.DataSnapshot> => {
@@ -224,6 +315,7 @@ const RoomProvider: FC = ({ children }) => {
     return room;
   };
 
+  // Finds room by current user
   const findRoomByUser = async (): Promise<
     undefined | fb.database.DataSnapshot
   > => {
@@ -249,6 +341,7 @@ const RoomProvider: FC = ({ children }) => {
     return room;
   };
 
+  // Finds user's username
   const findUsername = async (user: string): Promise<string> => {
     const userRef = firebase.database().ref(`users/${user}`);
     const username = await userRef
@@ -259,7 +352,7 @@ const RoomProvider: FC = ({ children }) => {
     return username;
   };
 
-  // REMOVES ERRORMSG AUTOMATICALLY
+  // Removes Error messages for room-status automatically
   useEffect(() => {
     if (roomStatus.errorMsg) {
       setTimeout(() => {
