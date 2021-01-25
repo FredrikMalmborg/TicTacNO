@@ -7,11 +7,13 @@ export type TPlayer = { id: string | null; displayName: string; cellId: 3 | 4 };
 export interface IRoomState {
   rid: string | undefined;
   open: boolean;
+  rematchValidity: { player1: false | string; player2: false | string };
   player1: TPlayer | null;
   player2: TPlayer | null;
   playerTurn: TPlayer | null;
   losingPlayer: TPlayer | null;
   gameStarted: boolean;
+  gameOver: boolean;
   gameBoard: TCellState[][] | undefined;
   availableCells: TCellPos[];
 }
@@ -29,11 +31,16 @@ export const INITIAL_BOARD: TCellState[][] = [
 export const INITIAL_ROOM: IRoomState = {
   rid: undefined,
   open: false,
+  rematchValidity: {
+    player1: false,
+    player2: false,
+  },
   player1: null,
   player2: null,
   playerTurn: null,
   losingPlayer: null,
   gameStarted: false,
+  gameOver: false,
   gameBoard: INITIAL_BOARD,
   availableCells: INITIAL_ACELLS,
 };
@@ -109,8 +116,10 @@ const RoomContext = React.createContext({
     resetRoomStatus: () => {},
     leaveRoom: () => {},
     startGame: () => {},
-    addGameStats: (key: "losses" | "wins") => {},
     updateGameState: (board: TCellState[][], aCells: TCellPos[]) => {},
+    restartGame: () => {},
+    resetGame: () => {},
+    updateRematchValidity: (valid: boolean) => {},
     updateGameLoser: (board: TCellState[][]) => {},
   },
   roomStatus: INITIAL_ROOM_STATUS,
