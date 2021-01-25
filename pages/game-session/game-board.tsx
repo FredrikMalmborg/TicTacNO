@@ -106,7 +106,9 @@ const GameBoard = () => {
             <Stop offset="0" stopColor="#0000" stopOpacity="0" />
             <Stop
               offset="1"
-              stopColor={playerTurn?.cellId === 3 ? colors.red.light : colors.teal.light}
+              stopColor={
+                playerTurn?.cellId === 3 ? colors.red.light : colors.teal.light
+              }
               stopOpacity="1"
             />
           </LinearGradient>
@@ -140,14 +142,14 @@ const GameBoard = () => {
               />
             </>
           ) : (
-              <Circle
-                cx="30"
-                cy="30"
-                r="20"
-                stroke={colors.teal.dark}
-                strokeWidth="20"
-              />
-            )}
+            <Circle
+              cx="30"
+              cy="30"
+              r="20"
+              stroke={colors.teal.dark}
+              strokeWidth="20"
+            />
+          )}
         </Svg>
       </View>
       <PanCamera windowSize={windowSize}>
@@ -177,10 +179,10 @@ const GameBoard = () => {
               zoomLevel === 0
                 ? 1
                 : zoomLevel === 1
-                  ? 2
-                  : zoomLevel === 2
-                    ? 0
-                    : zoomLevel
+                ? 2
+                : zoomLevel === 2
+                ? 0
+                : zoomLevel
             );
           }}
         >
