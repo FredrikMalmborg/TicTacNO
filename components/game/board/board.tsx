@@ -94,23 +94,23 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn, ...props }: IProps) =
               };
 
             if (f.value === playerState) {
-              console.log("found");
+              // console.log("found");
 
               if (f2.value === playerState) {
-                console.log("found further");
+                // console.log("found further");
                 isLossCell(lossArray, f2.y, f2.x) &&
                   lossArray.push({ y: f2.y, x: f2.x });
                 isLossCell(lossArray, f.y, f.x) &&
                   lossArray.push({ y: f.y, x: f.x });
               }
               if (b.value === playerState) {
-                console.log("back");
+                // console.log("back");
                 isLossCell(lossArray, b.y, b.x) &&
                   lossArray.push({ y: f2.y, x: b.x });
                 isLossCell(lossArray, f.y, f.x) &&
                   lossArray.push({ y: f.y, x: f.x });
                 if (b2.value === playerState) {
-                  console.log("back further");
+                  // console.log("back further");
                   isLossCell(lossArray, b2.y, b2.x) &&
                     lossArray.push({ y: b2.y, x: b2.x });
                   isLossCell(lossArray, f.y, f.x) &&
@@ -231,9 +231,7 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn, ...props }: IProps) =
               <Cell
                 zoomLevel={props.zoomLevel}
                 player={playerState}
-                click={
-                  yourTurn ? onClickCell : () => console.log("NOT YOUR TURN")
-                }
+                click={yourTurn ? onClickCell : () => {}}
                 pos={{ y: rowIndex, x: colIndex }}
                 key={`cell-${rowIndex}/${colIndex}`}
                 state={col}

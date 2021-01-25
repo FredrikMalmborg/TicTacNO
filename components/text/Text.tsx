@@ -144,17 +144,17 @@ const TicTacText = ({
     },
     button: {
       backgroundColor: button?.bgColor?.light,
-      paddingHorizontal: 20,
+      paddingHorizontal: 15,
       paddingVertical: 8,
-      margin: 10,
+      margin: 6,
       ...Platform.select({
         ios: {
           shadowRadius: 0,
           shadowColor: button?.bgColor?.dark,
-          shadowOpacity: 0.6,
+          shadowOpacity: 0.9,
           shadowOffset: {
-            height: 5,
-            width: -5,
+            height: 3,
+            width: -3,
           },
         },
         android: {

@@ -24,7 +24,7 @@ const GameBoard = () => {
     roomState: { player1, player2, playerTurn, gameBoard, availableCells },
   } = useContext(RoomContext);
   const {
-    user: { userToken },
+    userStatus: { userToken },
   } = useContext(AuthContext);
   const handleBackButton = () => {
     return true;
@@ -44,10 +44,8 @@ const GameBoard = () => {
       playerTurn !== null &&
       yourPlayer()?.id === playerTurn.id
     ) {
-      console.log("TURN TRUE");
       setYourTurn(true);
     } else {
-      console.log("TURN FALSE");
       setYourTurn(false);
     }
   }, [playerTurn]);

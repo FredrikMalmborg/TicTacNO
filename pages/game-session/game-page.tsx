@@ -2,11 +2,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, StyleProp, ViewStyle, SafeAreaView } from "react-native";
 import RoomContext, { INITIAL_ROOM } from "../../contexts/room/room-context";
-import { CommonActions, RouteProp } from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
 import { StackParamlist } from "../page-navigation/PageNavigator";
 import GameInfoModal from "./game-info-modal";
 import GameBoard from "./game-board";
 import PreGameRoom from "./pre-game-room/pre-game-room";
+import PostGameModal from "./post-game-modal";
 
 interface IStyles {
   container: StyleProp<ViewStyle>;
@@ -24,7 +25,8 @@ interface Props {
 const GamePage = ({ navigation, route }: Props) => {
   const { condition } = route.params;
   const { roomState, roomContext } = useContext(RoomContext);
-  const [modal, setModal] = useState<boolean>(false);
+  const [gameInfoModal, setGameInfoModal] = useState<boolean>(false);
+  const [postGameModal, setPostGameModal] = useState<boolean>(true);
 
   // CREATE ROOM ON HOST OR DESTROY ON HOST DEMOUNT
   useEffect(() => {
@@ -33,7 +35,6 @@ const GamePage = ({ navigation, route }: Props) => {
     }
     return () => {
       if (condition === "HOST" || condition === "RECON-HOST") {
-        // console.log("DESTROY", room.gameStarted);
         roomContext.destroyRoom();
       }
     };
@@ -42,9 +43,9 @@ const GamePage = ({ navigation, route }: Props) => {
   // START GAME
   useEffect(() => {
     if (roomState.gameStarted) {
-      setModal(true);
+      setGameInfoModal(true);
       setTimeout(() => {
-        setModal(false);
+        setGameInfoModal(false);
         // navigation.dispatch(resetAction);
       }, 2000);
     }
@@ -52,18 +53,24 @@ const GamePage = ({ navigation, route }: Props) => {
 
   // LEAVE ROOM IF DESTROYED
   useEffect(() => {
-    console.log("local room: ", roomState);
-
     if (condition === "JOIN" && !roomState.gameStarted) {
       if (roomState === INITIAL_ROOM) {
-        setModal(true);
+        setGameInfoModal(true);
         setTimeout(() => {
-          setModal(false);
+          setGameInfoModal(false);
           navigation.goBack();
         }, 2000);
       }
     }
   }, [roomState]);
+
+  useEffect(() => {
+    if (roomState.gameOver) {
+      setPostGameModal(true);
+    } else {
+      setPostGameModal(false);
+    }
+  }, [roomState.gameOver]);
 
   //Place page on top of stack
   //   const resetAction = CommonActions.reset({
@@ -82,6 +89,9 @@ const GamePage = ({ navigation, route }: Props) => {
     navigation.goBack();
   };
 
+  const hostOrJoin =
+    condition === "HOST" || condition === "RECON-HOST" ? "HOST" : "JOIN";
+
   return (
     <SafeAreaView style={style.container}>
       <>
@@ -89,7 +99,7 @@ const GamePage = ({ navigation, route }: Props) => {
           <GameBoard />
         ) : (
           <PreGameRoom
-            condition={condition}
+            condition={hostOrJoin}
             rid={roomState.rid}
             player1={roomState.player1}
             player2={roomState.player2}
@@ -99,10 +109,17 @@ const GamePage = ({ navigation, route }: Props) => {
           />
         )}
       </>
+      <PostGameModal
+        modalVisible={postGameModal}
+        setVisible={setPostGameModal}
+        condition={hostOrJoin}
+        leaveRoom={leaveRoom}
+        destroyRoom={destroyRoom}
+      />
       <GameInfoModal
-        modalVisible={modal}
+        modalVisible={gameInfoModal}
         label={!roomState.gameStarted ? "Game was cancelled" : "Loading game"}
-        setVisible={setModal}
+        setVisible={setGameInfoModal}
       />
     </SafeAreaView>
   );

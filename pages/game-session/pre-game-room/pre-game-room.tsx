@@ -22,7 +22,7 @@ interface IStyles {
   bottom: StyleProp<ViewStyle>;
 }
 interface Props {
-  condition?: string;
+  condition?: "JOIN" | "HOST";
   player1: { id: string | null; displayName: string } | null;
   player2: { id: string | null; displayName: string } | null;
   rid?: string;
@@ -47,9 +47,6 @@ const PreGameRoom = ({
     ? "Game is ready"
     : "Game is not ready";
 
-  const hostOrJoin =
-    condition === "HOST" || condition === "RECON-HOST" ? "HOST" : "JOIN";
-
   return (
     <SafeAreaView style={style.container}>
       <Grid style={{ width: "100%", height: "100%" }}>
@@ -57,7 +54,7 @@ const PreGameRoom = ({
           {condition && (
             <TicTacText
               title
-              label={hostOrJoin === "HOST" ? "Your room" : "Joined room"}
+              label={condition === "HOST" ? "Your room" : "Joined room"}
               centered
               size="md"
             />
@@ -110,7 +107,7 @@ const PreGameRoom = ({
           </View>
           <View style={style.content}>
             <TicTacText title label={gameStatus} centered size="sm" />
-            {condition && hostOrJoin === "HOST" && (
+            {condition === "HOST" && (
               <TicTacText
                 label="Start game"
                 size={40}
@@ -128,11 +125,11 @@ const PreGameRoom = ({
         <Row size={1} style={[style.section, style.bottom]}>
           {condition && (
             <TicTacText
-              label={hostOrJoin === "HOST" ? "Cancel room" : "Leave room"}
+              label={condition === "HOST" ? "Cancel room" : "Leave room"}
               size="sm"
               centered
               button={{
-                onClick: hostOrJoin === "HOST" ? destroyRoom : leaveRoom,
+                onClick: condition === "HOST" ? destroyRoom : leaveRoom,
                 bgColor: colors.red,
                 form: "square",
               }}
