@@ -47,6 +47,7 @@ const StartPage = ({ navigation }: Props) => {
   }, [userStatus.userToken]);
 
   const navigateToPlay = () => navigation.navigate(Pages.Play);
+  const navigateToDev = () => navigation.navigate(Pages.DEV);
   const navigateToProfile = () => navigation.navigate(Pages.Profile);
 
   return (

@@ -10,18 +10,25 @@ import { Grid, Row } from "react-native-easy-grid";
 import { gameState } from "./gameController";
 import Cell, { TCellState, TCellPos } from "../cell/cell";
 
-import TicTacText from "../../text/Text";
 import { View } from "react-native";
 import RoomContext from "../../../contexts/room/room-context";
+import { ZoomLevel } from "../../../pages/game-session/game-board";
 
 interface IProps {
   gameBoard: TCellState[][];
   aCells: TCellPos[];
   playerState?: 3 | 4;
   yourTurn: boolean;
+  zoomLevel: ZoomLevel;
 }
 
-const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
+const Board = ({
+  gameBoard,
+  aCells,
+  playerState,
+  yourTurn,
+  ...props
+}: IProps) => {
   const { roomContext } = useContext(RoomContext);
 
   const onClickCell = ({ y, x }: TCellPos, state: TCellState) => {
@@ -212,16 +219,29 @@ const Board = ({ gameBoard, aCells, playerState, yourTurn }: IProps) => {
     <Grid
       style={{
         flex: 0,
-        borderWidth: 3,
-        borderColor: "purple",
       }}
     >
       {gameBoard &&
         playerState &&
         [...gameBoard].map((row, rowIndex) => (
-          <Row style={{ height: 40 }} key={`row-${rowIndex}`}>
+          <Row
+            style={{
+              height: (() => {
+                switch (props.zoomLevel) {
+                  case 0:
+                    return 40;
+                  case 1:
+                    return 60;
+                  case 2:
+                    return 100;
+                }
+              })(),
+            }}
+            key={`row-${rowIndex}`}
+          >
             {row.map((col, colIndex) => (
               <Cell
+                zoomLevel={props.zoomLevel}
                 player={playerState}
                 click={yourTurn ? onClickCell : () => {}}
                 pos={{ y: rowIndex, x: colIndex }}

@@ -6,5 +6,6 @@ export const Pages = {
   Login: "LoginPage",
   InitialSetup: "InitialSetup",
   Splash: "SplashPage",
+  DEV: "DEV",
 } as const;
 export type ScreenName = keyof typeof Pages;

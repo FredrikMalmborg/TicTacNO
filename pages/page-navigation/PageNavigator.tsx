@@ -15,6 +15,7 @@ import { Pages } from "../pages";
 import { forSlide } from "./page-animations";
 import SplashScreen from "./splash-screen";
 import AuthContext from "../../contexts/auth/auth-context";
+import DEV_board from "../DEV/DEV_board";
 
 export type StackParamlist = {
   [Pages.Start]: undefined;
@@ -26,6 +27,7 @@ export type StackParamlist = {
   [Pages.Login]: undefined;
   [Pages.Splash]: undefined;
   [Pages.InitialSetup]: undefined;
+  [Pages.DEV]: undefined;
 };
 
 const PageNavigator = () => {
@@ -58,6 +60,7 @@ const PageNavigator = () => {
               <Stack.Screen name={Pages.Start} component={StartPage} />
               <Stack.Screen name={Pages.Play} component={PlayPage} />
               <Stack.Screen name={Pages.Profile} component={ProfilePage} />
+              <Stack.Screen name={Pages.DEV} component={DEV_board} />
               <Stack.Screen
                 name={Pages.GamePage}
                 component={GamePage}

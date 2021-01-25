@@ -3,30 +3,31 @@ import {
   SafeAreaView,
   Dimensions,
   BackHandler,
+  TouchableOpacity,
   View,
+  StyleSheet,
   StyleProp,
   ViewStyle,
-  StyleSheet,
 } from "react-native";
 import {
-  TouchableHighlight,
-  TouchableOpacity,
-} from "react-native-gesture-handler";
+  Svg,
+  Image as SvgImage,
+  Circle,
+  Path,
+  Defs,
+  RadialGradient,
+  Stop,
+  LinearGradient,
+} from "react-native-svg";
 
 import Board from "../../components/game/board/board";
 import PanCamera from "../../components/game/camera/pan-camera";
-import AuthContext from "../../contexts/auth/auth-context";
-import RoomContext from "../../contexts/room/room-context";
 import TicTacText from "../../components/text/Text";
-import Svg, {
-  Defs,
-  LinearGradient,
-  Stop,
-  Path,
-  Circle,
-  Image as SvgImage,
-} from "react-native-svg";
+import { TCellState } from "../../components/game/cell/cell";
+import { INITIAL_ACELLS as INCELLS } from "../../components/game/board/DEFAULT_BOARD";
 import colors from "../../constants/colors";
+import Gradient from "../../components/background/gradient";
+import { color } from "react-native-reanimated";
 
 export type ZoomLevel = 0 | 1 | 2;
 
@@ -36,42 +37,21 @@ interface UIstyle {
   turnviewIcon: StyleProp<ViewStyle>;
 }
 
-const GameBoard = () => {
+const DEV_Board = () => {
   const windowSize = Dimensions.get("screen");
-  const {
-    roomState: { player1, player2, playerTurn, gameBoard, availableCells },
-  } = useContext(RoomContext);
-  const {
-    userStatus: { userToken },
-  } = useContext(AuthContext);
-  const handleBackButton = () => {
-    return true;
-  };
-  const [yourTurn, setYourTurn] = useState<boolean>(false);
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(1);
+  const [yourTurn, setYourTurn] = useState<boolean>(false);
 
-  useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", handleBackButton);
-    return () =>
-      BackHandler.removeEventListener("hardwareBackPress", handleBackButton);
-  });
-
-  useEffect(() => {
-    if (
-      yourPlayer() !== null &&
-      playerTurn !== null &&
-      yourPlayer()?.id === playerTurn.id
-    ) {
-      setYourTurn(true);
-    } else {
-      setYourTurn(false);
-    }
-  }, [playerTurn]);
-
-  const yourPlayer = () =>
-    userToken && player1 && player2 && userToken === player1.id
-      ? player1
-      : player2;
+  const TEST_BOARD: TCellState[][] = [
+    [1, 1, 1, 0, 0, 0, 0],
+    [1, 2, 1, 1, 1, 1, 0],
+    [1, 1, 2, 3, 2, 1, 0],
+    [0, 1, 2, 2, 2, 1, 0],
+    [0, 1, 2, 2, 4, 1, 0],
+    [0, 1, 1, 1, 2, 1, 0],
+    [0, 0, 0, 1, 1, 1, 0],
+  ];
+  ("");
 
   const zoomIn = require("../../assets/images/icons/zoomIn.png");
   const zoomOut = require("../../assets/images/icons/zoomOut.png");
@@ -128,7 +108,7 @@ const GameBoard = () => {
       <View style={UI.turnviewContainer}>
         {turnGradient}
         <Svg style={UI.turnviewIcon} width={60} height={60} viewBox="0 0 60 60">
-          {playerTurn?.cellId === 3 ? (
+          {yourTurn ? (
             <>
               <Path
                 d="M57.0644 42.8908C60.9783 46.8048 60.9783 53.1506 57.0644 57.0645C53.1504 60.9785 46.8046 60.9785 42.8907 57.0645L2.93547 17.1093C-0.978494 13.1954 -0.978485 6.8496 2.93547 2.93564C6.84944 -0.978323 13.1952 -0.978324 17.1092 2.93564L57.0644 42.8908Z"
@@ -151,15 +131,13 @@ const GameBoard = () => {
         </Svg>
       </View>
       <PanCamera windowSize={windowSize}>
-        {gameBoard && availableCells && (
-          <Board
-            zoomLevel={zoomLevel}
-            gameBoard={gameBoard}
-            yourTurn={yourTurn}
-            playerState={yourPlayer()?.cellId}
-            aCells={availableCells}
-          />
-        )}
+        <Board
+          zoomLevel={zoomLevel}
+          gameBoard={TEST_BOARD}
+          yourTurn={yourTurn}
+          playerState={3}
+          aCells={INCELLS}
+        />
       </PanCamera>
       <View
         style={{
@@ -170,6 +148,11 @@ const GameBoard = () => {
           flexDirection: "row",
         }}
       >
+        <TicTacText
+          label="switch turn"
+          size="sm"
+          button={{ onClick: () => setYourTurn(!yourTurn) }}
+        />
         <TouchableOpacity
           style={{ width: 60, height: "100%" }}
           onPress={() => {
@@ -206,4 +189,4 @@ const GameBoard = () => {
   );
 };
 
-export default memo(GameBoard);
+export default memo(DEV_Board);
